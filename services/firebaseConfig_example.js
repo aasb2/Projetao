@@ -1,0 +1,1 @@
+// add configurações do Firebase SDK e mudar o nome do arquivo para 'firebaseConfig.js'

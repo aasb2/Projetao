@@ -2,27 +2,36 @@
 
 ## Getting Started
 
-Projeto base da nossa aplicação Flutter.
+O UnityFit depende das seguintes tecnologias e bibliotecas:
 
-Alguns recursos importantes:
+- [Expo](https://expo.dev/)
+- [React Native](https://reactnative.dev/)
+- [NativeBase UI](https://nativebase.io/)
+- [Firebase](https://firebase.google.com/)
+  - [Expo and Firebase SDK](https://docs.expo.dev/guides/using-firebase/#using-firebase-js-sdk)
 
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-- [online documentation](https://docs.flutter.dev/)
-- Documentação do FlutterFire (integração com Firebase):
-[Adicionar o Firebase ao seu app Flutter](https://firebase.google.com/docs/flutter/setup?hl=pt&authuser=0&platform=ios#available-plugins)
-  - [firebase.flutter.dev](https://firebase.flutter.dev) 
+- [Expo Go](https://docs.expo.dev/get-started/expo-go/)
 
+### Configuração do Firebase
 
-### Estrutura de pastas:
+Para configurar o Firebase, siga estas etapas:
 
-- `models/`: Contém as classes que representam os modelos de dados do aplicativo, como classes para usuários, treinos, etc.
+1. Vá em 'Configurações do Projeto' [Firebase Console](https://console.firebase.google.com/).
+2. Copie as credenciais do projeto (chave do Firebase) e cole-as no arquivo `services/firebaseConfig.js`:
 
-- `services/`: Contém classes que lidam com a lógica de negócios e interações com APIs, banco de dados ou serviços externos.
+```javascript
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
 
-- `ui/`: É onde você colocará todas as interfaces do usuário. Essa pasta é dividida em subpastas:
+export default {
+  apiKey: "SUA_API_KEY",
+  authDomain: "SEU_AUTH_DOMAIN",
+  projectId: "SEU_PROJECT_ID",
+  storageBucket: "SEU_STORAGE_BUCKET",
+  messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+  appId: "SEU_APP_ID",
+  measurementId: "SEU_measurementId:"
+};
 
-  - `ui/screens/`: Cada tela do aplicativo deve ter sua própria pasta aqui, contendo o código específico da tela e possivelmente seus próprios widgets.
-
-  - `ui/widgets/`: Contém widgets reutilizáveis que podem ser usados em várias telas.
-
-- `utils/`: Armazena utilitários e funções auxiliares que podem ser usados em várias partes do aplicativo.
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
