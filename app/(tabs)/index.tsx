@@ -24,6 +24,89 @@ const users = [images.user1, images.user2, images.user3, images.user4]
 
 const Feed = () => {
 
+    function renderHeader() {
+        return (
+            <View
+                style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    backgroundColor: '#AF9EBC',
+                    paddingVertical: 145,
+                    paddingHorizontal: 0,
+                    borderBottomLeftRadius: 20,
+                    borderBottomRightRadius: 20,
+                    zIndex: -1,
+                }}
+            >
+            </View>
+        )
+    }
+
+
+    function renderContainer() {
+        return (
+            <View>
+                <View style={{ marginVertical: 8 }}>
+                    <Text style={{ ...FONTS.h3 }}>Couro e Osso</Text>
+                    <View style={{ marginVertical: 4, flexDirection: 'row', alignItems: 'center' }}>
+                        <Text style={{ ...FONTS.body3, marginLeft: 8 }}>Amigos</Text>
+                        <TouchableOpacity onPress={() => console.log('Ver Todos Pressed')}>
+                            <Text style={{ ...FONTS.body3, marginLeft: 8, color: 'blue' }}>Ver todos</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                                
+
+
+
+                <FlatList
+                    horizontal={true}
+                    data={friends}
+                    keyExtractor={(item) => item.id}
+                    renderItem={({ item, index }) => (
+                        <View
+                            key={item.id}
+                            style={{
+                                flexDirection: 'column',
+                                flex: 1,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                            }}
+                        >
+                            <TouchableOpacity
+                                onPress={() => console.log('Pressed')}
+                                style={{
+                                    paddingVertical: 4,
+                                    marginRight: 10,
+                                }}
+                            >
+                                <Image
+                                    source={item.image}
+                                    resizeMode="contain"
+                                    style={{
+                                        width: 96,
+                                        height: 110,
+                                        borderRadius: 80,
+                                        borderWidth: 4,
+                                        borderColor: '#fff',
+                                    }}
+                                />
+                            </TouchableOpacity>
+                            <Text
+                                style={{ ...FONTS.body3, fontWeight: 'bold' }}
+                            >
+                                {item.name}
+                            </Text>
+                        </View>
+                    )}
+                />
+            </View>
+        )
+    }
+
+
     function renderFeedPost() {
         return (
             <View
@@ -246,15 +329,19 @@ const Feed = () => {
     }
 
 
-
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#E7E7E7' }}>
-            <View style={{ flex: 1, paddingHorizontal: 22 }}>
-              <ScrollView>
-                {renderFeedPost()}
-                {renderFeedPost() }
-                {renderFeedPost()}
-              </ScrollView>
+        <SafeAreaView style= {{ flex: 1, backgroundColor: '#AF9EBC' }}>
+            
+            <View style={{ flex: 1, paddingBottom: 60, backgroundColor: '#E7E7E7' }}>
+                <ScrollView>
+                    { renderHeader() }
+                    <View style={{ paddingHorizontal: 15 }}>
+                        {renderContainer()}
+                        {renderFeedPost()}
+                        {renderFeedPost()}
+                        {renderFeedPost()}
+                    </View>
+                </ScrollView>
                 
             </View>
         </SafeAreaView>

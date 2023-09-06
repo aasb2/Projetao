@@ -78,17 +78,20 @@ const BottomTabNavigation = () => {
                                 style={{
                                     alignItems: 'center',
                                     justifyContent: 'center',
+                                    transform: [{ rotate: '-45deg' }],
                                     width: Platform.OS == 'ios' ? 50 : 60,
                                     height: Platform.OS == 'ios' ? 50 : 60,
                                     top: Platform.OS == 'ios' ? -10 : -20,
-                                    borderRadius: 22,
+                                    borderRadius: 23,
                                 }}
                             >
-                                <Feather
-                                    name="plus-circle"
-                                    size={24}
-                                    color={COLORS.white}
-                                />
+                              <View style={{ transform: [{ rotate: '45deg' }] }}>
+                                  <Feather
+                                      name="plus-circle"
+                                      size={24}
+                                      color={COLORS.white}
+                                  />
+                              </View>
                             </LinearGradient>
                         )
                     },

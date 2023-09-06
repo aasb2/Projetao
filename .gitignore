@@ -42,3 +42,4 @@ expo-env.d.ts
 
 # Firebase
 services/firebaseConfig.js
+services/firebaseConfig.ts
