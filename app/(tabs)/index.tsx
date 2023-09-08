@@ -7,7 +7,7 @@ import {
     Image,
     TextInput,
 } from 'react-native'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { COLORS, FONTS, SIZES, images } from '../../constants'
 import {
@@ -19,10 +19,31 @@ import {
 } from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient'
 import { friends } from '../../constants/data'
+import { getFriendsList } from '../../services/functions/community/feedCommunity';
+import { DocumentData } from 'firebase/firestore';
+
 
 const users = [images.user1, images.user2, images.user3, images.user4]
 
 const Feed = () => {
+
+    const [friendsData, setFriendsData] = useState<DocumentData[]>(friends);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchFriends = async () => {
+            try {
+            const dataFriends = await getFriendsList();
+            setFriendsData(dataFriends);
+            setIsLoading(false);
+            } catch (error) {
+            console.error('Erro ao buscar a lista de amigos:', error);
+            }
+        };
+
+        fetchFriends(); // Chama a função de busca ao montar o componente
+    }, []);
+
 
     function renderHeader() {
         return (
@@ -46,6 +67,10 @@ const Feed = () => {
 
 
     function renderContainer() {
+        
+        // if (isLoading) {
+        //     return <Text>Carregando...</Text>;
+        // }
         return (
             <View>
                 <View style={{ marginVertical: 8 }}>
@@ -57,13 +82,11 @@ const Feed = () => {
                         </TouchableOpacity>
                     </View>
                 </View>
+                
                                 
-
-
-
                 <FlatList
                     horizontal={true}
-                    data={friends}
+                    data={friendsData}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item, index }) => (
                         <View
@@ -83,7 +106,7 @@ const Feed = () => {
                                 }}
                             >
                                 <Image
-                                    source={item.image}
+                                    source={{ uri: item.imageURL }} // Usar a URL da imagem
                                     resizeMode="contain"
                                     style={{
                                         width: 96,
@@ -105,6 +128,7 @@ const Feed = () => {
             </View>
         )
     }
+
 
 
     function renderFeedPost() {
