@@ -19,31 +19,13 @@ import {
 } from '@expo/vector-icons'
 import { LinearGradient } from 'expo-linear-gradient'
 import { friends } from '../../constants/data'
-import { getFriendsList } from '../../services/functions/community/feedCommunity';
+import { getFriendsList, getPostsList } from '../../services/functions/community/feedCommunity';
 import { DocumentData } from 'firebase/firestore';
 
 
 const users = [images.user1, images.user2, images.user3, images.user4]
 
 const Feed = () => {
-
-    const [friendsData, setFriendsData] = useState<DocumentData[]>(friends);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchFriends = async () => {
-            try {
-            const dataFriends = await getFriendsList();
-            setFriendsData(dataFriends);
-            setIsLoading(false);
-            } catch (error) {
-            console.error('Erro ao buscar a lista de amigos:', error);
-            }
-        };
-
-        fetchFriends(); // Chama a função de busca ao montar o componente
-    }, []);
-
 
     function renderHeader() {
         return (
@@ -65,8 +47,26 @@ const Feed = () => {
         )
     }
 
+// ...
 
     function renderContainer() {
+        
+        const [friendsData, setFriendsData] = useState<DocumentData[]>(friends);
+        const [isLoading, setIsLoading] = useState(true);
+
+        useEffect(() => {
+            const fetchFriends = async () => {
+                try {
+                const dataFriends = await getFriendsList();
+                setFriendsData(dataFriends);
+                setIsLoading(false);
+                } catch (error) {
+                console.error('Erro ao buscar a lista de amigos:', error);
+                }
+            };
+
+            fetchFriends(); // Chama a função de busca ao montar o componente
+        }, []);
         
         // if (isLoading) {
         //     return <Text>Carregando...</Text>;
@@ -129,11 +129,35 @@ const Feed = () => {
         )
     }
 
-
+// ...
 
     function renderFeedPost() {
+        const [postsData, setPostsData] = useState<DocumentData[]>([]);
+        const [isLoading, setIsLoading] = useState(true);
+
+        useEffect(() => {
+            const fetchPosts = async () => {
+            try {
+                const dataPosts = await getPostsList();
+                setPostsData(dataPosts);
+                setIsLoading(false);
+            } catch (error) {
+                console.error('Erro ao buscar a lista de posts:', error);
+            }
+            };
+
+            fetchPosts();
+        }, []);
+
+        if (isLoading) {
+            return <Text>Carregando...</Text>;
+        }
+
         return (
-            <View
+            <View>
+            {postsData.map((post) => (
+                <View
+                key={post.id}
                 style={{
                     backgroundColor: '#fff',
                     flexDirection: 'column',
@@ -143,45 +167,45 @@ const Feed = () => {
                     borderColor: '#fff',
                     marginVertical: 12,
                 }}
-            >
+                >
                 {/* Post header */}
                 <View
                     style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        marginTop: 8,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginTop: 8,
                     }}
                 >
                     <View
-                        style={{
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            marginHorizontal: 8,
-                        }}
+                    style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        marginHorizontal: 8,
+                    }}
                     >
-                        <Image
-                            source={images.user1}
-                            style={{
-                                height: 52,
-                                width: 52,
-                                borderRadius: 20,
-                            }}
-                        />
+                    <Image
+                        source={ { uri: post.user.imageURL } }
+                        style={{
+                        height: 52,
+                        width: 52,
+                        borderRadius: 20,
+                        }}
+                    />
 
-                        <View style={{ marginLeft: 12 }}>
-                            <Text
-                                style={{ ...FONTS.body4, fontWeight: 'bold' }}
-                            >
-                                Ankita Shrama
-                            </Text>
-                        </View>
+                    <View style={{ marginLeft: 12 }}>
+                        <Text
+                        style={{ ...FONTS.body4, fontWeight: 'bold' }}
+                        >
+                        {post.user.name}
+                        </Text>
+                    </View>
                     </View>
 
                     <MaterialCommunityIcons
-                        name="dots-vertical"
-                        size={24}
-                        color={COLORS.black}
+                    name="dots-vertical"
+                    size={24}
+                    color={COLORS.black}
                     />
                 </View>
 
@@ -189,37 +213,36 @@ const Feed = () => {
 
                 <View
                     style={{
-                        marginHorizontal: 8,
-                        marginVertical: 8,
+                    marginHorizontal: 8,
+                    marginVertical: 8,
                     }}
                 >
                     <Text style={{ ...FONTS.body4 }}>
-                      djksajdklasjdkasjdkjskl djsakdjaskjdaksj dksjdkjas
-                      jdlaskjdklas jdkjasdkjak
+                    {post.content}
                     </Text>
                 </View>
 
                 <View
                     style={{
-                        marginHorizontal: 8,
-                        flexDirection: 'row',
-                        alignItems: 'center',
+                    marginHorizontal: 8,
+                    flexDirection: 'row',
+                    alignItems: 'center',
                     }}
                 >
                     <Ionicons
-                        name="location-outline"
-                        size={21}
-                        color={COLORS.primary}
+                    name="location-outline"
+                    size={21}
+                    color={COLORS.primary}
                     />
                     <Text
-                        style={{
-                            fontSize: 12,
-                            fontFamily: 'regular',
-                            color: COLORS.primary,
-                            marginLeft: 4,
-                        }}
+                    style={{
+                        fontSize: 12,
+                        fontFamily: 'regular',
+                        color: COLORS.primary,
+                        marginLeft: 4,
+                    }}
                     >
-                        Academia Couro e Osso | 10 mins atrás
+                    Academia Couro e Osso | 10 mins atrás
                     </Text>
                 </View>
 
@@ -227,85 +250,85 @@ const Feed = () => {
 
                 <View
                     style={{
-                        marginHorizontal: 8,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        paddingBottom: 6,
+                    marginHorizontal: 8,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    paddingBottom: 6,
                     }}
                 >
                     <View
+                    style={{
+                        flexDirection: 'row',
+                    }}
+                    >
+                    <View
                         style={{
-                            flexDirection: 'row',
+                        flexDirection: 'row',
+
+                        alignItems: 'center',
+                        marginRight: SIZES.padding2,
                         }}
                     >
-                        <View
-                            style={{
-                                flexDirection: 'row',
+                        <Feather
+                        name="heart"
+                        size={20}
+                        color={COLORS.black}
+                        />
+                        <Text style={{ ...FONTS.body4, marginLeft: 2 }}>
+                        {post.numLike}
+                        </Text>
+                    </View>
 
-                                alignItems: 'center',
-                                marginRight: SIZES.padding2,
-                            }}
-                        >
-                            <Feather
-                                name="heart"
-                                size={20}
-                                color={COLORS.black}
-                            />
-                            <Text style={{ ...FONTS.body4, marginLeft: 2 }}>
-                                22
-                            </Text>
-                        </View>
+                    <View
+                        style={{
+                        flexDirection: 'row',
 
-                        <View
-                            style={{
-                                flexDirection: 'row',
-
-                                alignItems: 'center',
-                            }}
-                        >
-                            <MaterialCommunityIcons
-                                name="message-text-outline"
-                                size={20}
-                                color={COLORS.black}
-                            />
-                            <Text style={{ ...FONTS.body4, marginLeft: 2 }}>
-                                22
-                            </Text>
-                        </View>
+                        alignItems: 'center',
+                        }}
+                    >
+                        <MaterialCommunityIcons
+                        name="message-text-outline"
+                        size={20}
+                        color={COLORS.black}
+                        />
+                        <Text style={{ ...FONTS.body4, marginLeft: 2 }}>
+                        {post.numComment}
+                        </Text>
+                    </View>
                     </View>
 
                     <View style={{ flexDirection: 'row' }}>
-                        <View>
-                            <Text
-                                style={{ ...FONTS.body4, fontWeight: 'bold' }}
-                            >
-                                X
-                            </Text>
-                        </View>
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                marginLeft: 10,
-                            }}
+                    <View>
+                        <Text
+                        style={{ ...FONTS.body4, fontWeight: 'bold' }}
                         >
-                            {users.map((user, index) => (
-                                <Image
-                                    source={user}
-                                    key={index}
-                                    style={{
-                                        width: 25,
-                                        height: 25,
-                                        borderRadius: 999,
-                                        borderWidth: 1,
-                                        borderColor: '#fff',
-                                        marginLeft: -5,
-                                    }}
-                                />
-                            ))}
-                        </View>
+                        X
+                        </Text>
+                    </View>
+                    <View
+                        style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginLeft: 10,
+                        }}
+                    >
+                        {users.map((user, index) => (
+                        <Image
+                            source={user}
+                            key={index}
+                            style={{
+                            width: 25,
+                            height: 25,
+                            borderRadius: 999,
+                            borderWidth: 1,
+                            borderColor: '#fff',
+                            marginLeft: -5,
+                            }}
+                        />
+                        ))}
+                    </View>
                     </View>
                 </View>
 
@@ -313,44 +336,47 @@ const Feed = () => {
 
                 <View
                     style={{
-                        flexDirection: 'row',
-                        marginHorizontal: 8,
-                        paddingVertical: 18,
-                        borderTopWidth: 1,
-                        borderTopColor: '#FDF6ED',
+                    flexDirection: 'row',
+                    marginHorizontal: 8,
+                    paddingVertical: 18,
+                    borderTopWidth: 1,
+                    borderTopColor: '#FDF6ED',
                     }}
                 >
                     <Image
-                        source={images.user4}
-                        resizeMode="contain"
-                        style={{
-                            height: 52,
-                            width: 52,
-                            borderRadius: 26,
-                        }}
+                    source={images.user4}
+                    resizeMode="contain"
+                    style={{
+                        height: 52,
+                        width: 52,
+                        borderRadius: 26,
+                    }}
                     />
 
                     <View
-                        style={{
-                            flex: 1,
-                            height: 52,
-                            borderRadius: 26,
-                            borderWidth: 1,
-                            borderColor: '#CCC',
-                            marginLeft: 12,
-                            paddingLeft: 12,
-                            justifyContent: 'center',
-                        }}
+                    style={{
+                        flex: 1,
+                        height: 52,
+                        borderRadius: 26,
+                        borderWidth: 1,
+                        borderColor: '#CCC',
+                        marginLeft: 12,
+                        paddingLeft: 12,
+                        justifyContent: 'center',
+                    }}
                     >
-                        <TextInput
-                            placeholder="Add comentário"
-                            placeholderTextColor="#CCC"
-                        />
+                    <TextInput
+                        placeholder="Add comentário"
+                        placeholderTextColor="#CCC"
+                    />
                     </View>
                 </View>
+                </View>
+            ))}
             </View>
-        )
+        );
     }
+
 
 
     return (
@@ -361,9 +387,7 @@ const Feed = () => {
                     { renderHeader() }
                     <View style={{ paddingHorizontal: 15 }}>
                         {renderContainer()}
-                        {renderFeedPost()}
-                        {renderFeedPost()}
-                        {renderFeedPost()}
+                        {renderFeedPost()}                        
                     </View>
                 </ScrollView>
                 
@@ -373,39 +397,3 @@ const Feed = () => {
 }
 
 export default Feed
-
-
-
-
-
-// // import { StyleSheet } from 'react-native';
-
-// // import EditScreenInfo from '../../components/EditScreenInfo';
-// // import { Text, View } from '../../components/Themed';
-
-// // export default function TabOneScreen() {
-// //   return (
-// //     <View style={styles.container}>
-// //       <Text style={styles.title}>Tab One</Text>
-// //       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-// //       <EditScreenInfo path="app/(tabs)/index.tsx" />
-// //     </View>
-// //   );
-// // }
-
-// // const styles = StyleSheet.create({
-// //   container: {
-// //     flex: 1,
-// //     alignItems: 'center',
-// //     justifyContent: 'center',
-// //   },
-// //   title: {
-// //     fontSize: 20,
-// //     fontWeight: 'bold',
-// //   },
-// //   separator: {
-// //     marginVertical: 30,
-// //     height: 1,
-// //     width: '80%',
-// //   },
-// // });

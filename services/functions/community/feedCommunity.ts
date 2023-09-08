@@ -1,6 +1,7 @@
 import { db, storage } from '../../firebaseConfig';
-import { collection, getDocs, query, orderBy, DocumentData } from 'firebase/firestore';
-import { ref, getDownloadURL } from 'firebase/storage';
+import { collection, getDocs, getDoc, query, orderBy, DocumentData } from 'firebase/firestore';
+import { ref, getDownloadURL, FirebaseStorage } from 'firebase/storage';
+
 
 async function getFriendsList() {
   const friendsCollection = collection(db, 'users');
@@ -22,42 +23,50 @@ async function getFriendsList() {
   return friendsData;
 }
 
-
 // ...
 
 async function getPostsList() {
-  const postsCollection = collection(db, 'posts');
-  const postsQuery = query(postsCollection, orderBy('id', 'desc')); // Você pode ordenar os posts como desejar
-  const postsDocs = await getDocs(postsQuery);
+  try {
+    const postsRef = collection(db, 'posts'); // Referência à coleção "posts"
+    const querySnapshot = await getDocs(postsRef); // Obtém todos os documentos da coleção "posts"
 
-  const postsData: DocumentData[] = [];
+    const posts = [];
 
-  postsDocs.forEach((doc) => {
-    const postData = doc.data();
-    postData.id = doc.id; // Adicione o ID do documento aos dados do post
-    postsData.push(postData);
-  });
+    // Itera pelos documentos da coleção "posts"
+    for (const doc of querySnapshot.docs) {
+      const postData = doc.data(); // Dados do documento "posts"
+      
+      // Acessa a referência ao usuário associado ao post
+      const userRef = postData.user;
+      const userDoc = await getDoc(userRef);
 
-  console.log(postsData)
-  return postsData;
+      if (userDoc.exists()) {
+        const userData = userDoc.data() as DocumentData; // Dados do documento de usuário
+
+        const imageURL = await getDownloadURL(ref(storage, userData.image));
+
+        // Adicione a URL da imagem aos dados do usuário
+        userData.imageURL = imageURL;
+
+        // Combine os dados do post e do usuário
+        const combinedData = {
+          ...postData,
+          user: userData, // Substitui a referência pelo objeto de usuário
+        };
+
+        posts.push(combinedData);
+      } else {
+        console.error(`Documento de usuário não encontrado para o post: ${doc.id}`);
+      }
+    }
+
+    console.log(posts)
+    return posts;
+  } catch (error) {
+    console.error('Erro ao buscar a lista de posts:', error);
+    throw error; // Você pode optar por tratar o erro aqui ou lançá-lo novamente
+  }
 }
-
-
-
-// async function getPostsList() {
-//   const postsCollection = collection(db, 'posts');
-//   const postsDocs = await getDocs(postsCollection);
-
-//   const postsData = [];
-
-//   for (const docRef of postsDocs.docs) {
-//     const postData = docRef.data();
-//     postsData.push(postData);
-//   }
-
-//   console.log(postsData)
-//   return postsData;
-// }
 
 
 
