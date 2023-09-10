@@ -61,8 +61,8 @@ const Prescricao = () => {
             <View style={styles.headerMobile}>
                 <Image
                     style={[styles.icon]}
-                    resizeMode="cover"
-                    source={require('../../assets/images/west.svg')}
+                    resizeMode="contain"
+                    source={require('../../assets/images/left.png')}
                 />
                 <Text style={[styles.headerText]}>
                     Treinos
@@ -99,8 +99,8 @@ const Prescricao = () => {
                         <Pressable onPress={handleSubmit}>
                             <Image
                                 style={[styles.icon]}
-                                resizeMode="cover"
-                                source={require('../../assets/images/search.svg')}
+                                resizeMode="contain"
+                                source={require('../../assets/images/search.png')}
                             />
                         </Pressable>
                     </View>
@@ -112,9 +112,9 @@ const Prescricao = () => {
                             <TouchableOpacity style={checkbox.checked ? [styles.checkbox, styles.checked] : styles.checkbox}
                                 onPress={() => toggleCheckbox(index)}>
                                 <Image
-                                    style={styles.darkcheckIcon}
-                                    resizeMode="cover"
-                                    source={require('../../assets/images/darkcheck.svg')}
+                                    style={[styles.icon, styles.checkIcon]}
+                                    resizeMode='contain'
+                                    source={require('../../assets/images/checkmark.png')}
                                 />
                             </TouchableOpacity>
                             <View style={styles.exerciseTexts}>
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     searchText: {
-        width: '95%',
+        width: '90%',
         fontSize: 16,
         marginRight: 8,
     },
@@ -283,12 +283,13 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontFamily: 'Roboto_400Regular',
     },
-    darkcheckIcon: {
-        height: "45.72%",
-        width: "45.72%",
-        maxWidth: "100%",
-        maxHeight: "100%",
-        margin: 'auto'
+    checkIcon: {
+        height: "50%",
+        width: "50%",
+        marginTop: 'auto',
+        marginBottom: 'auto',
+        marginLeft: 'auto',
+        marginRight: 'auto',
     },
     button: {
         padding: 12,

@@ -64,7 +64,7 @@ const PrescricaoEspecificacao = () => {
                 <Image
                     style={[styles.icon]}
                     resizeMode="cover"
-                    source={require('../../assets/images/west.svg')}
+                    source={require('../../assets/images/left.png')}
                 />
                 <Text style={[styles.headerText]}>
                     Treinos - Especificação
@@ -94,7 +94,7 @@ const PrescricaoEspecificacao = () => {
                                     <Image
                                         style={[styles.icon]}
                                         resizeMode="cover"
-                                        source={require('../../assets/images/plus.svg')}
+                                        source={require('../../assets/images/plus.png')}
                                     />
 
                                 </Pressable>
@@ -107,12 +107,12 @@ const PrescricaoEspecificacao = () => {
                                         <Image
                                             style={[styles.icon]}
                                             resizeMode="contain"
-                                            source={require('../../assets/images/reps.svg')}
+                                            source={require('../../assets/images/reps.png')}
                                         />
                                         <Image
                                             style={[styles.icon]}
                                             resizeMode='contain'
-                                            source={require('../../assets/images/weight.svg')}
+                                            source={require('../../assets/images/weight.png')}
                                         />
 
                                     </View>
@@ -158,7 +158,7 @@ const PrescricaoEspecificacao = () => {
                                             <Image
                                                 style={[styles.icon]}
                                                 resizeMode="cover"
-                                                source={require('../../assets/images/minus.svg')}
+                                                source={require('../../assets/images/minus.png')}
                                             />
 
                                         </Pressable>
@@ -170,7 +170,7 @@ const PrescricaoEspecificacao = () => {
 
                 <View>
                     <Pressable style={styles.button} onPress={handleSavePress}>
-                        <Text style={styles.buttonText}>Salvar e Treino</Text>
+                        <Text style={styles.buttonText}>Salvar Treino</Text>
                     </Pressable>
                 </View>
                 </ScrollView>
