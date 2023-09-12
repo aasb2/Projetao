@@ -23,7 +23,7 @@ import {
 const users = [images.user1, images.user2, images.user3, images.user4]
 
 
-const FeedPost = ({ postsData }) => {
+const FeedPost = ({ postsData, handleLikePost }) => {
     return (
         <View>
             {postsData.map((post) => (
@@ -133,23 +133,23 @@ const FeedPost = ({ postsData }) => {
                                 flexDirection: 'row',
                             }}
                         >
-                            <View
-                                style={{
-                                    flexDirection: 'row',
-
-                                    alignItems: 'center',
-                                    marginRight: SIZES.padding2,
-                                }}
-                            >
-                                <Feather
-                                    name="heart"
-                                    size={20}
-                                    color={COLORS.black}
-                                />
-                                <Text style={{ ...FONTS.body4, marginLeft: 2 }}>
-                                    {post.numLike}
-                                </Text>
-                            </View>
+                        <TouchableOpacity
+                            onPress={() => handleLikePost(post.id)} // Chame uma função quando o botão for pressionado
+                            style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                marginRight: SIZES.padding2,
+                            }}
+                        >
+                            <Ionicons
+                                name="heart"
+                                size={20}
+                                color={post.isLiked ? COLORS.red : COLORS.black} // Altere a cor do ícone com base no estado de "isLiked" do post
+                            />
+                            <Text style={{ ...FONTS.body4, marginLeft: 2 }}>
+                                {post.numLike}
+                            </Text>
+                        </TouchableOpacity>
 
                             <View
                                 style={{
