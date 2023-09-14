@@ -40,7 +40,7 @@ const BottomTabNavigation = () => {
     return (
         <Tabs screenOptions={screenOptions}>
             <Tabs.Screen
-                name="index"
+                name="feed"
                 options={{
                     tabBarIcon: ({ focused }) => {
                         return (
