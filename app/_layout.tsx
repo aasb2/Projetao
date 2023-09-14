@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 
 export {
-  // Catch any errors thrown by the Layout component.
+  // Catch any errors thrown by the Layout compponent.
   ErrorBoundary,
 } from 'expo-router';
 
