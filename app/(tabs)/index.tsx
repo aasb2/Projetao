@@ -136,6 +136,23 @@ const Feed = () => {
         const [postsData, setPostsData] = useState<DocumentData[]>([]);
         const [isLoading, setIsLoading] = useState(true);
 
+        // Função para manipular a curtida de um post
+        const handleLikePost = (postId) => {
+            // Encontre o post com o ID correspondente na lista de postsData
+            const updatedPostsData = postsData.map((post) => {
+                if (post.id === postId) {
+                    // Verifique o estado atual de "isLiked" e altere-o para o oposto
+                    post.isLiked = !post.isLiked;
+                    // Incrementa ou decrementa o número de curtidas com base no estado de "isLiked"
+                    post.numLike += post.isLiked ? 1 : -1;
+                }
+                return post;
+            });
+        
+            // Atualize o estado dos posts com a nova lista
+            setPostsData(updatedPostsData);
+        };
+
         useEffect(() => {
             const fetchPosts = async () => {
             try {
@@ -154,7 +171,7 @@ const Feed = () => {
             return <Text>Carregando...</Text>;
         }
 
-        return <FeedPost postsData={postsData} />
+        return <FeedPost postsData={postsData} handleLikePost={handleLikePost} />;
 
     }
 

@@ -6,6 +6,7 @@ export const COLORS = {
     secondary: '#A9ADBC',
     white: '#FFF9E8',
     black: '#212121',
+    red:'#ff0000',
     blue: '#027DEF',
     //tabSecondary: '#371D49',
     tabSecondary: '#916AAE',
