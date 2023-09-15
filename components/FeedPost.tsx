@@ -141,7 +141,7 @@ const FeedPost = ({ postsData, handleLikePost }) => {
                                 marginRight: SIZES.padding2,
                             }}
                         >
-                            <Ionicons
+                            <MaterialCommunityIcons
                                 name="heart"
                                 size={20}
                                 color={post.isLiked ? COLORS.red : COLORS.black} // Altere a cor do ícone com base no estado de "isLiked" do post
