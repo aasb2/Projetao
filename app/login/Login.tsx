@@ -1,9 +1,30 @@
+import { useState } from 'react';
 import appTheme from '../../constants/theme';
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { Link } from 'expo-router';
-// import { Center } from 'native-base';
+import { AntDesign } from '@expo/vector-icons';
+import { auth } from "../../services/firebaseConfig";
+import {
+    GoogleAuthProvider,
+    User,
+    signInWithPopup,
+} from "firebase/auth"
+
 
 export function Login() {
+  const [user, setUser] = useState<User>({} as User);
+
+  function handleGoogleSigIn() {
+        const provider = new GoogleAuthProvider();
+
+        signInWithPopup(auth, provider)
+            .then((result) => {
+                setUser(result.user);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+  }
 
   return (
     <View
@@ -25,12 +46,20 @@ export function Login() {
         <View 
           style={{flex:1, flexDirection: 'row', gap: 10, justifyContent: 'center', alignItems: 'center'}}
         >
-          <Link href={'/'}>
-            <Image 
-              source={require('../../assets/images/google.png')}
-              style={{ width: 36, height: 36 }}
-            />
-          </Link>
+          <TouchableOpacity
+              onPress={() => handleGoogleSigIn()} // Chame uma função quando o botão for pressionado
+              style={{
+                width: 36,
+                height: 36,
+              }}
+          >
+              <AntDesign
+                  name="google"
+                  size={30}
+                  color="white" // Altere a cor do ícone com base no estado de "isLiked" do post
+              />
+          </TouchableOpacity>
+          
           
           <Link href={'/'}>
             <Image 
