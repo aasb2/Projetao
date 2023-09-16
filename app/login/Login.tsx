@@ -1,10 +1,30 @@
+import { useState } from 'react';
 import appTheme from '../../constants/theme';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { Link } from 'expo-router';
 import { AntDesign } from '@expo/vector-icons';
-// import { Center } from 'native-base';
+import { auth } from "../../services/firebaseConfig";
+import {
+    GoogleAuthProvider,
+    User,
+    signInWithPopup,
+} from "firebase/auth"
 
-export function Login({ promptAsync }) {
+
+export function Login() {
+  const [user, setUser] = useState<User>({} as User);
+
+  function handleGoogleSigIn() {
+        const provider = new GoogleAuthProvider();
+
+        signInWithPopup(auth, provider)
+            .then((result) => {
+                setUser(result.user);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
 
   return (
     <View
@@ -27,7 +47,7 @@ export function Login({ promptAsync }) {
           style={{flex:1, flexDirection: 'row', gap: 10, justifyContent: 'center', alignItems: 'center'}}
         >
           <TouchableOpacity
-              onPress={() => promptAsync} // Chame uma função quando o botão for pressionado
+              onPress={() => handleGoogleSigIn()} // Chame uma função quando o botão for pressionado
               style={{
                 width: 36,
                 height: 36,
