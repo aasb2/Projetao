@@ -3,15 +3,18 @@ import appTheme from '../../constants/theme';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { Link } from 'expo-router';
 import { AntDesign } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native'; // Importar a função de navegação
 import { auth } from "../../services/firebaseConfig";
 import {
     GoogleAuthProvider,
     User,
     signInWithPopup,
 } from "firebase/auth"
+import { createNewUserDocument } from '../../services/functions/login/loginUser';
 
 
 export function Login() {
+  const navegate = useNavigation();
   const [user, setUser] = useState<User>({} as User);
 
   function handleGoogleSigIn() {
@@ -19,7 +22,9 @@ export function Login() {
 
         signInWithPopup(auth, provider)
             .then((result) => {
-                setUser(result.user);
+              setUser(result.user);
+              //navegate('feed');
+              createNewUserDocument(result.user); // Chama a função para criar o documento de usuário
             })
             .catch((error) => {
                 console.log(error);

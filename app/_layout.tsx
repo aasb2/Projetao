@@ -1,6 +1,6 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { SplashScreen, Stack } from 'expo-router';
+import { SplashScreen, Stack, Tabs } from 'expo-router';
 import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 import {  useFonts, Roboto_400Regular, Roboto_700Bold } from '@expo-google-fonts/roboto';
@@ -50,7 +50,8 @@ function RootLayoutNav() {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
-        {/* <Stack.Screen name="modal" options={{ presentation: 'modal' }} /> */}
+        <Stack.Screen name ="(tabs)" options = {{ headerShown: false }} />
+        {/* <Stack.Screen name="modal" options={{ presentation: 'modal' }} /> */ }
       </Stack>
     </ThemeProvider>
   );

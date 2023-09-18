@@ -23,7 +23,7 @@ import {
 const users = [images.user1, images.user2, images.user3, images.user4]
 
 
-const FeedPost = ({ postsData, handleLikePost }) => {
+const FeedPost = ({ postsData, handleLikePost, userImage }) => {
     return (
         <View>
             {postsData.map((post) => (
@@ -174,7 +174,7 @@ const FeedPost = ({ postsData, handleLikePost }) => {
                                 <Text
                                     style={{ ...FONTS.body4, fontWeight: 'bold' }}
                                 >
-                                    X
+                                    
                                 </Text>
                             </View>
                             <View
@@ -215,11 +215,11 @@ const FeedPost = ({ postsData, handleLikePost }) => {
                         }}
                     >
                         <Image
-                            source={images.user4}
+                            source={{ uri: userImage }}
                             resizeMode="contain"
                             style={{
-                                height: 52,
-                                width: 52,
+                                height: 48,
+                                width: 48,
                                 borderRadius: 26,
                             }}
                         />

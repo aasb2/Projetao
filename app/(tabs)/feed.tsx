@@ -21,6 +21,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { friends } from '../../constants/data'
 import FeedPost from '../../components/FeedPost';
 import { getFriendsList, getPostsList } from '../../services/functions/community/feedCommunity';
+import { getUserInfo } from '../../services/functions/login/loginUser';
 import { DocumentData } from 'firebase/firestore';
 
 
@@ -110,8 +111,8 @@ const Feed = () => {
                                     source={{ uri: item.imageURL }} // Usar a URL da imagem
                                     resizeMode="contain"
                                     style={{
-                                        width: 96,
-                                        height: 110,
+                                        width: 100,
+                                        height: 100,
                                         borderRadius: 80,
                                         borderWidth: 4,
                                         borderColor: '#fff',
@@ -121,7 +122,7 @@ const Feed = () => {
                             <Text
                                 style={{ ...FONTS.body3, fontWeight: 'bold' }}
                             >
-                                {item.name}
+                                {item.firstName}
                             </Text>
                         </View>
                     )}
@@ -134,6 +135,7 @@ const Feed = () => {
 
     function renderFeedPost() {
         const [postsData, setPostsData] = useState<DocumentData[]>([]);
+        const [userImg, setUserImg] = useState();
         const [isLoading, setIsLoading] = useState(true);
 
         // Função para manipular a curtida de um post
@@ -159,6 +161,9 @@ const Feed = () => {
             const fetchPosts = async () => {
             try {
                 const dataPosts = await getPostsList();
+                const dataUser = await getUserInfo() as DocumentData;
+
+                setUserImg(dataUser.image);
                 setPostsData(dataPosts);
                 setIsLoading(false);
             } catch (error) {
@@ -173,7 +178,7 @@ const Feed = () => {
             return <Text>Carregando...</Text>;
         }
 
-        return <FeedPost postsData={postsData} handleLikePost={handleLikePost} />;
+        return <FeedPost postsData={postsData} handleLikePost={handleLikePost} userImage={userImg} />;
 
     }
 
