@@ -22,7 +22,8 @@ import { friends } from '../../constants/data'
 import FeedPost from '../../components/FeedPost';
 import { getFriendsList, getPostsList } from '../../services/functions/community/feedCommunity';
 import { getUserInfo } from '../../services/functions/login/loginUser';
-import { DocumentData } from 'firebase/firestore';
+import { DocumentData, updateDoc, doc } from 'firebase/firestore';
+import { db } from '../../services/firebaseConfig';
 
 
 const users = [images.user1, images.user2, images.user3, images.user4]
@@ -149,6 +150,14 @@ const Feed = () => {
                     post.isLiked = !post.isLiked;
                     // Incrementa ou decrementa o número de curtidas com base no estado de "isLiked"
                     post.numLike += post.isLiked ? 1 : -1;
+
+                    const id = postId._key.path.segments.slice(-1)[0];
+
+                    const postDocRef = doc(db, 'posts', id);
+                    updateDoc(postDocRef, {
+                      isLiked: post.isLiked,
+                      numLike: post.numLike,
+                    });
                 }
                 return post;
             });
