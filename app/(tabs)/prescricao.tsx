@@ -1,26 +1,41 @@
 import * as React from "react";
-import { Text, StyleSheet, View, Image, ScrollView, Touchable, TouchableOpacity, Pressable } from "react-native";
+import { Text, StyleSheet, View, Image, ScrollView, TouchableOpacity, Pressable } from "react-native";
 import { useFonts, Roboto_400Regular, Roboto_700Bold, Roboto_100Thin } from '@expo-google-fonts/roboto'
 import { TextInput } from "react-native-gesture-handler";
 import Color from '../../constants/Colors';
 
 const Prescricao = () => {
-    const [inputText, setText] = React.useState<string>('');
-    const [checkboxes, setCheckboxes] = React.useState([
-        { exercise: 'Remada Baixa', exerciseType: 'Dorsal - Remada', checked: false },
-        { exercise: ' Remada Alta', exerciseType: 'Dorsal - Remada', checked: false },
-        { exercise: 'Remada Curvada', exerciseType: 'Dorsal - Remada', checked: false },
-        { exercise: 'Remada Invertida', exerciseType: 'Dorsal - Remada', checked: false },
-    ]);
-    const [selectedButton, setSelectedButton] = React.useState(0);
+    const [inputText, setInputText] = React.useState<string>('');
+    const [checkboxes, setCheckboxes] = React.useState<{ exercise: string; exerciseType: string; checked: boolean }[]>([
+        { exercise: 'Remada Baixa', exerciseType: 'Costas', checked: false },
+        { exercise: 'Remada Alta', exerciseType: 'Costas', checked: false },
+        { exercise: 'Remada Curvada', exerciseType: 'Costas', checked: false },
+        { exercise: 'Remada Invertida', exerciseType: 'Costas', checked: false },
+        { exercise: 'Agachamento', exerciseType: 'Pernas', checked: false },
+        { exercise: 'Afundo', exerciseType: 'Pernas', checked: false },
+        { exercise: 'Extensão', exerciseType: 'Pernas', checked: false },
+        { exercise: 'Leg Press', exerciseType: 'Pernas', checked: false },
+        { exercise: 'Curl de Bíceps', exerciseType: 'Bíceps', checked: false },
+        { exercise: 'Rosca Alternada', exerciseType: 'Bíceps', checked: false },
+        { exercise: 'Rosca Direta', exerciseType: 'Bíceps', checked: false },
+        { exercise: 'Rosca Scott', exerciseType: 'Bíceps', checked: false },
+        { exercise: 'Elevação Frontal', exerciseType: 'Ombros', checked: false },
+        { exercise: 'Elevação Lateral', exerciseType: 'Ombros', checked: false },
+        { exercise: 'Arnold Press', exerciseType: 'Ombros', checked: false },
+        { exercise: 'Rotação Externa', exerciseType: 'Ombros', checked: false },
+        { exercise: 'Elevação Pélvica', exerciseType: 'Glúteos', checked: false },
+        { exercise: 'Elevação Unilateral', exerciseType: 'Glúteos', checked: false },
+        { exercise: 'Agacham. Sumô', exerciseType: 'Glúteos', checked: false },
+        { exercise: 'Passada', exerciseType: 'Glúteos', checked: false },
 
+    ]);
+    const [selectedButton, setSelectedButton] = React.useState<string>('');
 
     const [fontLoaded] = useFonts({
         Roboto_100Thin,
         Roboto_400Regular,
         Roboto_700Bold
     })
-
 
     if (!fontLoaded) {
         return null;
@@ -30,8 +45,8 @@ const Prescricao = () => {
         { value: 'Costas' },
         { value: 'Pernas' },
         { value: 'Bíceps' },
-        { value: 'Ombro' },
-        { value: 'Glúteos', },
+        { value: 'Ombros' },
+        { value: 'Glúteos' },
     ]
 
     const toggleCheckbox = (index: number) => {
@@ -41,20 +56,26 @@ const Prescricao = () => {
     };
 
     const handleSavePress = () => {
-
+        // Adicione sua lógica de salvamento aqui
     };
 
-    const handleOptionPress = (index: number) => {
-        setSelectedButton(index);
+    const handleOptionPress = (value: string) => {
+        setSelectedButton(value);
     };
 
-    const handleInputChange = (inputText: string) => {
-        setText(inputText);
+    const handleInputChange = (text: string) => {
+        setInputText(text);
     };
 
     const handleSubmit = () => {
-        alert('pesquisa por: ' + inputText)
+        alert('pesquisa por: ' + inputText);
     };
+
+    // Filtrar os exercícios com base na opção selecionada
+    const filteredExercises = checkboxes.filter((checkbox) => {
+        if (!selectedButton) return true; // Se nenhuma opção estiver selecionada, exibir todos os exercícios
+        return checkbox.exerciseType === selectedButton;
+    });
 
     return (
         <View style={styles.prescricaoTreinos}>
@@ -77,10 +98,10 @@ const Prescricao = () => {
                     {options.map((option, index) => (
                         <Pressable
                             key={option.value}
-                            style={selectedButton === index ? [styles.bodyPart, styles.selected] : styles.bodyPart}
-                            onPress={() => handleOptionPress(index)}>
+                            style={selectedButton === option.value ? [styles.bodyPart, styles.selected] : styles.bodyPart}
+                            onPress={() => handleOptionPress(option.value)}>
                             <Text
-                                style={selectedButton === index ? [styles.bodyPartText, styles.selected] : styles.bodyPartText}
+                                style={selectedButton === option.value ? [styles.bodyPartText, styles.selected] : styles.bodyPartText}
                             >{option.value}</Text>
                         </Pressable>
                     ))}
@@ -107,10 +128,9 @@ const Prescricao = () => {
                 </View>
 
                 <View style={styles.exercises}>
-                    {checkboxes.map((checkbox, index) => (
-                        <View key={checkbox.exercise} style={[styles.exercise]}>
-                            <TouchableOpacity style={checkbox.checked ? [styles.checkbox, styles.checked] : styles.checkbox}
-                                onPress={() => toggleCheckbox(index)}>
+                    {filteredExercises.map((checkbox, index) => (
+                        <View key={checkbox.exercise} style={styles.exercise}>
+                            <TouchableOpacity style={checkbox.checked ? [styles.checkbox, styles.checked] : styles.checkbox} onPress={() => toggleCheckbox(index)}>
                                 <Image
                                     style={[styles.icon, styles.checkIcon]}
                                     resizeMode='contain'
@@ -118,7 +138,7 @@ const Prescricao = () => {
                                 />
                             </TouchableOpacity>
                             <View style={styles.exerciseTexts}>
-                                <Text style={[styles.exerciseText]}>
+                                <Text style={styles.exerciseText}>
                                     {checkbox.exercise}
                                 </Text>
                                 <Text style={styles.exerciseTextSmall}> {checkbox.exerciseType}</Text>
@@ -135,7 +155,6 @@ const Prescricao = () => {
 
             </View>
         </View>
-
     );
 };
 
@@ -231,7 +250,6 @@ const styles = StyleSheet.create({
         rowGap: 16,
         width: '100%',
         margin: 'auto',
-
     },
     exercise: {
         borderWidth: 1.2,
