@@ -27,7 +27,6 @@ const Prescricao = () => {
         { exercise: 'Elevação Unilateral', exerciseType: 'Glúteos', checked: false },
         { exercise: 'Agacham. Sumô', exerciseType: 'Glúteos', checked: false },
         { exercise: 'Passada', exerciseType: 'Glúteos', checked: false },
-
     ]);
     const [selectedButton, setSelectedButton] = React.useState<string>('');
 
@@ -56,9 +55,8 @@ const Prescricao = () => {
     };
 
     const handleSavePress = () => {
-        // Adicione sua lógica de salvamento aqui
+        // Adicionar lógica de salvamento aqui
     };
-
     const handleOptionPress = (value: string) => {
         setSelectedButton(value);
     };
@@ -287,17 +285,16 @@ const styles = StyleSheet.create({
         borderWidth: 0
     },
     exerciseTexts: {
-        marginTop: 'auto',
-        marginBottom: 'auto',
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     exerciseText: {
-        textAlign: "center",
         fontSize: 16,
         fontFamily: 'Roboto_400Regular',
     },
     exerciseTextSmall: {
         color: Color.prescricao.gray,
-        textAlign: "center",
         fontSize: 14,
         fontFamily: 'Roboto_400Regular',
     },
