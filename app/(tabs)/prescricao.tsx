@@ -4,8 +4,14 @@ import { useFonts, Roboto_400Regular, Roboto_700Bold, Roboto_100Thin } from '@ex
 import { TextInput } from "react-native-gesture-handler";
 import Color from '../../constants/Colors';
 import { useRouter } from "expo-router";
+import { collection, getDocs, onSnapshot } from "firebase/firestore";
+import db from "../../services/firebaseConfig"
+import { useEffect } from "react";
+import { useId } from 'react';
+
 
 interface checkboxStruct {
+    id: string;
     exercise: string;
     exerciseType: string;
     checked: boolean
@@ -14,30 +20,49 @@ interface checkboxStruct {
 const Prescricao = () => {
     const router = useRouter();
 
+
+
     const [inputText, setInputText] = React.useState<string>('');
-    const [checkboxes, setCheckboxes] = React.useState<checkboxStruct[]>([
-        { exercise: 'Remada Baixa', exerciseType: 'Costas', checked: false },
-        { exercise: 'Remada Alta', exerciseType: 'Costas', checked: false },
-        { exercise: 'Remada Curvada', exerciseType: 'Costas', checked: false },
-        { exercise: 'Remada Invertida', exerciseType: 'Costas', checked: false },
-        { exercise: 'Agachamento', exerciseType: 'Pernas', checked: false },
-        { exercise: 'Afundo', exerciseType: 'Pernas', checked: false },
-        { exercise: 'Extensão', exerciseType: 'Pernas', checked: false },
-        { exercise: 'Leg Press', exerciseType: 'Pernas', checked: false },
-        { exercise: 'Curl de Bíceps', exerciseType: 'Bíceps', checked: false },
-        { exercise: 'Rosca Alternada', exerciseType: 'Bíceps', checked: false },
-        { exercise: 'Rosca Direta', exerciseType: 'Bíceps', checked: false },
-        { exercise: 'Rosca Scott', exerciseType: 'Bíceps', checked: false },
-        { exercise: 'Elevação Frontal', exerciseType: 'Ombros', checked: false },
-        { exercise: 'Elevação Lateral', exerciseType: 'Ombros', checked: false },
-        { exercise: 'Arnold Press', exerciseType: 'Ombros', checked: false },
-        { exercise: 'Rotação Externa', exerciseType: 'Ombros', checked: false },
-        { exercise: 'Elevação Pélvica', exerciseType: 'Glúteos', checked: false },
-        { exercise: 'Elevação Unilateral', exerciseType: 'Glúteos', checked: false },
-        { exercise: 'Agachamento Sumô', exerciseType: 'Glúteos', checked: false },
-        { exercise: 'Passada', exerciseType: 'Glúteos', checked: false },
-    ]);
+    const [checkboxes, setCheckboxes] = React.useState<checkboxStruct[]>([]);
     const [selectedButton, setSelectedButton] = React.useState<string>('');
+
+    const getPrescriptions = () => {
+        const collectionRef = collection(db, "prescriptions")
+        let prescriptions = []
+        getDocs(collectionRef).then((snapshot)=>{
+            // console.log("doc",snapshot.docs)
+            snapshot.docs.forEach((doc) => {
+            prescriptions.push({...doc.data(), id: doc.id})
+
+         })
+         console.log("Pre", prescriptions)
+        }).catch(err =>{console.log(err.message)})
+        setCheckboxes(prescriptions)
+        return prescriptions
+    }
+    useEffect(() =>{
+        const collectionRef = collection(db, "prescriptions")
+        let prescriptions = []
+        onSnapshot(collectionRef,(snapshot)=>{
+            
+            snapshot.docs.forEach((doc) => {
+                if (doc.id==="uEDYZGRrI5crs3xrcQoY"){
+                    let data = doc.data()
+                    // prescriptions.push({exercise:data.exerciseName, exerciseType:exerci, checked:false })
+                    // data.forEach((prescription) => {
+                    prescriptions.push({...data})
+                    // })
+                } else{
+                    console.log("ID",doc.id)
+                }
+            })
+        })
+        console.log("pre",prescriptions)
+        setCheckboxes(prescriptions)
+        
+    },[])
+
+
 
     const options = [
         { value: 'Costas' },
@@ -149,7 +174,7 @@ const Prescricao = () => {
                         showsVerticalScrollIndicator={false}
                         style={styles.exercises}>
                         {filteredExercises.map((checkbox, index) => (
-                            <View key={checkbox.exercise} style={styles.exercise}>
+                            <View key={checkbox.id} style={styles.exercise}>
                                 <TouchableOpacity
                                     style={checkbox.checked ? [styles.checkbox, styles.checked] : styles.checkbox}
                                     onPress={() => toggleCheckbox(checkbox)}>
