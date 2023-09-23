@@ -2,10 +2,13 @@
 import React from 'react';
 import { View, Text, Alert, Button, StyleSheet,  TouchableOpacity } from 'react-native';
 
-
+import appTheme from '../../constants/theme';
 const AchievementsTestScreen = () => {
     function renderHeader() {
         return (
+          <View
+          style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#380062'}}
+          >
             <View
                 style={{
                     position: 'absolute',
@@ -43,21 +46,14 @@ const AchievementsTestScreen = () => {
 
         </View>
 
-            </View>
-
+        </View>
+        </View>
         )
     }
-
-    
     return (
-        
-            
-            <View style={{ flex: 1, paddingBottom: 60, backgroundColor: '#E7E7E7' }}>
-
-                    { renderHeader() }
-
-                
-            </View>
+      <View style={{ flex: 1, paddingBottom: 60, backgroundColor: '#E7E7E7' }}>
+        { renderHeader() } 
+      </View>
     )
 };
 const styles = StyleSheet.create({
