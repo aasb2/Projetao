@@ -2,21 +2,43 @@ import * as React from "react";
 import { Text, StyleSheet, View, Image, ScrollView, TextInput, Pressable } from "react-native";
 import { useFonts, Roboto_400Regular, Roboto_700Bold, Roboto_100Thin } from '@expo-google-fonts/roboto'
 import Color from '../../constants/Colors';
+import { useLocalSearchParams, router } from 'expo-router';
+import { db } from "../../services/firebaseConfig";
+import { doc, addDoc, collection } from 'firebase/firestore';
+import { useEffect } from "react";
 
-interface ExerciseOption {
-    value: string;
-    sessions: any[];
+interface ExerciseStruct {
+    exerciseName: string;
+    sets: SetStruct[];
+}
+
+interface SetStruct {
+    load: number;
+    reps: number;
 }
 
 const PrescricaoEspecificacao = () => {
-
-    const [exerciseOptions, setExercises] = React.useState<ExerciseOption[]>([
-        { value: 'Remada Curvada', sessions: [] },
-        { value: 'Salto à Corda', sessions: [] },
-        { value: 'Remada Alta', sessions: [] },
-        { value: 'Ombro', sessions: [] },
-        { value: 'Glúteos', sessions: [] },
+    const params = useLocalSearchParams<{ exercises: string }>();
+    
+    const [exerciseOptions, setExercises] = React.useState<ExerciseStruct[]>([
+        { exerciseName: 'Remada Curvada', sets: [] },
+        { exerciseName: 'Salto à Corda', sets: [] },
+        { exerciseName: 'Remada Alta', sets: [] },
+        { exerciseName: 'Ombro', sets: [] },
+        { exerciseName: 'Glúteos', sets: [] },
     ])
+    
+    //atualiza os exercicios quando params muda
+    useEffect(() => {
+        if (Object.keys(params).length != 0) {
+            //console.log(params);
+
+            const exercisesArr = params.exercises.split(',');
+            const chosenExercises = exercisesArr.map(ex => ({ exerciseName: ex, sets: [] }));
+
+            setExercises(chosenExercises);
+        }
+    }, [params]);
 
     const [fontLoaded] = useFonts({
         Roboto_100Thin,
@@ -30,32 +52,44 @@ const PrescricaoEspecificacao = () => {
 
     const addNewExercise = (index: number) => {
         const newExerciseOptions = [...exerciseOptions]
-        newExerciseOptions[index].sessions.push({ repetitions: '10', weight: '10' })
+        newExerciseOptions[index].sets.push({ reps: 10, load: 10 })
         setExercises(newExerciseOptions);
     };
 
     const removeExercise = (exIndex: number, sesIndex: number) => {
-        var newExerciseOptions = [...exerciseOptions]
-        exerciseOptions[exIndex].sessions.splice(sesIndex,1);
+        var newExerciseOptions = [...exerciseOptions];
+        exerciseOptions[exIndex].sets.splice(sesIndex, 1);
         setExercises(newExerciseOptions);
     };
 
-    const updateSessionRep = (reps: string, exIndex: number, sesIndex: number) => {
+    const updateSetRep = (reps: string, exIndex: number, sesIndex: number) => {
         const newExerciseOptions = [...exerciseOptions]
         const numericReps = reps.replace(/[^0-9]/g, '');
-        newExerciseOptions[exIndex].sessions[sesIndex].repetitions = numericReps
+        newExerciseOptions[exIndex].sets[sesIndex].reps = parseInt(numericReps);
         setExercises(newExerciseOptions);
     };
 
-    const updateSessionWeight = (weight: string, exIndex: number, sesIndex: number) => {
-        const newExerciseOptions = [...exerciseOptions]
-        const numericWeight = weight.replace(/[^0-9]/g, '');
-        newExerciseOptions[exIndex].sessions[sesIndex].weight = numericWeight
+    const updateSetLoad = (load: string, exIndex: number, sesIndex: number) => {
+        const newExerciseOptions = [...exerciseOptions];
+        const numericLoad = load.replace(/[^0-9]/g, '');
+        newExerciseOptions[exIndex].sets[sesIndex].load = parseInt(numericLoad);
         setExercises(newExerciseOptions);
     };
 
-    const handleSavePress = () => {
+    const handleSavePress = async () => {
+        //ids para teste, já que ainda não tem como pegar eles das outras telas
+        const userId = "4SyAAkeKRs71KxdhGv12";
+        const personalId = "68znESXijyRSra7X18wS";
 
+        const presCollection = collection(db, 'prescriptions');
+
+        const addedPresc = await addDoc(presCollection, {
+            personal: doc(db, 'personal', personalId),
+            user: doc(db, 'users', userId),
+            prescriptions: exerciseOptions
+        });
+
+        alert("Adicionado com sucesso em " + addedPresc.id);
     };
 
     return (
@@ -83,7 +117,7 @@ const PrescricaoEspecificacao = () => {
 
                                 <View style={styles.exerciseTextWrapper}>
                                     <Text style={styles.exerciseText}>
-                                        {option.value}
+                                        {option.exerciseName}
                                     </Text>
                                 </View>
 
@@ -101,9 +135,9 @@ const PrescricaoEspecificacao = () => {
 
                             </View>
 
-                            <View style={styles.sessions}>
-                                {exerciseOptions[exIndex].sessions.length > 0 && (
-                                    <View style={styles.sessionIcons}>
+                            <View style={styles.sets}>
+                                {exerciseOptions[exIndex].sets.length > 0 && (
+                                    <View style={styles.setIcons}>
                                         <Image
                                             style={[styles.icon]}
                                             resizeMode="contain"
@@ -118,42 +152,42 @@ const PrescricaoEspecificacao = () => {
                                     </View>
                                 )}
 
-                                {option.sessions.map((rep, sesIndex) => (
-                                    <View key={sesIndex} style={styles.session}>
+                                {option.sets.map((set, setIndex) => (
+                                    <View key={setIndex} style={styles.set}>
 
-                                        <View style={styles.sessionIndex}>
-                                            <Text style={styles.sessionIndexText}>
-                                                {sesIndex}
+                                        <View style={styles.setIndex}>
+                                            <Text style={styles.setIndexText}>
+                                                {setIndex}
                                             </Text>
                                         </View>
 
-                                        <View style={styles.sessionRep}>
+                                        <View style={styles.setRep}>
 
                                             <TextInput
-                                                style={styles.sessionInput}
+                                                style={styles.setInput}
                                                 placeholder="10"
-                                                onChangeText={(text) => updateSessionRep(text, exIndex, sesIndex)}
-                                                value={rep.repetitions}
+                                                onChangeText={(text) => updateSetRep(text, exIndex, setIndex)}
+                                                value={set.reps.toString()}
                                                 keyboardType="numeric"
                                             />
 
                                         </View>
 
-                                        <View style={styles.sessionWeight}>
+                                        <View style={styles.setLoad}>
 
                                             <TextInput
-                                                style={styles.sessionInput}
+                                                style={styles.setInput}
                                                 placeholder="10"
-                                                onChangeText={(text) => updateSessionWeight(text, exIndex, sesIndex)}
-                                                value={rep.weight}
+                                                onChangeText={(text) => updateSetLoad(text, exIndex, setIndex)}
+                                                value={set.load.toString()}
                                                 keyboardType="numeric"
                                             />
 
                                         </View>
 
                                         <Pressable
-                                            onPress={() => removeExercise(exIndex, sesIndex)}
-                                            style={styles.sessionRemoveButton}
+                                            onPress={() => removeExercise(exIndex, setIndex)}
+                                            style={styles.setRemoveButton}
                                         >
                                             <Image
                                                 style={[styles.icon]}
@@ -168,11 +202,11 @@ const PrescricaoEspecificacao = () => {
                         </View>
                     ))}
 
-                <View>
-                    <Pressable style={styles.button} onPress={handleSavePress}>
-                        <Text style={styles.buttonText}>Salvar Treino</Text>
-                    </Pressable>
-                </View>
+                    <View>
+                        <Pressable style={styles.button} onPress={handleSavePress}>
+                            <Text style={styles.buttonText}>Salvar Treino</Text>
+                        </Pressable>
+                    </View>
                 </ScrollView>
 
             </View>
@@ -201,7 +235,7 @@ const styles = StyleSheet.create({
     body: {
         padding: 48,
         paddingTop: 16,
-        height:'100%',
+        height: '100%',
     },
     icon: {
         width: 24,
@@ -245,50 +279,50 @@ const styles = StyleSheet.create({
         marginBottom: 'auto',
         marginTop: 'auto'
     },
-    sessions: {
+    sets: {
         rowGap: 10,
         marginRight: 30,
         width: '84%',
         marginBottom: 12,
         marginTop: 12,
     },
-    session: {
+    set: {
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
         columnGap: 20
     },
-    sessionIndex: {
+    setIndex: {
         backgroundColor: Color.prescricao.purple,
         height: 32,
         width: 32,
         borderRadius: 6,
-        alignItems:'center',
+        alignItems: 'center',
         justifyContent: 'center',
     },
-    sessionIndexText: {
+    setIndexText: {
         color: 'white',
     },
-    sessionRep: {
+    setRep: {
         borderWidth: 1,
         borderColor: Color.prescricao.purple,
         borderRadius: 40,
         padding: 8,
     },
-    sessionWeight: {
+    setLoad: {
         borderWidth: 1,
         borderColor: Color.prescricao.purple,
         borderRadius: 40,
         padding: 8,
     },
-    sessionRemoveButton: {
+    setRemoveButton: {
     },
-    sessionInput: {
+    setInput: {
         textAlign: 'center',
         width: 36,
         fontSize: 16
     },
-    sessionIcons: {
+    setIcons: {
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',

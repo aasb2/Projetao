@@ -1,10 +1,13 @@
 import * as React from "react";
-import { Text, StyleSheet, View, Image, ScrollView, TouchableOpacity, Pressable } from "react-native";
+import { Text, StyleSheet, View, Image, ScrollView, Touchable, TouchableOpacity, Pressable } from "react-native";
 import { useFonts, Roboto_400Regular, Roboto_700Bold, Roboto_100Thin } from '@expo-google-fonts/roboto'
 import { TextInput } from "react-native-gesture-handler";
 import Color from '../../constants/Colors';
+import { useRouter  } from "expo-router";
 
 const Prescricao = () => {
+    const router= useRouter();
+    
     const [inputText, setInputText] = React.useState<string>('');
     const [checkboxes, setCheckboxes] = React.useState<{ exercise: string; exerciseType: string; checked: boolean }[]>([
         { exercise: 'Remada Baixa', exerciseType: 'Costas', checked: false },
@@ -30,16 +33,6 @@ const Prescricao = () => {
     ]);
     const [selectedButton, setSelectedButton] = React.useState<string>('');
 
-    const [fontLoaded] = useFonts({
-        Roboto_100Thin,
-        Roboto_400Regular,
-        Roboto_700Bold
-    })
-
-    if (!fontLoaded) {
-        return null;
-    }
-
     const options = [
         { value: 'Costas' },
         { value: 'Pernas' },
@@ -47,6 +40,18 @@ const Prescricao = () => {
         { value: 'Ombros' },
         { value: 'Glúteos' },
     ]
+    
+    const [fontLoaded] = useFonts({
+        Roboto_100Thin,
+        Roboto_400Regular,
+        Roboto_700Bold
+    })
+
+
+    if (!fontLoaded) {
+        return null;
+    }
+
 
     const toggleCheckbox = (index: number) => {
         const updatedCheckboxes = [...checkboxes];
@@ -55,7 +60,11 @@ const Prescricao = () => {
     };
 
     const handleSavePress = () => {
-        // Adicionar lógica de salvamento aqui
+        const checkedCheckboxes = checkboxes.filter((checkbox) => checkbox.checked);
+        const chosenExercises =  checkedCheckboxes.map((checkbox) => checkbox.exercise);
+
+        //vai para a pagina de especificaçao enviando os exercicios escolhidos
+        router.push({'pathname':'/prescricao-especificacao', params: {'exercises':chosenExercises}});
     };
     const handleOptionPress = (value: string) => {
         setSelectedButton(value);
@@ -248,6 +257,7 @@ const styles = StyleSheet.create({
         rowGap: 16,
         width: '100%',
         margin: 'auto',
+
     },
     exercise: {
         borderWidth: 1.2,
@@ -285,16 +295,17 @@ const styles = StyleSheet.create({
         borderWidth: 0
     },
     exerciseTexts: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+        marginTop: 'auto',
+        marginBottom: 'auto',
     },
     exerciseText: {
+        textAlign: "center",
         fontSize: 16,
         fontFamily: 'Roboto_400Regular',
     },
     exerciseTextSmall: {
         color: Color.prescricao.gray,
+        textAlign: "center",
         fontSize: 14,
         fontFamily: 'Roboto_400Regular',
     },
