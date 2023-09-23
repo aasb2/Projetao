@@ -3,13 +3,18 @@ import { Text, StyleSheet, View, Image, ScrollView, Touchable, TouchableOpacity,
 import { useFonts, Roboto_400Regular, Roboto_700Bold, Roboto_100Thin } from '@expo-google-fonts/roboto'
 import { TextInput } from "react-native-gesture-handler";
 import Color from '../../constants/Colors';
-import { useRouter  } from "expo-router";
+import { useRouter } from "expo-router";
+
+interface checkboxStruct {
+    exercise: string;
+    exerciseType: string;
+    checked: boolean }
 
 const Prescricao = () => {
-    const router= useRouter();
-    
+    const router = useRouter();
+
     const [inputText, setInputText] = React.useState<string>('');
-    const [checkboxes, setCheckboxes] = React.useState<{ exercise: string; exerciseType: string; checked: boolean }[]>([
+    const [checkboxes, setCheckboxes] = React.useState<checkboxStruct[]>([
         { exercise: 'Remada Baixa', exerciseType: 'Costas', checked: false },
         { exercise: 'Remada Alta', exerciseType: 'Costas', checked: false },
         { exercise: 'Remada Curvada', exerciseType: 'Costas', checked: false },
@@ -40,7 +45,7 @@ const Prescricao = () => {
         { value: 'Ombros' },
         { value: 'Glúteos' },
     ]
-    
+
     const [fontLoaded] = useFonts({
         Roboto_100Thin,
         Roboto_400Regular,
@@ -53,18 +58,18 @@ const Prescricao = () => {
     }
 
 
-    const toggleCheckbox = (index: number) => {
-        const updatedCheckboxes = [...checkboxes];
-        updatedCheckboxes[index].checked = !updatedCheckboxes[index].checked;
-        setCheckboxes(updatedCheckboxes);
+    const toggleCheckbox = (checkboxToSwitch: checkboxStruct) => {
+        checkboxToSwitch.checked=!checkboxToSwitch.checked;
+        
+        setCheckboxes( [...checkboxes]);
     };
 
     const handleSavePress = () => {
         const checkedCheckboxes = checkboxes.filter((checkbox) => checkbox.checked);
-        const chosenExercises =  checkedCheckboxes.map((checkbox) => checkbox.exercise);
+        const chosenExercises = checkedCheckboxes.map((checkbox) => checkbox.exercise);
 
         //vai para a pagina de especificaçao enviando os exercicios escolhidos
-        router.push({'pathname':'/prescricao-especificacao', params: {'exercises':chosenExercises}});
+        router.push({ 'pathname': '/prescricao-especificacao', params: { 'exercises': chosenExercises } });
     };
     const handleOptionPress = (value: string) => {
         setSelectedButton(value);
@@ -137,7 +142,9 @@ const Prescricao = () => {
                 <View style={styles.exercises}>
                     {filteredExercises.map((checkbox, index) => (
                         <View key={checkbox.exercise} style={styles.exercise}>
-                            <TouchableOpacity style={checkbox.checked ? [styles.checkbox, styles.checked] : styles.checkbox} onPress={() => toggleCheckbox(index)}>
+                            <TouchableOpacity
+                                style={checkbox.checked ? [styles.checkbox, styles.checked] : styles.checkbox}
+                                onPress={() => toggleCheckbox(checkbox)}>
                                 <Image
                                     style={[styles.icon, styles.checkIcon]}
                                     resizeMode='contain'
