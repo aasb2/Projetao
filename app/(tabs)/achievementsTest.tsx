@@ -1,6 +1,7 @@
 // import { Button } from 'native-base';
 import React from 'react';
 import { View, Text, Alert, Button, StyleSheet,  TouchableOpacity } from 'react-native';
+import { Ionicons } from '@expo/vector-icons'; // Importe o ícone desejado da biblioteca de ícones
 
 import appTheme from '../../constants/theme';
 const AchievementsTestScreen = () => {
@@ -24,11 +25,19 @@ const AchievementsTestScreen = () => {
                 }}
             >
 
-            {/* Button aqui*/}
-            <View style={styles.fixToText}>
-            <Button 
-            title="Voltar"
-            />
+          {/* Botões aqui */}
+          <View style={styles.fixToText}>
+            <TouchableOpacity
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                backgroundColor: '4B0082', // Cor roxa
+                padding: 10,
+              }}
+            >
+              <Ionicons name="arrow-back" size={24} color="white" /> {/* Ícone de seta */}
+              <Text style={{ color: 'white', marginLeft: 5 }}>Voltar</Text>
+            </TouchableOpacity>
 
             {/* TouchableOpacity */}
             <TouchableOpacity style={styles.button} >
