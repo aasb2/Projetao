@@ -1,90 +1,124 @@
-// import { Button } from 'native-base';
-import React from 'react';
-import { View, Text, Alert, Button, StyleSheet,  TouchableOpacity } from 'react-native';
+// Importe as dependências necessárias
+
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // Importe o ícone desejado da biblioteca de ícones
 
 import appTheme from '../../constants/theme';
-const AchievementsTestScreen = () => {
-    function renderHeader() {
-        return (
-          <View
-          style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#380062'}}
-          >
-            <View
-                style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    backgroundColor: '#4B0082',
-                    paddingVertical: 20,
-                    paddingHorizontal: 0,
-                    // borderBottomLeftRadius: 20,
-                    // borderBottomRightRadius: 20,
-                    zIndex: -1,
-                }}
-            >
 
-          {/* Botões aqui */}
+// Defina o tipo de objeto para os achievements
+type Achievement = {
+  id: string;
+  achievementName: string;
+  description: string;
+  // Outras propriedades, se necessário
+};
+
+const AchievementsTestScreen = () => {
+  const [achievements, setAchievements] = useState<Achievement[]>([]);
+
+  useEffect(() => {
+    // Função assíncrona para buscar a lista de achievements
+    async function fetchAchievements() {
+      try {
+        // Substitua a próxima linha pela lógica de busca real dos achievements
+        const achievementsData: Achievement[] = [
+          { id: '1', achievementName: 'Conquista 1', description: 'Descrição da conquista 1' },
+          { id: '2', achievementName: 'Conquista 2', description: 'Descrição da conquista 2' },
+          // Adicione mais conquistas, se necessário
+        ];
+
+        setAchievements(achievementsData);
+      } catch (error) {
+        console.error('Erro ao buscar a lista de achievements:', error);
+        // Trate o erro de acordo com a necessidade
+      }
+    }
+
+    // Chama a função para buscar os achievements
+    fetchAchievements();
+  }, []);
+
+  function renderItem({ item }: { item: Achievement }) {
+    return (
+      <View style={styles.achievementItem}>
+        <Text>{item.achievementName}</Text>
+        <Text style={styles.achievementDescription}>{item.description}</Text>
+      </View>
+    );
+  }
+
+  function renderHeader() {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#380062' }}>
+        <View
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            backgroundColor: '#4B0082',
+            paddingVertical: 20,
+            paddingHorizontal: 0,
+            zIndex: -1,
+          }}
+        >
           <View style={styles.fixToText}>
             <TouchableOpacity
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
-                backgroundColor: '4B0082', // Cor roxa
+                backgroundColor: '4B0082',
                 padding: 10,
               }}
             >
-              <Ionicons name="arrow-back" size={24} color="white" /> {/* Ícone de seta */}
+              <Ionicons name="arrow-back" size={24} color="white" />
               <Text style={{ color: 'white', marginLeft: 5 }}>Voltar</Text>
             </TouchableOpacity>
 
-            {/* TouchableOpacity */}
-            <TouchableOpacity style={styles.button} >
-                    <Text>Press Here</Text>
+            <TouchableOpacity style={styles.button}>
+              <Text>Press Here</Text>
             </TouchableOpacity>
-
-        {/* TouchableOpacity com imagem - testar*/}
-        {/* <TouchableOpacity style={styles.button}>
-          <Image
-            source={require('./caminho/para/sua/imagem.png')}
-            style={{ width: 30, height: 30 }} // Defina o tamanho da imagem conforme necessário
-          />
-          <Text>Pressione Aqui</Text>
-        </TouchableOpacity> */}
-
+            
+          </View>
         </View>
-
-        </View>
-        </View>
-        )
-    }
-    return (
-      <View style={{ flex: 1, paddingBottom: 60, backgroundColor: '#E7E7E7' }}>
-        { renderHeader() } 
       </View>
-    )
-};
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      justifyContent: 'center',
-      marginHorizontal: 16,
-    },
-    title: {
-      textAlign: 'center',
-      marginVertical: 8,
-    },
-    fixToText: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-    },
-    button: {
-        alignItems: 'center',
-        backgroundColor: '#DDDDDD',
-        padding: 10,
-      },
+    );
+  }
 
-  });
+  return (
+    <View style={{ flex: 1, paddingBottom: 60, backgroundColor: '#E7E7E7' }}>
+      {renderHeader()}
+      <FlatList
+        data={achievements}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+      />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  fixToText: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  button: {
+    alignItems: 'center',
+    backgroundColor: '#DDDDDD',
+    padding: 10,
+  },
+  achievementItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#DDDDDD',
+  },
+  achievementDescription: {
+    fontSize: 16,
+    color: 'black',
+  },
+});
 
 export default AchievementsTestScreen;
