@@ -8,7 +8,8 @@ import { useRouter } from "expo-router";
 interface checkboxStruct {
     exercise: string;
     exerciseType: string;
-    checked: boolean }
+    checked: boolean
+}
 
 const Prescricao = () => {
     const router = useRouter();
@@ -33,7 +34,7 @@ const Prescricao = () => {
         { exercise: 'Rotação Externa', exerciseType: 'Ombros', checked: false },
         { exercise: 'Elevação Pélvica', exerciseType: 'Glúteos', checked: false },
         { exercise: 'Elevação Unilateral', exerciseType: 'Glúteos', checked: false },
-        { exercise: 'Agacham. Sumô', exerciseType: 'Glúteos', checked: false },
+        { exercise: 'Agachamento Sumô', exerciseType: 'Glúteos', checked: false },
         { exercise: 'Passada', exerciseType: 'Glúteos', checked: false },
     ]);
     const [selectedButton, setSelectedButton] = React.useState<string>('');
@@ -59,9 +60,9 @@ const Prescricao = () => {
 
 
     const toggleCheckbox = (checkboxToSwitch: checkboxStruct) => {
-        checkboxToSwitch.checked=!checkboxToSwitch.checked;
-        
-        setCheckboxes( [...checkboxes]);
+        checkboxToSwitch.checked = !checkboxToSwitch.checked;
+
+        setCheckboxes([...checkboxes]);
     };
 
     const handleSavePress = () => {
@@ -72,7 +73,11 @@ const Prescricao = () => {
         router.push({ 'pathname': '/prescricao-especificacao', params: { 'exercises': chosenExercises } });
     };
     const handleOptionPress = (value: string) => {
-        setSelectedButton(value);
+        if (selectedButton == value) {
+            setSelectedButton('');
+        }
+        else
+            setSelectedButton(value);
     };
 
     const handleInputChange = (text: string) => {
@@ -102,18 +107,18 @@ const Prescricao = () => {
                 </Text>
             </View>
 
-            <View style={styles.bodyPartsWrapper}>
+            <View style={styles.exerciseTypesWrapper}>
                 <ScrollView horizontal
                     showsHorizontalScrollIndicator={false}
-                    style={styles.bodyParts}>
+                    style={styles.exerciseTypes}>
 
                     {options.map((option, index) => (
                         <Pressable
                             key={option.value}
-                            style={selectedButton === option.value ? [styles.bodyPart, styles.selected] : styles.bodyPart}
+                            style={selectedButton === option.value ? [styles.exerciseType, styles.selected] : styles.exerciseType}
                             onPress={() => handleOptionPress(option.value)}>
                             <Text
-                                style={selectedButton === option.value ? [styles.bodyPartText, styles.selected] : styles.bodyPartText}
+                                style={selectedButton === option.value ? [styles.exerciseTypeText, styles.selected] : styles.exerciseTypeText}
                             >{option.value}</Text>
                         </Pressable>
                     ))}
@@ -139,34 +144,38 @@ const Prescricao = () => {
                     </View>
                 </View>
 
-                <View style={styles.exercises}>
-                    {filteredExercises.map((checkbox, index) => (
-                        <View key={checkbox.exercise} style={styles.exercise}>
-                            <TouchableOpacity
-                                style={checkbox.checked ? [styles.checkbox, styles.checked] : styles.checkbox}
-                                onPress={() => toggleCheckbox(checkbox)}>
-                                <Image
-                                    style={[styles.icon, styles.checkIcon]}
-                                    resizeMode='contain'
-                                    source={require('../../assets/images/checkmark.png')}
-                                />
-                            </TouchableOpacity>
-                            <View style={styles.exerciseTexts}>
-                                <Text style={styles.exerciseText}>
-                                    {checkbox.exercise}
-                                </Text>
-                                <Text style={styles.exerciseTextSmall}> {checkbox.exerciseType}</Text>
+                <View style={styles.exercisesWrapper}>
+                    <ScrollView
+                        showsVerticalScrollIndicator={false}
+                        style={styles.exercises}>
+                        {filteredExercises.map((checkbox, index) => (
+                            <View key={checkbox.exercise} style={styles.exercise}>
+                                <TouchableOpacity
+                                    style={checkbox.checked ? [styles.checkbox, styles.checked] : styles.checkbox}
+                                    onPress={() => toggleCheckbox(checkbox)}>
+                                    <Image
+                                        style={[styles.icon, styles.checkIcon]}
+                                        resizeMode='contain'
+                                        source={require('../../assets/images/checkmark.png')}
+                                    />
+                                </TouchableOpacity>
+                                <View style={styles.exerciseTexts}>
+                                    <Text style={styles.exerciseText}>
+                                        {checkbox.exercise}
+                                    </Text>
+                                    <Text style={styles.exerciseTextSmall}> {checkbox.exerciseType}</Text>
+                                </View>
                             </View>
-                        </View>
-                    ))}
+                        ))}
+                    </ScrollView>
                 </View>
 
-                <View>
-                    <Pressable style={styles.button} onPress={handleSavePress}>
-                        <Text style={styles.buttonText}>Salvar e Continuar</Text>
-                    </Pressable>
-                </View>
 
+            </View>
+            <View style={styles.buttonWrapper}>
+                <Pressable style={styles.button} onPress={handleSavePress}>
+                    <Text style={styles.buttonText}>Salvar e Continuar</Text>
+                </Pressable>
             </View>
         </View>
     );
@@ -179,19 +188,22 @@ const styles = StyleSheet.create({
         overflow: "hidden",
         width: "100%",
         maxWidth: 550,
-        flex: 1,
         backgroundColor: Color.prescricao.white,
     },
     headerMobile: {
         width: '100%',
+        height: '10%',
         padding: 20,
+        paddingTop:30,
         alignSelf: "stretch",
         backgroundColor: Color.prescricao.purple,
         flexDirection: "row",
     },
     body: {
         padding: 48,
-        paddingTop: 16
+        paddingTop: 16,
+        height: '80%',
+        boxSizing: 'border-box',
     },
     icon: {
         width: 24,
@@ -203,7 +215,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontFamily: 'Roboto_400Regular',
     },
-    bodyParts: {
+    exerciseTypes: {
         display: 'flex',
         flexDirection: 'row',
         columnGap: 12,
@@ -212,14 +224,14 @@ const styles = StyleSheet.create({
         overflowX: 'hidden',
         marginTop: 10,
     },
-    bodyPartText: {
+    exerciseTypeText: {
         fontSize: 16,
         textAlign: "center",
         color: "#4b0082",
         fontFamily: 'Roboto_400Regular',
         borderRadius: 20
     },
-    bodyPart: {
+    exerciseType: {
         borderRadius: 20,
         justifyContent: "center",
         borderWidth: 1,
@@ -234,7 +246,7 @@ const styles = StyleSheet.create({
         height: '100%',
         marginRight: 10,
     },
-    bodyPartsWrapper: {
+    exerciseTypesWrapper: {
         height: 70
     },
     inputField: {
@@ -258,13 +270,16 @@ const styles = StyleSheet.create({
         fontSize: 16,
         marginRight: 8,
     },
-    exercises: {
-        marginTop: 24,
-        flexDirection: 'column',
-        rowGap: 16,
+    exercisesWrapper: {
+        marginTop: 20,
         width: '100%',
+        height: '80%',
+    },
+    exercises: {
+        flexDirection: 'column',
+        width: '100%',
+        height: '64%',
         margin: 'auto',
-
     },
     exercise: {
         borderWidth: 1.2,
@@ -272,10 +287,12 @@ const styles = StyleSheet.create({
         borderStyle: "solid",
         borderRadius: 20,
         height: 70,
-        width: 200,
+        width: 240,
         flexDirection: 'row',
         marginLeft: 'auto',
         marginRight: 'auto',
+        marginTop: 8,
+        marginBottom: 8
     },
     checkbox: {
         height: 26,
@@ -304,6 +321,8 @@ const styles = StyleSheet.create({
     exerciseTexts: {
         marginTop: 'auto',
         marginBottom: 'auto',
+        flex: 1,
+        marginRight:26
     },
     exerciseText: {
         textAlign: "center",
@@ -324,10 +343,15 @@ const styles = StyleSheet.create({
         marginLeft: 'auto',
         marginRight: 'auto',
     },
+    buttonWrapper: {
+        position: 'absolute',
+        bottom: 20,
+        justifyContent: 'center',
+        width: '100%',
+    },
     button: {
+        alignSelf: 'center',
         padding: 12,
-        margin: 'auto',
-        marginTop: 40,
         borderRadius: 20,
         backgroundColor: Color.prescricao.purple,
     },

@@ -20,13 +20,7 @@ interface SetStruct {
 const PrescricaoEspecificacao = () => {
     const params = useLocalSearchParams<{ exercises: string }>();
     
-    const [exerciseOptions, setExercises] = React.useState<ExerciseStruct[]>([
-        { exerciseName: 'Remada Curvada', sets: [] },
-        { exerciseName: 'Salto à Corda', sets: [] },
-        { exerciseName: 'Remada Alta', sets: [] },
-        { exerciseName: 'Ombro', sets: [] },
-        { exerciseName: 'Glúteos', sets: [] },
-    ])
+    const [exerciseOptions, setExercises] = React.useState<ExerciseStruct[]>([])
     
     //atualiza os exercicios quando params muda
     useEffect(() => {
@@ -202,12 +196,12 @@ const PrescricaoEspecificacao = () => {
                         </View>
                     ))}
 
-                    <View>
+                </ScrollView>
+                    <View style={styles.buttonWrapper}>
                         <Pressable style={styles.button} onPress={handleSavePress}>
                             <Text style={styles.buttonText}>Salvar Treino</Text>
                         </Pressable>
                     </View>
-                </ScrollView>
 
             </View>
         </View>
@@ -221,13 +215,13 @@ const styles = StyleSheet.create({
         height: '100%',
         overflow: "hidden",
         width: "100%",
-        maxWidth: 500,
-        flex: 1,
+        maxWidth: 550,
         backgroundColor: Color.prescricao.white,
     },
     headerMobile: {
         width: '100%',
         padding: 20,
+        paddingTop:30,
         alignSelf: "stretch",
         backgroundColor: Color.prescricao.purple,
         flexDirection: "row",
@@ -235,7 +229,7 @@ const styles = StyleSheet.create({
     body: {
         padding: 48,
         paddingTop: 16,
-        height: '100%',
+        height: '90%',
     },
     icon: {
         width: 24,
@@ -329,10 +323,11 @@ const styles = StyleSheet.create({
         columnGap: 50,
         marginLeft: 8
     },
+    buttonWrapper: {
+        marginTop: 16,
+    },
     button: {
         padding: 12,
-        margin: 'auto',
-        marginTop: 40,
         borderRadius: 20,
         backgroundColor: Color.prescricao.purple,
     },
