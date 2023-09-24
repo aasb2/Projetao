@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, CheckBox, FlatList, Picker, TextInput  } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { getWorkoutsList } from '../../services/functions/workout/functionWorkout';
-import { getWorkoutsList } from '../../services/functions/workout/functionWorkout';
+
 
 const WorkoutScreen = () => {
   const [workouts, setWorkouts] = useState([]);
@@ -129,18 +129,12 @@ const WorkoutScreen = () => {
 
         {/* Botão "Finalizar Treino" */}
         <TouchableOpacity
-        {/* Botão "Finalizar Treino" */}
-        <TouchableOpacity
         style={styles.finalizarButton}
         onPress={handleDesmarcarTodos}
         >
         <Text style={styles.text2}>Finalizar treino</Text>
         </TouchableOpacity>
 
-        onPress={handleDesmarcarTodos}
-        >
-        <Text style={styles.text2}>Finalizar treino</Text>
-        </TouchableOpacity>
 
     </View>
   );
