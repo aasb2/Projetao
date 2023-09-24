@@ -6,11 +6,14 @@ import Color from '../../constants/Colors';
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
 import { db } from "../../services/firebaseConfig";
-import { doc, addDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { doc, addDoc, collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
 import { useIsFocused } from "@react-navigation/native";
 import globalState, { ExerciseStruct } from '../../components/store/prescricaoGlobalState';
+import { useId } from 'react';
+
 
 interface checkboxStruct {
+    id: string;
     exercise: string;
     exerciseType: string;
     checked: boolean
@@ -20,40 +23,69 @@ const Prescricao = () => {
     const router = useRouter();
 
     const [inputText, setInputText] = React.useState<string>('');
-    const [checkboxes, setCheckboxes] = React.useState<checkboxStruct[]>([
-        { exercise: 'Remada Baixa', exerciseType: 'Costas', checked: false },
-        { exercise: 'Remada Alta', exerciseType: 'Costas', checked: false },
-        { exercise: 'Remada Curvada', exerciseType: 'Costas', checked: false },
-        { exercise: 'Remada Invertida', exerciseType: 'Costas', checked: false },
-        { exercise: 'Agachamento', exerciseType: 'Pernas', checked: false },
-        { exercise: 'Afundo', exerciseType: 'Pernas', checked: false },
-        { exercise: 'Extensão', exerciseType: 'Pernas', checked: false },
-        { exercise: 'Leg Press', exerciseType: 'Pernas', checked: false },
-        { exercise: 'Curl de Bíceps', exerciseType: 'Bíceps', checked: false },
-        { exercise: 'Rosca Alternada', exerciseType: 'Bíceps', checked: false },
-        { exercise: 'Rosca Direta', exerciseType: 'Bíceps', checked: false },
-        { exercise: 'Rosca Scott', exerciseType: 'Bíceps', checked: false },
-        { exercise: 'Elevação Frontal', exerciseType: 'Ombros', checked: false },
-        { exercise: 'Elevação Lateral', exerciseType: 'Ombros', checked: false },
-        { exercise: 'Arnold Press', exerciseType: 'Ombros', checked: false },
-        { exercise: 'Rotação Externa', exerciseType: 'Ombros', checked: false },
-        { exercise: 'Elevação Pélvica', exerciseType: 'Glúteos', checked: false },
-        { exercise: 'Elevação Unilateral', exerciseType: 'Glúteos', checked: false },
-        { exercise: 'Agachamento Sumô', exerciseType: 'Glúteos', checked: false },
-        { exercise: 'Passada', exerciseType: 'Glúteos', checked: false },
-    ]);
+    const [checkboxes, setCheckboxes] = React.useState<checkboxStruct[]>([]);
     const [selectedButton, setSelectedButton] = React.useState<string>('');
     
     const isFocused = useIsFocused();
+    
+    // const getPrescriptions = () => {
+    //     const collectionRef = collection(db, "prescriptions")
+    //     let prescriptions = []
+    //     getDocs(collectionRef).then((snapshot)=>{
+    //         // console.log("doc",snapshot.docs)
+    //         snapshot.docs.forEach((doc) => {
+    //         prescriptions.push({...doc.data(), id: doc.id})
 
-    //só é executado uma vez
+    //      })
+    //      console.log("Pre", prescriptions)
+    //     }).catch(err =>{console.log(err.message)})
+    //     setCheckboxes(prescriptions)
+    //     return prescriptions
+    // }
+
+    useEffect(() =>{
+        const collectionRef = collection(db, "prescriptions")
+        onSnapshot(collectionRef,(snapshot)=>{
+            let prescriptions:checkboxStruct[] = []
+            
+            snapshot.docs.forEach((doc) => {
+                if (doc.id==="uEDYZGRrI5crs3xrcQoY"){
+                    let data = doc.data()
+                    // prescriptions.push({exercise:data.exerciseName, exerciseType:exerci, checked:false })
+                    // data.forEach((prescription) => {
+                    prescriptions.push({
+                        id:data.id,
+                        exercise: data.exercise,
+                        exerciseType:data.exerciseType,
+                        checked: false //checked nao vai ser armazenado
+                    })
+                    // })
+                } else{
+                    console.log("ID",doc.id)
+                }
+            })
+            setCheckboxes(prescriptions)
+            console.log("pre",prescriptions)
+        })
+
+        //carrega os treinos do usuario atual
+        fetchSavedPresc();
+    },[]) 
+
+    //executa sempre que a tela é aberta
     useEffect(() => {
-        //id para teste, já que ainda não tem como pegar ele por enquanto
+        if (isFocused) {
+            updateFromGlobal();
+            console.log("updated screen");
+        }
+    }, [isFocused]);
+
+    const fetchSavedPresc = () => {
+         //id para teste, já que ainda não tem como pegar ele por enquanto
         //eventualmente substituir por
         //const currUser = await getUserInfo();
         const userId = "4SyAAkeKRs71KxdhGv12";
         const currUser = doc(db, 'users', userId);
-
         const prescCollection = collection(db, 'prescriptions');
         const prescQuery = query(prescCollection, where('user', '==', currUser));
 
@@ -76,19 +108,11 @@ const Prescricao = () => {
             else
                 console.log("none");
         });
-    }, []);
-
-    //executa sempre que a tela é aberta
-    useEffect(() => {
-        if (isFocused) {
-            updateFromGlobal();
-            console.log("updated screen");
-        }
-    }, [isFocused]);
-    
+    };
+     
     const updateFromGlobal = () => {
+        console.log(globalState.userExercises)
         globalState.userExercises.forEach((presc: ExerciseStruct) => {
-
             if (!presc.checked)
                 return;
             const matchedCheckbox = checkboxes.find((checkbox) => {
@@ -177,6 +201,11 @@ const Prescricao = () => {
     }
     
 
+  // Filtrar os exercícios com base no texto de pesquisa
+  const searchFilteredExercises = checkboxes.filter((checkbox) =>
+    checkbox.exercise.toLowerCase().includes(inputText.toLowerCase())
+  );
+  
     return (
         <View style={styles.prescricaoTreinos}>
             <View style={styles.headerMobile}>
@@ -232,7 +261,7 @@ const Prescricao = () => {
                         showsVerticalScrollIndicator={false}
                         style={styles.exercises}>
                         {filteredExercises.map((checkbox, index) => (
-                            <View key={checkbox.exercise} style={styles.exercise}>
+                            <View key={checkbox.id} style={styles.exercise}>
                                 <TouchableOpacity
                                     style={checkbox.checked ? [styles.checkbox, styles.checked] : styles.checkbox}
                                     onPress={() => toggleCheckbox(checkbox)}>
