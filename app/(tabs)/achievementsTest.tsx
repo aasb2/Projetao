@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // Importe o ícone desejado da biblioteca de ícones
 
 import appTheme from '../../constants/theme';
@@ -57,6 +57,8 @@ const AchievementsTestScreen = () => {
     );
   }
 
+
+
   return (
     <View style={{ flex: 1, paddingBottom: 60, backgroundColor: '#E7E7E7' }}>
       <View style={styles.header}>
@@ -78,7 +80,9 @@ const AchievementsTestScreen = () => {
       </View>
 
       {/* Barra de pesquisa */}
-      <View style={styles.searchContainer}>
+      <View
+        style={styles.searchContainer}
+      >
         <View style={styles.searchInputContainer}>
           <TextInput
             placeholder="Pesquisar desafio..."
@@ -104,6 +108,7 @@ const AchievementsTestScreen = () => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   header: {
@@ -131,10 +136,9 @@ const styles = StyleSheet.create({
   },
 
   searchContainer: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: -130,
+    marginTop: 20, // Espaçamento entre a barra de pesquisa e a header
   },
   searchInputContainer: {
     flexDirection: 'row',
