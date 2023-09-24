@@ -19,9 +19,9 @@ async function getAchievementsList() {
       const achievementName = achievementData.name;
       achievementData.achievementName = achievementName;
 
-      // URL da imagem do achievement
-      // const imageURL = achievementData.image;
-      // achievementData.imageURL = imageURL;
+      //URL da imagem do achievement
+      const imageURL = achievementData.image;
+      achievementData.imageURL = imageURL;
 
       // Descrição do achievement
       const description = achievementData.description;

@@ -65,6 +65,7 @@ const AchievementsTestScreen = () => {
   function renderItem({ item }: { item: Achievement }) {
     return (
       <View style={styles.achievementItem}>
+        {/* <Image source={{ uri: item.imageURL }} style={styles.achievementImage} /> */}
         <Text>{item.achievementName}</Text>
         <Text style={styles.achievementDescription}>{item.description}</Text>
       </View>
