@@ -66,7 +66,7 @@ const FeedPost = ({ postsData, handleLikePost, userImage }) => {
 
                             <View style={{ marginLeft: 12 }}>
                                 <Text
-                                    style={{ ...FONTS.body4, fontWeight: 'bold' }}
+                                    style={{ fontSize: 14, fontWeight: 'bold' }}
                                 >
                                     {post.user.name}
                                 </Text>
@@ -88,7 +88,7 @@ const FeedPost = ({ postsData, handleLikePost, userImage }) => {
                             marginVertical: 8,
                         }}
                     >
-                        <Text style={{ ...FONTS.body4 }}>
+                        <Text style={{ fontSize: 14 }}>
                             {post.content}
                         </Text>
                     </View>
@@ -113,7 +113,7 @@ const FeedPost = ({ postsData, handleLikePost, userImage }) => {
                                 marginLeft: 4,
                             }}
                         >
-                            Academia Couro e Osso | 10 mins atrás
+                            {post.location} | 10 mins atrás
                         </Text>
                     </View>
 
@@ -146,7 +146,7 @@ const FeedPost = ({ postsData, handleLikePost, userImage }) => {
                                 size={20}
                                 color={post.isLiked ? COLORS.red : COLORS.black} // Altere a cor do ícone com base no estado de "isLiked" do post
                             />
-                            <Text style={{ ...FONTS.body4, marginLeft: 2 }}>
+                            <Text style={{ fontSize: 14, marginLeft: 2 }}>
                                 {post.numLike}
                             </Text>
                         </TouchableOpacity>
@@ -163,7 +163,7 @@ const FeedPost = ({ postsData, handleLikePost, userImage }) => {
                                     size={20}
                                     color={COLORS.black}
                                 />
-                                <Text style={{ ...FONTS.body4, marginLeft: 2 }}>
+                                <Text style={{ fontSize: 14, marginLeft: 2 }}>
                                     {post.numComment}
                                 </Text>
                             </View>
@@ -172,7 +172,7 @@ const FeedPost = ({ postsData, handleLikePost, userImage }) => {
                         <View style={{ flexDirection: 'row' }}>
                             <View>
                                 <Text
-                                    style={{ ...FONTS.body4, fontWeight: 'bold' }}
+                                    style={{ fontSize: 14, fontWeight: 'bold' }}
                                 >
                                     
                                 </Text>

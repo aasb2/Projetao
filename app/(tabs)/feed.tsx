@@ -77,11 +77,11 @@ const Feed = () => {
         return (
             <View>
                 <View style={{ marginVertical: 8 }}>
-                    <Text style={{ ...FONTS.h3 }}>Couro e Osso</Text>
+                    <Text style={{ fontSize: 20, fontWeight: '400' }}>Couro e Osso</Text>
                     <View style={{ marginVertical: 4, flexDirection: 'row', alignItems: 'center' }}>
-                        <Text style={{ ...FONTS.body3, marginLeft: 8 }}>Amigos</Text>
+                        <Text style={{ fontSize: 14, marginLeft: 8 }}>Companheiros</Text>
                         <TouchableOpacity onPress={() => console.log('Ver Todos Pressed')}>
-                            <Text style={{ ...FONTS.body3, marginLeft: 8, color: 'blue' }}>Ver todos</Text>
+                            <Text style={{ fontSize: 14, marginLeft: 8, color: 'blue' }}>Ver todos</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -121,7 +121,7 @@ const Feed = () => {
                                 />
                             </TouchableOpacity>
                             <Text
-                                style={{ ...FONTS.body3, fontWeight: 'bold' }}
+                                style={{ fontSize: 14, fontWeight: '500' }}
                             >
                                 {item.firstName}
                             </Text>
@@ -144,7 +144,7 @@ const Feed = () => {
         // ass: severino <3
         const handleLikePost = (postId: any) => {
             // Encontre o post com o ID correspondente na lista de postsData
-            const updatedPostsData = postsData.map((post) => {
+            const updatedPostsData = postsData.map(post => {
                 if (post.id === postId) {
                     // Verifique o estado atual de "isLiked" e altere-o para o oposto
                     post.isLiked = !post.isLiked;

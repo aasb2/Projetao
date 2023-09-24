@@ -40,7 +40,7 @@ async function getUserInfo() {
   try {
     const user = auth.currentUser;
     if (user) {
-      //console.log('Usuário autenticado:', user);
+      console.log('Usuário autenticado:', user);
       // Resto do código
     } else {
       console.log('Nenhum usuário autenticado.');

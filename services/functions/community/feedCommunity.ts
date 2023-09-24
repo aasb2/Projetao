@@ -64,7 +64,8 @@ async function getPostsList() {
       const postsCollection = collection(db, 'posts');
       const postsQuery = query(
         postsCollection,
-        where('community', '==', communityRef)
+        where('community', '==', communityRef),
+        //orderBy('createdAt', 'desc')
       );
       
       const postsQuerySnapshot = await getDocs(postsQuery);
