@@ -4,6 +4,11 @@ import { useFonts, Roboto_400Regular, Roboto_700Bold, Roboto_100Thin } from '@ex
 import { TextInput } from "react-native-gesture-handler";
 import Color from '../../constants/Colors';
 import { useRouter } from "expo-router";
+import { useEffect } from "react";
+import { db } from "../../services/firebaseConfig";
+import { doc, addDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { useIsFocused } from "@react-navigation/native";
+import globalState, { ExerciseStruct } from '../../components/store/prescricaoGlobalState';
 
 interface checkboxStruct {
     exercise: string;
@@ -38,30 +43,86 @@ const Prescricao = () => {
         { exercise: 'Passada', exerciseType: 'Glúteos', checked: false },
     ]);
     const [selectedButton, setSelectedButton] = React.useState<string>('');
+    
+    const isFocused = useIsFocused();
 
-    const options = [
-        { value: 'Costas' },
-        { value: 'Pernas' },
-        { value: 'Bíceps' },
-        { value: 'Ombros' },
-        { value: 'Glúteos' },
-    ]
+    //só é executado uma vez
+    useEffect(() => {
+        //id para teste, já que ainda não tem como pegar ele por enquanto
+        //eventualmente substituir por
+        //const currUser = await getUserInfo();
+        const userId = "4SyAAkeKRs71KxdhGv12";
+        const currUser = doc(db, 'users', userId);
 
-    const [fontLoaded] = useFonts({
-        Roboto_100Thin,
-        Roboto_400Regular,
-        Roboto_700Bold
-    })
+        const prescCollection = collection(db, 'prescriptions');
+        const prescQuery = query(prescCollection, where('user', '==', currUser));
 
+        //busca pela prescrição do usuario atual
+        getDocs(prescQuery).then((prescQuerySnapshot) => {
+            if (prescQuerySnapshot.size > 0) {
+                const prescData = prescQuerySnapshot.docs[0].data();
 
-    if (!fontLoaded) {
-        return null;
-    }
+                globalState.prescriptionRef =  prescQuerySnapshot.docs[0].ref;
 
+                //salva as prescrições do banco dod ados no estado global
+                globalState.userExercises = prescData.prescriptions;
 
-    const toggleCheckbox = (checkboxToSwitch: checkboxStruct) => {
-        checkboxToSwitch.checked = !checkboxToSwitch.checked;
+                globalState.userExercises.forEach(ex => {
+                    ex.checked = true;
+                });
+                console.log("fetched from db");
+                updateFromGlobal();
+            }
+            else
+                console.log("none");
+        });
+    }, []);
 
+    //executa sempre que a tela é aberta
+    useEffect(() => {
+        if (isFocused) {
+            updateFromGlobal();
+            console.log("updated screen");
+        }
+    }, [isFocused]);
+    
+    const updateFromGlobal = () => {
+        globalState.userExercises.forEach((presc: ExerciseStruct) => {
+
+            if (!presc.checked)
+                return;
+            const matchedCheckbox = checkboxes.find((checkbox) => {
+                return checkbox.exercise === presc.exerciseName;
+            });
+
+            if (matchedCheckbox != undefined) {
+                toggleCheckbox(matchedCheckbox, true);
+            }
+        });
+    };
+
+    const toggleCheckbox = (checkboxToSwitch: checkboxStruct, value?: boolean) => {
+        const matchedExercise = globalState.userExercises.find((ex) => {
+            return ex.exerciseName === checkboxToSwitch.exercise;
+        });
+
+        if (value) {
+            checkboxToSwitch.checked = value;
+            
+        }
+        else {
+            checkboxToSwitch.checked = !checkboxToSwitch.checked;
+        }
+        
+        //atualiza o estado global tambem
+        if (matchedExercise != undefined) {
+            matchedExercise.checked = checkboxToSwitch.checked;
+        }
+        else {
+            globalState.userExercises.push(
+                { exerciseName: checkboxToSwitch.exercise, sets: [], checked: checkboxToSwitch.checked }
+            );
+        }
         setCheckboxes([...checkboxes]);
     };
 
@@ -88,11 +149,33 @@ const Prescricao = () => {
         alert('pesquisa por: ' + inputText);
     };
 
+    
+
     // Filtrar os exercícios com base na opção selecionada
     const filteredExercises = checkboxes.filter((checkbox) => {
         if (!selectedButton) return true; // Se nenhuma opção estiver selecionada, exibir todos os exercícios
         return checkbox.exerciseType === selectedButton;
     });
+
+    const options = [
+        { value: 'Costas' },
+        { value: 'Pernas' },
+        { value: 'Bíceps' },
+        { value: 'Ombros' },
+        { value: 'Glúteos' },
+    ]
+
+    const [fontLoaded] = useFonts({
+        Roboto_100Thin,
+        Roboto_400Regular,
+        Roboto_700Bold
+    })
+
+
+    if (!fontLoaded) {
+        return null;
+    }
+    
 
     return (
         <View style={styles.prescricaoTreinos}>
@@ -194,7 +277,7 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '10%',
         padding: 20,
-        paddingTop:30,
+        paddingTop: 30,
         alignSelf: "stretch",
         backgroundColor: Color.prescricao.purple,
         flexDirection: "row",
@@ -322,7 +405,7 @@ const styles = StyleSheet.create({
         marginTop: 'auto',
         marginBottom: 'auto',
         flex: 1,
-        marginRight:26
+        marginRight: 26
     },
     exerciseText: {
         textAlign: "center",

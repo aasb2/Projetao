@@ -4,8 +4,11 @@ import { useFonts, Roboto_400Regular, Roboto_700Bold, Roboto_100Thin } from '@ex
 import Color from '../../constants/Colors';
 import { useLocalSearchParams, router } from 'expo-router';
 import { db } from "../../services/firebaseConfig";
-import { doc, addDoc, collection } from 'firebase/firestore';
+import { doc, addDoc, collection, updateDoc } from 'firebase/firestore';
 import { useEffect } from "react";
+import globalState from "../../components/store/prescricaoGlobalState";
+import { useIsFocused } from "@react-navigation/native";
+//import { getUserInfo } from '../../services/functions/login/loginUser';
 
 interface ExerciseStruct {
     exerciseName: string;
@@ -19,20 +22,36 @@ interface SetStruct {
 
 const PrescricaoEspecificacao = () => {
     const params = useLocalSearchParams<{ exercises: string }>();
-    
+
     const [exerciseOptions, setExercises] = React.useState<ExerciseStruct[]>([])
-    
+
+    const isFocused = useIsFocused();
+
     //atualiza os exercicios quando params muda
     useEffect(() => {
-        if (Object.keys(params).length != 0) {
-            //console.log(params);
+        if (isFocused) {
+            if (Object.keys(params).length != 0) {
+                //console.log(params);
 
-            const exercisesArr = params.exercises.split(',');
-            const chosenExercises = exercisesArr.map(ex => ({ exerciseName: ex, sets: [] }));
+                const matchGlobalExercise = (exName: string) => {
+                    const match = globalState.userExercises.find((globalEx) => {
+                        return globalEx.exerciseName === exName;
+                    });
 
-            setExercises(chosenExercises);
+                    if (match == undefined)
+                        return { exerciseName: exName, sets: [] };
+                    else
+                        return match;
+                };
+                const exercisesArr = params.exercises.split(',');
+                //const chosenExercises = exercisesArr.map(matchGlobalExercise);
+                const chosenExercises = globalState.userExercises.filter((ex) => ex.checked == true);
+
+                globalState.userExercises.find
+                setExercises(chosenExercises);
+            }
         }
-    }, [params]);
+    }, [isFocused]);
 
     const [fontLoaded] = useFonts({
         Roboto_100Thin,
@@ -43,7 +62,6 @@ const PrescricaoEspecificacao = () => {
     if (!fontLoaded) {
         return null;
     }
-
     const addNewExercise = (index: number) => {
         const newExerciseOptions = [...exerciseOptions]
         newExerciseOptions[index].sets.push({ reps: 10, load: 10 })
@@ -71,19 +89,29 @@ const PrescricaoEspecificacao = () => {
     };
 
     const handleSavePress = async () => {
-        //ids para teste, já que ainda não tem como pegar eles das outras telas
+        //id para teste, já que ainda não tem como pegar ele por enquanto
+        //eventualmente substituir por
+        //const currUser = await getUserInfo();
         const userId = "4SyAAkeKRs71KxdhGv12";
-        const personalId = "68znESXijyRSra7X18wS";
+        const currUser = doc(db, 'users', userId);
 
         const presCollection = collection(db, 'prescriptions');
 
-        const addedPresc = await addDoc(presCollection, {
-            personal: doc(db, 'personal', personalId),
-            user: doc(db, 'users', userId),
-            prescriptions: exerciseOptions
-        });
+        if (globalState.prescriptionRef == null) {
+            const addedPresc = await addDoc(presCollection, {
+                user: currUser,
+                prescriptions: exerciseOptions
+            });
+            alert("Adicionado com sucesso em " + addedPresc.id);
+        }
+        else{
+            await updateDoc(globalState.prescriptionRef, {
+                user: currUser,
+                prescriptions: exerciseOptions
+            });
+            alert("Atualizado com sucesso em " + globalState.prescriptionRef.id);
+        }
 
-        alert("Adicionado com sucesso em " + addedPresc.id);
     };
 
     return (
@@ -197,11 +225,11 @@ const PrescricaoEspecificacao = () => {
                     ))}
 
                 </ScrollView>
-                    <View style={styles.buttonWrapper}>
-                        <Pressable style={styles.button} onPress={handleSavePress}>
-                            <Text style={styles.buttonText}>Salvar Treino</Text>
-                        </Pressable>
-                    </View>
+                <View style={styles.buttonWrapper}>
+                    <Pressable style={styles.button} onPress={handleSavePress}>
+                        <Text style={styles.buttonText}>Salvar Treino</Text>
+                    </Pressable>
+                </View>
 
             </View>
         </View>
@@ -221,7 +249,7 @@ const styles = StyleSheet.create({
     headerMobile: {
         width: '100%',
         padding: 20,
-        paddingTop:30,
+        paddingTop: 30,
         alignSelf: "stretch",
         backgroundColor: Color.prescricao.purple,
         flexDirection: "row",
