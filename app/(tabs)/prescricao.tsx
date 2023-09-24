@@ -96,7 +96,7 @@ const Prescricao = () => {
 
                 globalState.prescriptionRef =  prescQuerySnapshot.docs[0].ref;
 
-                //salva as prescrições do banco dod ados no estado global
+                //salva as prescrições do banco de dados no estado global
                 globalState.userExercises = prescData.prescriptions;
 
                 globalState.userExercises.forEach(ex => {
@@ -261,7 +261,7 @@ const Prescricao = () => {
                     <ScrollView
                         showsVerticalScrollIndicator={false}
                         style={styles.exercises}>
-                        {searchFilteredExercises.map((checkbox, index) => (
+                            {(inputText.length > 0 ? searchFilteredExercises : filteredExercises).map((checkbox, index) => (
                             <View key={checkbox.id} style={styles.exercise}>
                                 <TouchableOpacity
                                     style={checkbox.checked ? [styles.checkbox, styles.checked] : styles.checkbox}
