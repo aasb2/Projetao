@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // Importe o ícone desejado da biblioteca de ícones
 import { getAchievementsList } from '../../services/functions/achievements/functionAchievements'; // Substitua pelo caminho correto do seu arquivo getAchievementsList
 import appTheme from '../../constants/theme';
+import { background } from 'native-base/lib/typescript/theme/styled-system';
 
 // Defina o tipo de objeto para os achievements
 type Achievement = {
@@ -72,8 +73,10 @@ const AchievementsTestScreen = () => {
     );
   }
 
+
+
   return (
-    <View style={{ flex: 1, paddingBottom: 60, backgroundColor: '#E7E7E7' }}>
+    <View style={{ flex: 1, paddingBottom: 60, backgroundColor: '#380062' }}>
       <View style={styles.header}>
         <TouchableOpacity
           style={{
@@ -93,7 +96,9 @@ const AchievementsTestScreen = () => {
       </View>
 
       {/* Barra de pesquisa */}
-      <View style={styles.searchContainer}>
+      <View
+        style={styles.searchContainer}
+      >
         <View style={styles.searchInputContainer}>
           <TextInput
             placeholder="Pesquisar desafio..."
@@ -119,6 +124,7 @@ const AchievementsTestScreen = () => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   header: {
@@ -149,10 +155,9 @@ const styles = StyleSheet.create({
   },
 
   searchContainer: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: -130,
+    marginTop: 20, // Espaçamento entre a barra de pesquisa e a header
   },
   searchInputContainer: {
     flexDirection: 'row',
@@ -171,6 +176,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginLeft: 10,
   },
+
 });
 
 export default AchievementsTestScreen;
