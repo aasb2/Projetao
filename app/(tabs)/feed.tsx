@@ -58,11 +58,11 @@ const Feed = () => {
         useEffect(() => {
             const fetchFriends = async () => {
                 try {
-                const dataFriends = await getFriendsList();
-                setFriendsData(dataFriends);
-                setIsLoading(false);
+                    const dataFriends = await getFriendsList();
+                    setFriendsData(dataFriends);
+                    setIsLoading(false);
                 } catch (error) {
-                console.error('Erro ao buscar a lista de amigos:', error);
+                    console.error('Erro ao buscar a lista de amigos:', error);
                 }
             };
 

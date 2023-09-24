@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { User, onAuthStateChanged, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import { auth } from '../services/firebaseConfig';
@@ -7,7 +7,7 @@ import * as WebBrowser from 'expo-web-browser';
 import * as Google from "expo-auth-session/providers/google"
 import { Login } from "./Login/Login";
 import { useNavigation } from 'expo-router'
-import Feed from "./(tabs)/feed";
+
 
 
 export default function Index() {
@@ -15,7 +15,7 @@ export default function Index() {
     const navigation = useNavigation();
 
 
-    const [userInfo, setUserInfo] = React.useState<User | null>();
+    const [userInfo, setUserInfo] = useState<User | null>();
     const [request, response, promptAsync] = Google.useAuthRequest({
         androidClientId: "100988905326-mslpnvg22mbk52vuee73q9updl5k8vm0.apps.googleusercontent.com",
         webClientId: "100988905326-q1b6e6imq9ei9ae76via0fk9h862f83u.apps.googleusercontent.com"
@@ -32,13 +32,16 @@ export default function Index() {
     }
 
     useEffect(() => {
+        console.log('entre aq dnv')
         checkLocalUser();
         const unsub = onAuthStateChanged(auth, async (user) => {
             if (user) {
                 console.log(JSON.stringify(user, null, 2));
                 await AsyncStorage.setItem("@user", JSON.stringify(user));
                 setUserInfo(user);
-                navigation.navigate('(tabs)')
+                if (!response?.type) {
+                    navigation.navigate('(tabs)');
+                }                
             } else {
                 setUserInfo(null);
             }
@@ -52,11 +55,9 @@ export default function Index() {
             const credential = GoogleAuthProvider.credential(id_token);
             signInWithCredential(auth, credential)
             .then((result) => {
-                
-                createNewUserDocument(result.user);
+                createNewUserDocument(result.user)
                 setUserInfo(result.user);
-                // TODO:                
-                // jogar p tela de colocar id do personal
+                navigation.navigate('CheckIn');
             })
             .catch((error) => {
                 console.log(error);
