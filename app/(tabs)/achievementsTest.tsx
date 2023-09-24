@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput, Dimensio
 import { Ionicons } from '@expo/vector-icons'; // Importe o ícone desejado da biblioteca de ícones
 import { getAchievementsList } from '../../services/functions/achievements/functionAchievements'; // Substitua pelo caminho correto do seu arquivo getAchievementsList
 import appTheme from '../../constants/theme';
+import { background } from 'native-base/lib/typescript/theme/styled-system';
 
 // Defina o tipo de objeto para os achievements
 type Achievement = {
@@ -74,7 +75,7 @@ const AchievementsTestScreen = () => {
 
 
   return (
-    <View style={{ flex: 1, paddingBottom: 60, backgroundColor: '#E7E7E7' }}>
+    <View style={{ flex: 1, paddingBottom: 60, backgroundColor: '#380062' }}>
       <View style={styles.header}>
         <TouchableOpacity
           style={{
@@ -174,6 +175,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginLeft: 10,
   },
+
 });
 
 export default AchievementsTestScreen;
