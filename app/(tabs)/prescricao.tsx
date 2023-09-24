@@ -175,12 +175,7 @@ const Prescricao = () => {
 
     
 
-    // Filtrar os exercícios com base na opção selecionada
-    const filteredExercises = checkboxes.filter((checkbox) => {
-        if (!selectedButton) return true; // Se nenhuma opção estiver selecionada, exibir todos os exercícios
-        return checkbox.exerciseType === selectedButton;
-    });
-
+    
     const options = [
         { value: 'Costas' },
         { value: 'Pernas' },
@@ -188,23 +183,29 @@ const Prescricao = () => {
         { value: 'Ombros' },
         { value: 'Glúteos' },
     ]
-
+    
     const [fontLoaded] = useFonts({
         Roboto_100Thin,
         Roboto_400Regular,
         Roboto_700Bold
     })
-
-
+    
+    
     if (!fontLoaded) {
         return null;
     }
     
+    // Filtrar os exercícios com base na opção selecionada
+    const filteredExercises = checkboxes.filter((checkbox) => {
+        if (!selectedButton) return true; // Se nenhuma opção estiver selecionada, exibir todos os exercícios
+        return checkbox.exerciseType === selectedButton;
+    });
 
   // Filtrar os exercícios com base no texto de pesquisa
   const searchFilteredExercises = checkboxes.filter((checkbox) =>
     checkbox.exercise.toLowerCase().includes(inputText.toLowerCase())
   );
+  
   
     return (
         <View style={styles.prescricaoTreinos}>
@@ -260,7 +261,7 @@ const Prescricao = () => {
                     <ScrollView
                         showsVerticalScrollIndicator={false}
                         style={styles.exercises}>
-                        {filteredExercises.map((checkbox, index) => (
+                        {searchFilteredExercises.map((checkbox, index) => (
                             <View key={checkbox.id} style={styles.exercise}>
                                 <TouchableOpacity
                                     style={checkbox.checked ? [styles.checkbox, styles.checked] : styles.checkbox}
