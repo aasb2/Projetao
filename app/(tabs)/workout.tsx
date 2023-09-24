@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput, Dimensions, CheckBox } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // Importe o ícone desejado da biblioteca de ícones
-import { getAchievementsList } from '../../services/functions/achievements/functionAchievements'; // Substitua pelo caminho correto do seu arquivo getAchievementsList
-import appTheme from '../../constants/theme';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, CheckBox } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 const WorkoutScreen = () => {
   const [isChecked, setIsChecked] = useState(false);
+
+  // Função para desmarcar o checkbox
+  const handleFinalizarTreino = () => {
+    setIsChecked(false);
+  };
 
   return (
     <View style={{ flex: 1, paddingBottom: 60, backgroundColor: '#380062' }}>
@@ -31,8 +34,21 @@ const WorkoutScreen = () => {
             onValueChange={() => setIsChecked(!isChecked)}
           />
         </View>
-        <Text style={styles.text}>Texto do Checkbox</Text>
+
+        <View style={{ flexDirection: 'column' }}>
+          <Text style={styles.text}>Nome do exercício</Text>
+          <Text style={styles.text}>Quantidade de séries e repetições</Text>
+          <Text style={styles.text}>Peso:</Text>
+        </View>
       </View>
+
+      {/* Botão "Finalizar Treino" */}
+      <TouchableOpacity
+        style={styles.finalizarButton}
+        onPress={handleFinalizarTreino}
+      >
+        <Text style={styles.text2} >Finalizar Treino</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -49,16 +65,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: '#FFFFFF', // Cor do retângulo
-    borderRadius: 10, // Borda arredondada
-    margin: 10, // Espaçamento ao redor do retângulo
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    margin: 10,
   },
   checkboxContainer: {
-    marginRight: 10, // Espaçamento entre o checkbox e o texto
+    marginRight: 10,
   },
   text: {
     fontSize: 16,
     color: 'black',
+  },
+  text2: {
+    fontSize: 16,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  finalizarButton: {
+    backgroundColor: '#4B0082',
+    alignItems: 'center',
+    padding: 10,
+    borderRadius: 10,
+    marginTop: 20,
   },
 });
 
