@@ -1,14 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Image, TextInput } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons"; // Importe o ícone de localização
 import * as ImagePicker from "expo-image-picker";
 import { COLORS } from '../../constants'
 import { createNewPost } from '../../services/functions/community/postCreate';
+import { getUserInfo } from '../../services/functions/login/loginUser';
 
 const PostScreen = () => {
   const [postText, setPostText] = useState("");
   const [postImage, setPostImage] = useState(null);
   const [location, setLocation] = useState("");
+  const [userImage, setUserImage] = useState("");
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -33,10 +35,29 @@ const PostScreen = () => {
     try {
       const newPostId = await createNewPost(content, image, postLocation);
       console.log('ID do novo post:', newPostId);
+
+      setPostText("");
+      setPostImage(null);
+      setLocation("");
+
     } catch (error) {
       console.error('Erro ao criar o post:', error);
     }
   }
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const userInfo = await getUserInfo();
+        setUserImage(userInfo.image);
+      } catch (error) {
+        console.error('Erro ao buscar informações do usuário:', error);
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -59,7 +80,7 @@ const PostScreen = () => {
           {/* Seção do usuário */}
           <View style={styles.userSection}>
             <Image
-              source={require("../../assets/images/user1.jpg")}
+              source={{ uri: userImage }}
               style={styles.userImage}
             />
             <View style={styles.locationContainer}>
@@ -71,7 +92,7 @@ const PostScreen = () => {
               <TextInput
                 placeholder="Onde você está treinando?"
                 placeholderTextColor="#AF9EBC"
-                style={styles.locationInput}
+                style={[styles.locationInput, { color: COLORS.primary }]}
                 value={location}
                 onChangeText={(text) => setLocation(text)}
               />
@@ -85,7 +106,7 @@ const PostScreen = () => {
               autoFocus={true}
               multiline={true}
               numberOfLines={3}
-              style={styles.commentInput}
+              style={[styles.commentInput, { color: COLORS.primary }]}
               placeholder="O que você quer compartilhar?"
               value={postText}
               onChangeText={text => setPostText(text)}

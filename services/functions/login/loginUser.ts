@@ -1,5 +1,5 @@
 import { db, auth } from '../../firebaseConfig';
-import { collection, doc, addDoc, query, where, getDocs, setDoc, DocumentReference , DocumentSnapshot } from 'firebase/firestore';
+import { collection, doc, addDoc, query, where, getDocs, setDoc, DocumentReference , DocumentSnapshot, getDoc } from 'firebase/firestore';
 import { User } from 'firebase/auth';
 
 // Função para criar um novo documento de usuário no Firestore
@@ -35,6 +35,26 @@ async function createNewUserDocument(user: User) {
 
 //...
 
+
+// Função para buscar informações da comunidade com base na referência
+async function getCommunityInfo(communityRef: any) {
+  try {
+    // Use a referência da comunidade para buscar as informações da comunidade
+    const communityDoc = await getDoc(communityRef);
+    if (communityDoc.exists()) {
+      return communityDoc.data();
+    } else {
+      console.log('Nenhuma informação encontrada para a comunidade.');
+      return null;
+    }
+  } catch (error) {
+    console.error('Erro ao buscar informações da comunidade:', error);
+    return null;
+  }
+}
+
+//..
+
 // Função para buscar informações do usuário logado
 async function getUserInfo() {
   try {
@@ -55,6 +75,18 @@ async function getUserInfo() {
         const userData = userQuerySnapshot.docs[0].data();
 
         //console.log('Informações do usuário logado:', userData);
+
+        // Verifique se a referência da comunidade está presente nas informações do usuário
+        if (userData.community) {
+          // Use a função getCommunityInfo para obter informações da comunidade
+          const communityInfo = await getCommunityInfo(userData.community);
+          
+          // Adicione as informações da comunidade ao objeto userData
+          if (communityInfo) {
+            userData.communityInfo = communityInfo;
+          }
+        }
+
         return userData;
       } else {
         console.log('Nenhum documento encontrado para o usuário logado.');
@@ -66,6 +98,40 @@ async function getUserInfo() {
     console.error('Erro ao buscar informações do usuário logado:', error);
   }
 }
+
+
+
+// // Função para buscar informações do usuário logado
+// async function getUserInfo() {
+//   try {
+//     const user = auth.currentUser;
+//     if (user) {
+//       console.log('Usuário autenticado:', user);
+//       // Resto do código
+//     } else {
+//       console.log('Nenhum usuário autenticado.');
+//     }
+
+//     if (user) {
+//       const usersCollection = collection(db, 'users');
+//       const userQuery = query(usersCollection, where('uid', '==', user.uid));
+//       const userQuerySnapshot = await getDocs(userQuery);
+
+//       if (userQuerySnapshot.size > 0) {
+//         const userData = userQuerySnapshot.docs[0].data();
+
+//         console.log('Informações do usuário logado:', userData);
+//         return userData;
+//       } else {
+//         console.log('Nenhum documento encontrado para o usuário logado.');
+//       }
+//     } else {
+//       console.log('Nenhum usuário logado.');
+//     }
+//   } catch (error) {
+//     console.error('Erro ao buscar informações do usuário logado:', error);
+//   }
+// }
 
 export { createNewUserDocument, getUserInfo };
 

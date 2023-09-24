@@ -5,12 +5,14 @@ import {
     ScrollView,
     FlatList,
     Image,
+    RefreshControl,
     TextInput,
 } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { COLORS, FONTS, SIZES, images } from '../../constants'
 import {
+    AntDesign,
     MaterialIcons,
     Ionicons,
     Feather,
@@ -55,14 +57,18 @@ const Feed = () => {
     function renderContainer() {
         
         const [friendsData, setFriendsData] = useState<DocumentData[]>(friends);
+        const [userCommunity, setUserCommunity] = useState<DocumentData | undefined>(undefined);
         const [isLoading, setIsLoading] = useState(true);
 
         useEffect(() => {
             const fetchFriends = async () => {
                 try {
-                const dataFriends = await getFriendsList();
-                setFriendsData(dataFriends);
-                setIsLoading(false);
+                    const dataFriends = await getFriendsList();
+                    const communityUser = await getUserInfo();
+
+                    setUserCommunity(communityUser);
+                    setFriendsData(dataFriends);
+                    setIsLoading(false);
                 } catch (error) {
                 console.error('Erro ao buscar a lista de amigos:', error);
                 }
@@ -70,26 +76,106 @@ const Feed = () => {
 
             fetchFriends(); // Chama a função de busca ao montar o componente
         }, []);
-        
-        // if (isLoading) {
-        //     return <Text>Carregando...</Text>;
+        const communityName = userCommunity?.communityInfo?.name || '';
+
+        // async function handleStartTraining() {
+        //     try {
+        //         const user = await getUserInfo();               
+                
+        //         if (user) {
+        //             const userRef = doc(db, 'users', user.uid);
+
+        //             // Se o campo isTraining for true, defina como false, e vice-versa
+        //             const newIsTrainingValue = !user.isTraining;
+        //             console.log(newIsTrainingValue)
+        //             // Atualiza o campo isTraining com o novo valor no Firestore
+        //             await updateDoc(userRef, {
+        //                 isTraining: newIsTrainingValue,
+        //             });
+
+        //             // Atualize o campo isTraining no estado local friendsData
+        //             const updatedFriendsData = friendsData.map((friend) => {
+        //                 if (friend.uid === user.uid) {
+        //                     console.log("LOCAL",friend)
+        //                 // Atualize o valor apenas para o usuário logado
+        //                     return {
+        //                         ...friend,
+        //                         isTraining: newIsTrainingValue,
+        //                     };
+        //                 }
+        //                 return friend;
+        //             });
+
+        //             // Atualize o estado friendsData com os novos dados
+        //             setFriendsData(updatedFriendsData);
+
+        //             console.log('Campo isTraining atualizado para', newIsTrainingValue);
+        //         } else {
+        //         console.log('Nenhum usuário autenticado.');
+        //         }
+        //     } catch (error) {
+        //         console.error('Erro ao atualizar o campo isTraining:', error);
+        //     }
         // }
+        const filteredFriendsData = friendsData.filter(item => item.isTraining);
+
+
         return (
             <View>
-                <View style={{ marginVertical: 8 }}>
-                    <Text style={{ fontSize: 20, fontWeight: '400' }}>Couro e Osso</Text>
-                    <View style={{ marginVertical: 4, flexDirection: 'row', alignItems: 'center' }}>
-                        <Text style={{ fontSize: 14, marginLeft: 8 }}>Companheiros</Text>
-                        <TouchableOpacity onPress={() => console.log('Ver Todos Pressed')}>
-                            <Text style={{ fontSize: 14, marginLeft: 8, color: 'blue' }}>Ver todos</Text>
-                        </TouchableOpacity>
+                <View
+                    style={{
+                    marginVertical: 8,
+                    flexDirection: 'row',
+                    justifyContent: 'space-between', // Isso coloca o ícone à direita
+                    alignItems: 'center',
+                    }}
+                >
+                    <View>
+                        <Text style={{ fontSize: 20, fontWeight: '400' }}>{communityName}</Text>
+                        <View
+                            style={{
+                            marginVertical: 4,
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            }}
+                        >
+                            <Text style={{ fontSize: 14, marginLeft: 8 }}>Companheiros</Text>
+                            <TouchableOpacity onPress={() => console.log('Ver Todos Pressed')}>
+                                <Text style={{ fontSize: 14, marginLeft: 8, color: '#4B0082' }}>
+                                    Ver todos
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
+                                        
+                    < TouchableOpacity onPress = {() => console.log('chamar => handleStartTraining()')}>
+                        <LinearGradient
+                        colors={['#4B0082', '#6D458B']}
+                        style={{
+                            height: 40,
+                            width: 40,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            shadowColor: '#18274B',
+                            shadowOffset: {
+                            width: 0,
+                            height: 4.5,
+                            },
+                            shadowOpacity: 0.12,
+                            shadowRadius: 6.5,
+                            elevation: 2,
+                            borderRadius: 16,
+                        }}
+                        >
+                        <MaterialCommunityIcons  name="weight-lifter" size={20} color={COLORS.white} />
+                        </LinearGradient>
+                    </TouchableOpacity>
                 </View>
                 
                                 
                 <FlatList
                     horizontal={true}
-                    data={friendsData}
+                    data={filteredFriendsData}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item, index }) => (
                         <View
@@ -108,6 +194,29 @@ const Feed = () => {
                                     marginRight: 10,
                                 }}
                             >
+                                {item.isTraining && (
+                                    <LinearGradient
+                                        colors={['#4B0082', '#6D458B']}
+                                        style={{
+                                            height: 28,
+                                            width: 28,
+                                            borderRadius: 15,
+                                            position: 'absolute',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            zIndex: 1,
+                                            bottom: -3,
+                                            right: 32,
+                                        }}
+                                    >
+                                        <MaterialCommunityIcons
+                                            name="weight-lifter"
+                                            size={20}
+                                            color={COLORS.white}
+                                        />
+                                    </LinearGradient>
+                                )}
+
                                 <Image
                                     source={{ uri: item.imageURL }} // Usar a URL da imagem
                                     resizeMode="contain"
@@ -116,7 +225,7 @@ const Feed = () => {
                                         height: 100,
                                         borderRadius: 80,
                                         borderWidth: 4,
-                                        borderColor: '#fff',
+                                        borderColor: item.isTraining ? '#6D458B' : '#fff',
                                     }}
                                 />
                             </TouchableOpacity>
