@@ -11,6 +11,7 @@ const WorkoutScreen = () => {
   const [isCheckedList, setIsCheckedList] = useState(false); // Use um array para rastrear os estados dos checkboxes
   const [pesos, setPesos] = useState([]);
   const userid = '4SyAAkeKRs71KxdhGv12'
+  const [pesosPorExercicio, setPesosPorExercicio] = useState({}); // Inicialize um objeto vazio para armazenar os pesos
 
   useEffect(() => {
     async function fetchWorkouts() {
@@ -32,10 +33,33 @@ const WorkoutScreen = () => {
       selectWorkout(0);
     }
   }, [workouts]);
-      // Função para desmarcar o checkbox
-      const handleDesmarcarTodos = () => {
-        setIsCheckedList(Array(selectedWorkout.exercises.length).fill(false));
-        };
+
+
+  // Função para desmarcar os checkboxs e enviar os pesos máximos
+  const handleDesmarcarTodos = () => {
+    const novoArrayPesos = {};
+
+    isCheckedList.forEach((isChecked, index) => {
+      if (isChecked) {
+        const nomeExercicio = selectedWorkout.exercises[index].exercise;
+        const novoPeso = pesos[index];
+        novoArrayPesos[nomeExercicio] = novoPeso;
+      }
+    });
+
+    setPesosPorExercicio(novoArrayPesos);
+        
+    setIsCheckedList(Array(selectedWorkout.exercises.length).fill(false));
+    // output no console
+    console.log('Array pesosPorExercicio:', pesosPorExercicio);
+    for (const chave in pesosPorExercicio) {
+      if (pesosPorExercicio.hasOwnProperty(chave)) {
+        const valor = pesosPorExercicio[chave];
+        console.log(`Chave: ${chave}, Valor: ${valor}`);
+      }
+    }
+
+  };
     
   // Função para desmarcar o checkbox
   const handleFinalizarTreino = () => {
