@@ -8,12 +8,14 @@ const WorkoutScreen = () => {
   const [selectedWorkout, setSelectedWorkout] = useState(null);
   const [selectedWorkoutIndex, setSelectedWorkoutIndex] = useState(0);
   const [isCheckedList, setIsCheckedList] = useState(false); // Use um array para rastrear os estados dos checkboxes
+  const userid = '4SyAAkeKRs71KxdhGv12'
 
   useEffect(() => {
     async function fetchWorkouts() {
       try {
-        const workoutsData = await getWorkoutsList();
+        const workoutsData = await getWorkoutsList(userid);
         setWorkouts(workoutsData);
+
       } catch (error) {
         console.error('Erro ao buscar a lista de treinos:', error);
       }
@@ -21,6 +23,14 @@ const WorkoutScreen = () => {
 
     fetchWorkouts();
   }, []);
+
+  useEffect(() => {
+    // Selecionar automaticamente o primeiro treino quando workouts é atualizado
+    if (workouts.length > 0) {
+      selectWorkout(0);
+    }
+  }, [workouts]);
+
 
 
     const handleDesmarcarTodos = () => {

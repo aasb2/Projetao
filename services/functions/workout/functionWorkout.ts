@@ -1,30 +1,40 @@
 import { db } from '../../firebaseConfig';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDoc, query, where, getDocs,doc} from 'firebase/firestore';
 
-async function getWorkoutsList() {
+async function getWorkoutsList(userId: string) {
   try {
-    // Consulta para buscar os treinos na coleção 'workouts'
-    const workoutsCollection = collection(db, 'workouts');
-    const workoutsQuerySnapshot = await getDocs(workoutsCollection);
+    const userDocRef = doc(db, 'users', userId);
+    const userDocSnapshot = await getDoc(userDocRef);
 
-    const workoutsData = [];
+    if (userDocSnapshot.exists()) {
+      const userDocData = userDocSnapshot.data();
+      const workoutReferences = userDocData.workouts || [];
 
-    for (const docRef of workoutsQuerySnapshot.docs) {
-      const workoutData = docRef.data();
+      const workoutsData = [];
 
-      // Nome do treino
-      const nomeTreino = workoutData.treino;
-      workoutData.nomeTreino = nomeTreino;
+      for (const workoutRef of workoutReferences) {
+        const workoutDocSnapshot = await getDoc(workoutRef);
+        if (workoutDocSnapshot.exists()) {
+          const workoutData = workoutDocSnapshot.data();
 
-      // Exercícios do treino
-      const exercises = workoutData.exercises;
-      workoutData.exercises = exercises;
+          // Nome do treino
+          const nomeTreino = workoutData.treino;
+          workoutData.nomeTreino = nomeTreino;
 
-      workoutsData.push(workoutData);
+          // Exercícios do treino
+          const exercises = workoutData.exercises;
+          workoutData.exercises = exercises;
+
+          workoutsData.push(workoutData);
+        }
+      }
+
+      console.log("aqui");
+      return workoutsData;
+    } else {
+      console.error('Documento de usuário não encontrado');
+      return [];
     }
-    console.log("aqui");
-
-    return workoutsData;
   } catch (error) {
     console.error('Erro ao buscar a lista de treinos:', error);
     throw error;
