@@ -5,7 +5,7 @@ import { TextInput } from "react-native-gesture-handler";
 import Color from '../../constants/Colors';
 import { useRouter } from "expo-router";
 import { collection, getDocs, onSnapshot } from "firebase/firestore";
-import db from "../../services/firebaseConfig"
+import { db } from "../../services/firebaseConfig";
 import { useEffect } from "react";
 import { useId } from 'react';
 
