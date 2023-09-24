@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, CheckBox, FlatList, Picker, TextInput  } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { getWorkoutsList } from '../../services/functions/workout/functionWorkout';
+import { getWorkoutsList } from '../../services/functions/workout/functionWorkout';
 
 const WorkoutScreen = () => {
   const [workouts, setWorkouts] = useState([]);
@@ -9,12 +10,14 @@ const WorkoutScreen = () => {
   const [selectedWorkoutIndex, setSelectedWorkoutIndex] = useState(0);
   const [isCheckedList, setIsCheckedList] = useState(false); // Use um array para rastrear os estados dos checkboxes
   const [pesos, setPesos] = useState([]);
+  const userid = '4SyAAkeKRs71KxdhGv12'
 
   useEffect(() => {
     async function fetchWorkouts() {
       try {
-        const workoutsData = await getWorkoutsList();
+        const workoutsData = await getWorkoutsList(userid);
         setWorkouts(workoutsData);
+
       } catch (error) {
         console.error('Erro ao buscar a lista de treinos:', error);
       }
@@ -23,19 +26,29 @@ const WorkoutScreen = () => {
     fetchWorkouts();
   }, []);
 
-    // Função para desmarcar o checkbox
-    const handleDesmarcarTodos = () => {
-    setIsCheckedList(Array(selectedWorkout.exercises.length).fill(false));
+  useEffect(() => {
+    // Selecionar automaticamente o primeiro treino quando workouts é atualizado
+    if (workouts.length > 0) {
+      selectWorkout(0);
+    }
+  }, [workouts]);
+      // Função para desmarcar o checkbox
+      const handleDesmarcarTodos = () => {
+        setIsCheckedList(Array(selectedWorkout.exercises.length).fill(false));
+        };
+    
+  // Função para desmarcar o checkbox
+  const handleFinalizarTreino = () => {
+    setIsChecked(false);
+  };
+    // Função para marcar ou desmarcar um checkbox específico
+    const handleCheckBoxChange = (index) => {
+      const newIsCheckedList = [...isCheckedList];
+      newIsCheckedList[index] = !newIsCheckedList[index];
+      setIsCheckedList(newIsCheckedList);
     };
 
-  // Função para marcar ou desmarcar um checkbox específico
-  const handleCheckBoxChange = (index) => {
-    const newIsCheckedList = [...isCheckedList];
-    newIsCheckedList[index] = !newIsCheckedList[index];
-    setIsCheckedList(newIsCheckedList);
-  };
-
-  // Função para selecionar um treino
+      // Função para selecionar um treino
   const selectWorkout = (index) => {
     setSelectedWorkout(workouts[index]);
     setSelectedWorkoutIndex(index);
@@ -116,7 +129,14 @@ const WorkoutScreen = () => {
 
         {/* Botão "Finalizar Treino" */}
         <TouchableOpacity
+        {/* Botão "Finalizar Treino" */}
+        <TouchableOpacity
         style={styles.finalizarButton}
+        onPress={handleDesmarcarTodos}
+        >
+        <Text style={styles.text2}>Finalizar treino</Text>
+        </TouchableOpacity>
+
         onPress={handleDesmarcarTodos}
         >
         <Text style={styles.text2}>Finalizar treino</Text>
@@ -196,6 +216,9 @@ const styles = StyleSheet.create({
   textInputContainer: {
     flexDirection: 'row', // Para alinhar o texto e a caixa de entrada lado a lado
     alignItems: 'center', // Para centralizar verticalmente
+  },
+  checkboxContainer: {
+    marginRight: 10,
   },
 });
 
