@@ -3,6 +3,7 @@ import { SplashScreen, Stack } from 'expo-router';
 import { useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 import { useFonts, Roboto_400Regular, Roboto_700Bold } from '@expo-google-fonts/roboto';
+import appTheme from '../constants/theme';
 
 
 export {
@@ -49,7 +50,20 @@ function RootLayoutNav() {
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
             <Stack>
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen name="index" options={{ headerShown: false }} /> 
+                <Stack.Screen name="index" options={{ headerShown: false }} />
+                <Stack.Screen name="CheckIn" 
+                    options={
+                    {   headerShown: true, 
+                        headerTitle: 'Conexão com seu personal trainer',
+                        headerStyle: {
+                            backgroundColor: appTheme.COLORS.primary,
+                        },
+                        headerTintColor: 'white',
+                        headerTitleStyle: {
+                            fontSize: 18
+                        }
+                    }                    
+                } />
             </Stack>
         </ThemeProvider>
     );

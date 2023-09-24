@@ -1,5 +1,5 @@
 import { db, auth } from '../../firebaseConfig';
-import { collection, doc, addDoc, query, where, getDocs, setDoc, DocumentReference , DocumentSnapshot } from 'firebase/firestore';
+import { collection, doc, addDoc, query, where, getDocs, setDoc, DocumentReference , DocumentSnapshot, UpdateData } from 'firebase/firestore';
 import { User } from 'firebase/auth';
 
 // Função para criar um novo documento de usuário no Firestore
@@ -16,7 +16,7 @@ async function createNewUserDocument(user: User) {
         email: user.email,
         name: user.displayName,
         image: user.photoURL,
-        community: doc(db, 'community', 'TWTh5lGYADKjXRxAy019')
+        // community: doc(db, 'community', 'TWTh5lGYADKjXRxAy019')
        });
         
         const newUserDocReference: DocumentReference = doc(db, 'users', newUserDocRef.id);
@@ -66,6 +66,35 @@ async function getUserInfo() {
   } catch (error) {
     console.error('Erro ao buscar informações do usuário logado:', error);
   }
+
 }
 
-export { createNewUserDocument, getUserInfo };
+async function linkToPersonal(id: string) {
+  try {
+    const user = auth.currentUser;
+    if (user) {
+      const personalCollection = collection(db, 'personal');
+      const personalQuery = query(personalCollection, where('checkIn', '==', id));
+      const personalQuerySnapshot = await getDocs(personalQuery);
+
+      const communityId = personalQuerySnapshot.docs[0].data().community;
+
+      const usersCollection = collection(db, 'users');
+      const userQuery = query(usersCollection, where('uid', '==', user.uid));
+      const userQuerySnapshot = await getDocs(userQuery);
+      
+      const userDocRef = userQuerySnapshot.docs[0].ref;
+
+      const newUserDocReference: DocumentReference = doc(db, 'users', userDocRef.id);
+      await setDoc(newUserDocReference, { community: communityId }, { merge: true });   
+      
+      console.log('Campo feito com sucesso!')
+    } else {
+      console.log('Nenhum documento encontrado para o usuário logado.');
+    }
+  } catch (error) {
+    console.error('Erro ao buscar informações do usuário logado:', error);
+  }
+}
+
+export { createNewUserDocument, getUserInfo, linkToPersonal };
