@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'; // Importe o ícone desejado da biblioteca de ícones
-
+import { getAchievementsList } from '../../services/functions/achievements/functionAchievements'; // Substitua pelo caminho correto do seu arquivo getAchievementsList
 import appTheme from '../../constants/theme';
 
 // Defina o tipo de objeto para os achievements
@@ -19,26 +19,40 @@ const AchievementsTestScreen = () => {
 
   useEffect(() => {
     // Função assíncrona para buscar a lista de achievements
+    // Função assíncrona para buscar a lista de achievements
     async function fetchAchievements() {
       try {
-        // Substitua a próxima linha pela lógica de busca real dos achievements
-        const achievementsData: Achievement[] = [
-          { id: '1', achievementName: 'Conquista 1', description: 'Descrição da conquista 1' },
-          { id: '2', achievementName: 'Conquista 2', description: 'Descrição da conquista 2' },
-          // Adicione mais conquistas, se necessário
-        ];
-
+        const achievementsData = await getAchievementsList();
         setAchievements(achievementsData);
-        setFilteredAchievements(achievementsData);
       } catch (error) {
         console.error('Erro ao buscar a lista de achievements:', error);
         // Trate o erro de acordo com a necessidade
       }
     }
 
+  // Chama a função para buscar os achievements
+  fetchAchievements();
+}, []);
+    // async function fetchAchievements() {
+    //   try {
+    //     // Substitua a próxima linha pela lógica de busca real dos achievements
+    //     const achievementsData: Achievement[] = [
+    //       { id: '1', achievementName: 'Conquista 1', description: 'Descrição da conquista 1' },
+    //       { id: '2', achievementName: 'Conquista 2', description: 'Descrição da conquista 2' },
+    //       // Adicione mais conquistas, se necessário
+    //     ];
+
+    //     setAchievements(achievementsData);
+    //     setFilteredAchievements(achievementsData);
+    //   } catch (error) {
+    //     console.error('Erro ao buscar a lista de achievements:', error);
+    //     // Trate o erro de acordo com a necessidade
+    //   }
+    // }
+
     // Chama a função para buscar os achievements
-    fetchAchievements();
-  }, []);
+  //   fetchAchievements();
+  // }, []);
 
   useEffect(() => {
     // Filtra os achievements com base no texto de pesquisa
@@ -129,6 +143,9 @@ const styles = StyleSheet.create({
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#DDDDDD',
+    width: 200,
+    height: 200,
+    backgroundColor: '#4B0082',
   },
   achievementDescription: {
     fontSize: 16,
