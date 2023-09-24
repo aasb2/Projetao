@@ -119,6 +119,11 @@ const Prescricao = () => {
         return checkbox.exerciseType === selectedButton;
     });
 
+  // Filtrar os exercícios com base no texto de pesquisa
+  const searchFilteredExercises = checkboxes.filter((checkbox) =>
+    checkbox.exercise.toLowerCase().includes(inputText.toLowerCase())
+  );
+  
     return (
         <View style={styles.prescricaoTreinos}>
             <View style={styles.headerMobile}>
