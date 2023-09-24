@@ -22,9 +22,11 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.lvll.unityfit"
     },
     "web": {
+      "port": 19006,
       "bundler": "metro",
       "output": "static",
       "favicon": "./assets/images/favicon.png"
@@ -34,6 +36,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "ce6f4a91-7994-4e02-920a-2ba2d3dd0461"
+      }
+    },
+    "schema": "unityfit"
   }
 }

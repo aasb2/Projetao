@@ -1,5 +1,5 @@
 import { View, Text, Platform, StyleSheet } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
     Feather,
     Ionicons,
@@ -8,12 +8,10 @@ import {
     FontAwesome,
     FontAwesome5,
 } from '@expo/vector-icons'
-import { Link, Tabs } from 'expo-router';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { COLORS } from '../../constants'
-import { LinearGradient } from 'expo-linear-gradient'
+import { Tabs } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
+import { COLORS } from '../../constants';
 
-const Tab = createBottomTabNavigator()
 
 const styles = StyleSheet.create({
     tabBarStyle: {
@@ -36,8 +34,12 @@ const screenOptions = {
     tabBarStyle: styles.tabBarStyle
 };
 
-const BottomTabNavigation = () => {
-    return (
+
+export default function TabLayout() {
+    console.log('?????????????')
+
+
+    return  (
         <Tabs screenOptions={screenOptions}>
             <Tabs.Screen
                 name="feed"
@@ -131,63 +133,55 @@ const BottomTabNavigation = () => {
     )
 }
 
-export default BottomTabNavigation
+// export default function Navigation() {
+//     WebBrowser.maybeCompleteAuthSession();
 
+//     const [userInfo, setUserInfo] = React.useState<User | null>();
+//     const [request, response, promptAsync] = Google.useAuthRequest({
+//         androidClientId: "100988905326-mslpnvg22mbk52vuee73q9updl5k8vm0.apps.googleusercontent.com",
+//         webClientId: "100988905326-q1b6e6imq9ei9ae76via0fk9h862f83u.apps.googleusercontent.com"
+//     })
 
+//     const checkLocalUser = async () => {
+//         try {
+//             const userJSON = await AsyncStorage.getItem("@user");
+//             const userData = userJSON ? JSON.parse(userJSON) : null;
+//             setUserInfo(userData);
+//         } catch (error) {
+//             alert(error);
+//         }
+//     }
 
+//     useEffect(() => {
+//         checkLocalUser();
+//         const unsub = onAuthStateChanged(auth, async (user) => {
+//             if (user) {
+//                 console.log(JSON.stringify(user, null, 2));
+//                 await AsyncStorage.setItem("@user", JSON.stringify(user));
+//                 setUserInfo(user);
+//                 createNewUserDocument(user);
+//             } else {
+//                 setUserInfo(null);
+//             }
+//         });
+//         return () => unsub();
+//     }, []);
 
-// import FontAwesome from '@expo/vector-icons/FontAwesome5';
-// import { Link, Tabs } from 'expo-router';
-// import { Pressable, useColorScheme } from 'react-native';
+//     useEffect(() => {
+//         if (response?.type == "success") {
+//             const { id_token } = response.params;
+//             const credential = GoogleAuthProvider.credential(id_token);
+//             signInWithCredential(auth, credential)
+//                 .then((result) => {
+//                     console.log('entrei aq?')
+//                     createNewUserDocument(result.user);
+//                     setUserInfo(result.user);
+//                 })
+//                 .catch((error) => {
+//                     console.log(error);
+//                 });
+//         }
+//     }, [response]);
 
-// import Colors from '../../constants/Colors';
-
-// /**
-//  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
-//  */
-// function TabBarIcon(props: {
-//   name: React.ComponentProps<typeof FontAwesome>['name'];
-//   color: string;
-// }) {
-//   return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
-// }
-
-// export default function TabLayout() {
-//   const colorScheme = useColorScheme();
-
-//   return (
-//     <Tabs
-//       screenOptions={{
-//         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-//       }}>
-//       <Tabs.Screen
-//         name="index"
-//         options={{
-//           title: 'Tab One',
-//           tabBarIcon: ({ color }) => <TabBarIcon name="users" color={color} />,
-//           headerRight: () => (
-//             <Link href="/modal" asChild>
-//               <Pressable>
-//                 {({ pressed }) => (
-//                   <FontAwesome
-//                     name="info-circle"
-//                     size={25}
-//                     color={Colors[colorScheme ?? 'light'].text}
-//                     style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-//                   />
-//                 )}
-//               </Pressable>
-//             </Link>
-//           ),
-//         }}
-//       />
-//       <Tabs.Screen
-//         name="two"
-//         options={{
-//           title: 'Tab Two',
-//           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-//         }}
-//       />
-//     </Tabs>
-//   );
+//     return userInfo ? <Login promptAsync={ promptAsync }/> : <BottomTabNavigation/>;
 // }
