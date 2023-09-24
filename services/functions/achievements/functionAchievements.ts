@@ -1,5 +1,6 @@
-import { db } from '../../firebaseConfig';
+import { db, auth } from '../../firebaseConfig';
 import { collection, getDocs } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 
 async function getAchievementsList() {
   try {
@@ -37,5 +38,33 @@ async function getAchievementsList() {
     throw error;
   }
 }
-
 export { getAchievementsList };
+
+// Função para realizar uma requisição POST
+async function enviarDadosParaUsuario(dados) {
+  try {
+    // Verifique se o usuário está autenticado (exemplo, você pode usar Firebase Authentication)
+    const user = auth.currentUser;
+
+    if (!user) {
+      throw new Error('Usuário não autenticado');
+    }
+
+    const userId = user.uid; // ID do usuário autenticado
+
+    // Caminho para o documento do usuário no Firestore (substitua pelo caminho correto)
+    const userDocRef = doc(db, 'users', userId);
+
+    // Adicione os dados ao array "treinos_realizados" no documento do usuário
+    await setDoc(userDocRef, {
+      treinos_realizados: arrayUnion(dados),
+    }, { merge: true });
+
+    console.log('Dados enviados com sucesso para o usuário:', userId);
+  } catch (error) {
+    console.error('Erro ao enviar dados para o usuário:', error);
+    throw error;
+  }
+}
+
+export { enviarDadosParaUsuario };
