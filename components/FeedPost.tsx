@@ -24,9 +24,16 @@ const users = [images.user1, images.user2, images.user3, images.user4]
 
 
 const FeedPost = ({ postsData, handleLikePost, userImage }) => {
+    const [comments, setComments] = useState(postsData.map(() => ''));
+
+    const handleCommentChange = (text: String, index: number) => {
+        const newComments = [...comments];
+        newComments[index] = text;
+        setComments(newComments);
+    };
     return (
         <View>
-            {postsData.map((post) => (
+            {postsData.map((post, index: number) => (
                 <View
                     key={post.id}
                     style={{
@@ -239,8 +246,27 @@ const FeedPost = ({ postsData, handleLikePost, userImage }) => {
                             <TextInput
                                 placeholder="Add comentário"
                                 placeholderTextColor="#CCC"
+                                value={comments[index]}
+                                onChangeText={(text) => handleCommentChange(text, index)}
                             />
                         </View>
+                        <TouchableOpacity
+                            onPress={() => {
+                                console.log("Comentário enviado");
+                                const newComments = [...comments];
+                                newComments[index] = '';
+                                setComments(newComments);
+                            }}
+                            style={{
+                                paddingHorizontal: 8,
+                                alignItems: 'center',
+                                flexDirection: 'row'
+                            }}
+                        >
+                            <Text style={{ color: COLORS.primary, fontWeight: 'bold' , alignItems: 'center'}}>
+                                Add
+                            </Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             ))}
