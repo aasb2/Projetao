@@ -39,7 +39,7 @@ async function createNewUserDocument(user: User) {
 // Função para buscar informações da comunidade com base na referência
 async function getCommunityInfo(communityRef: any) {
   try {
-    // Use a referência da comunidade para buscar as informações da comunidade
+    // Usa a referência da comunidade para buscar as informações da comunidade
     const communityDoc = await getDoc(communityRef);
     if (communityDoc.exists()) {
       return communityDoc.data();
@@ -59,12 +59,11 @@ async function getCommunityInfo(communityRef: any) {
 async function getUserInfo() {
   try {
     const user = auth.currentUser;
-    if (user) {
-      console.log('Usuário autenticado:', user);
-      // Resto do código
-    } else {
-      console.log('Nenhum usuário autenticado.');
-    }
+    // if (user) {
+    //   console.log('Usuário autenticado:', user);
+    // } else {
+    //   console.log('Nenhum usuário autenticado.');
+    // }
 
     if (user) {
       const usersCollection = collection(db, 'users');
@@ -76,12 +75,11 @@ async function getUserInfo() {
 
         //console.log('Informações do usuário logado:', userData);
 
-        // Verifique se a referência da comunidade está presente nas informações do usuário
         if (userData.community) {
-          // Use a função getCommunityInfo para obter informações da comunidade
+          // Usa a função getCommunityInfo para obter informações da comunidade
           const communityInfo = await getCommunityInfo(userData.community);
           
-          // Adicione as informações da comunidade ao objeto userData
+          // Adiciona as informações da comunidade ao objeto userData
           if (communityInfo) {
             userData.communityInfo = communityInfo;
           }

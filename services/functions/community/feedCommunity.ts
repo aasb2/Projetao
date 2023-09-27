@@ -3,14 +3,12 @@ import { collection, getDocs, getDoc, query, orderBy, DocumentData, where } from
 import { ref, getDownloadURL, FirebaseStorage } from 'firebase/storage';
 import { getUserInfo } from '../login/loginUser';
 
+// Função para pegar a lista de alunos da comunidade
 async function getFriendsList() {
   try {
-    // Obtem as informações do usuário logado, incluindo a comunidade
     const currUser = await getUserInfo();
 
-    // Verifica se há informações de usuário e de comunidade
     if (currUser && currUser.community) {
-      // Obtenha a referência da comunidade
       const communityRef = currUser.community;
 
       // Consulta para buscar os amigos do usuário com base na comunidade
@@ -51,12 +49,11 @@ async function getFriendsList() {
 
 // ...
 
+// Função para pegar os posts da comunidade
 async function getPostsList() {
   try {
-    // Obtem as informações do usuário logado, incluindo a comunidade
     const currUser = await getUserInfo();
 
-    // Verifica se há informações de usuário e de comunidade
     if (currUser && currUser.community) {
       const communityRef = currUser.community;
 
@@ -116,6 +113,7 @@ async function getPostsList() {
     throw error;
   }
 }
+
 
 export { getFriendsList, getPostsList };
 

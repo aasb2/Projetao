@@ -5,7 +5,6 @@ import {
     ScrollView,
     FlatList,
     Image,
-    RefreshControl,
     TextInput,
 } from 'react-native'
 import React, { useState, useEffect } from 'react'
@@ -24,7 +23,7 @@ import { friends } from '../../constants/data'
 import FeedPost from '../../components/FeedPost';
 import { getFriendsList, getPostsList } from '../../services/functions/community/feedCommunity';
 import { getUserInfo } from '../../services/functions/login/loginUser';
-import { DocumentData, updateDoc, doc } from 'firebase/firestore';
+import { DocumentData, updateDoc, doc, onSnapshot, collection, getDoc, getDocs } from 'firebase/firestore';
 import { db } from '../../services/firebaseConfig';
 
 
@@ -74,49 +73,45 @@ const Feed = () => {
                 }
             };
 
-            fetchFriends(); // Chama a função de busca ao montar o componente
+            // Inicia o ouvinte em tempo real para a coleção de posts
+            const unsubscribe = onSnapshot(collection(db, 'users'), async (snapshot) => {
+                const updatedFriends = await getFriendsList();
+                setFriendsData(updatedFriends);
+            });
+
+            // Chama as funções para buscar dados iniciais
+            fetchFriends();
+
+            // Retorna uma função de limpeza para interromper o ouvinte quando o componente for desmontado
+            return () => unsubscribe();
         }, []);
         const communityName = userCommunity?.communityInfo?.name || '';
 
-        // async function handleStartTraining() {
-        //     try {
-        //         const user = await getUserInfo();               
-                
-        //         if (user) {
-        //             const userRef = doc(db, 'users', user.uid);
+        async function handleStartTraining() {
+            try {
+                const user = await getUserInfo(); // Obtenha as informações do usuário logado
 
-        //             // Se o campo isTraining for true, defina como false, e vice-versa
-        //             const newIsTrainingValue = !user.isTraining;
-        //             console.log(newIsTrainingValue)
-        //             // Atualiza o campo isTraining com o novo valor no Firestore
-        //             await updateDoc(userRef, {
-        //                 isTraining: newIsTrainingValue,
-        //             });
+                if (user) {
+                    const newIsTrainingValue = !user.isTraining;
+                    const id = user.id._key.path.segments.slice(-1)[0];
+                    const userDocRef = doc(db, 'users', id);
+                    console.log("userDocRef", userDocRef);
+                    updateDoc(userDocRef, {
+                        isTraining: newIsTrainingValue,
+                    });
 
-        //             // Atualize o campo isTraining no estado local friendsData
-        //             const updatedFriendsData = friendsData.map((friend) => {
-        //                 if (friend.uid === user.uid) {
-        //                     console.log("LOCAL",friend)
-        //                 // Atualize o valor apenas para o usuário logado
-        //                     return {
-        //                         ...friend,
-        //                         isTraining: newIsTrainingValue,
-        //                     };
-        //                 }
-        //                 return friend;
-        //             });
+                    console.log('Campo isTraining atualizado para', newIsTrainingValue);
+                } else {
+                    console.log('O documento não existe.');
+                }
+            } catch (error) {
+                console.error('Erro ao atualizar o campo isTraining:', error);
+            }
+        }
 
-        //             // Atualize o estado friendsData com os novos dados
-        //             setFriendsData(updatedFriendsData);
 
-        //             console.log('Campo isTraining atualizado para', newIsTrainingValue);
-        //         } else {
-        //         console.log('Nenhum usuário autenticado.');
-        //         }
-        //     } catch (error) {
-        //         console.error('Erro ao atualizar o campo isTraining:', error);
-        //     }
-        // }
+
+
         const filteredFriendsData = friendsData.filter(item => item.isTraining);
 
 
@@ -126,7 +121,7 @@ const Feed = () => {
                     style={{
                     marginVertical: 8,
                     flexDirection: 'row',
-                    justifyContent: 'space-between', // Isso coloca o ícone à direita
+                    justifyContent: 'space-between',
                     alignItems: 'center',
                     }}
                 >
@@ -148,7 +143,7 @@ const Feed = () => {
                         </View>
                     </View>
                                         
-                    < TouchableOpacity onPress = {() => console.log('chamar => handleStartTraining()')}>
+                    < TouchableOpacity onPress = {() => handleStartTraining()}>
                         <LinearGradient
                         colors={['#4B0082', '#6D458B']}
                         style={{
@@ -198,8 +193,8 @@ const Feed = () => {
                                     <LinearGradient
                                         colors={['#4B0082', '#6D458B']}
                                         style={{
-                                            height: 28,
-                                            width: 28,
+                                            height: 30,
+                                            width: 30,
                                             borderRadius: 15,
                                             position: 'absolute',
                                             alignItems: 'center',
@@ -218,7 +213,7 @@ const Feed = () => {
                                 )}
 
                                 <Image
-                                    source={{ uri: item.imageURL }} // Usar a URL da imagem
+                                    source={{ uri: item.imageURL }}
                                     resizeMode="contain"
                                     style={{
                                         width: 100,
@@ -276,20 +271,41 @@ const Feed = () => {
         };
 
         useEffect(() => {
-            const fetchPosts = async () => {
-            try {
-                const dataPosts = await getPostsList();
-                const dataUser = await getUserInfo() as DocumentData;
-
-                setUserImg(dataUser.image);
-                setPostsData(dataPosts);
-                setIsLoading(false);
-            } catch (error) {
-                console.error('Erro ao buscar a lista de posts:', error);
-            }
+            // Obtém as informações do usuário logado
+            const fetchUserInfo = async () => {
+                try {
+                    const userData = await getUserInfo() as DocumentData | undefined;;
+                    if (userData) {
+                        setUserImg(userData.image);
+                    }
+                } catch (error) {
+                console.error('Erro ao buscar informações de usuário:', error);
+                }
             };
 
+            // Obtém a lista de posts
+            const fetchPosts = async () => {
+                try {
+                const postsData = await getPostsList();
+                setPostsData(postsData);
+                setIsLoading(false);
+                } catch (error) {
+                console.error('Erro ao buscar a lista de posts:', error);
+                }
+            };
+
+            // Inicia o ouvinte em tempo real para a coleção de posts
+            const unsubscribe = onSnapshot(collection(db, 'posts'), async (snapshot) => {
+                const updatedPosts = await getPostsList();
+                setPostsData(updatedPosts);
+            });
+
+            // Chama as funções para buscar dados iniciais
+            fetchUserInfo();
             fetchPosts();
+
+            // Retorna uma função de limpeza para interromper o ouvinte quando o componente for desmontado
+            return () => unsubscribe();
         }, []);
 
         if (isLoading) {
@@ -297,9 +313,7 @@ const Feed = () => {
         }
 
         return <FeedPost postsData={postsData} handleLikePost={handleLikePost} userImage={userImg} />;
-
     }
-
 
 
     return (
