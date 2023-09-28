@@ -37,6 +37,21 @@ const Prescricao = () => {
                     checked: false
                 })
             })
+
+            //ordena os treinos em ordem alfabetica
+            prescriptions.sort((a, b) => {
+                const prescriptionA = a.exercise.toLowerCase();
+                const prescriptionB = b.exercise.toLowerCase();
+              
+                if (prescriptionA < prescriptionB) {
+                  return -1; 
+                } else if (prescriptionA > prescriptionB) {
+                  return 1; 
+                } else {
+                  return 0; 
+                }
+              });
+              
             setCheckboxes(prescriptions)
             //console.log("pre",prescriptions)
         })
