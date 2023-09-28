@@ -5,6 +5,7 @@ import { getAchievementsList } from '../../services/functions/achievements/funct
 import appTheme from '../../constants/theme';
 import { background } from 'native-base/lib/typescript/theme/styled-system';
 import { Button } from 'react-native';
+import { ChallengeCard } from '../../components/challengeCard';
 
 
 // Defina o tipo de objeto para os achievements
@@ -132,6 +133,7 @@ const AchievementsTestScreen = () => {
 
       {/* RENDERIZAÇÃO: Challenges */}
       {/* @bonna */}
+      <ChallengeCard />
 
 
     </View>
