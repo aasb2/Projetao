@@ -95,17 +95,15 @@ const Prescricao = () => {
         return null;
     }
 
-    // Filtrar os exercícios com base na opção selecionada
+    // Filtrar os exercícios com base na opção selecionada e no texto de pesquisa
     const filteredExercises = checkboxes.filter((checkbox) => {
-        if (!selectedButton) return true; // Se nenhuma opção estiver selecionada, exibir todos os exercícios
-        return checkbox.exerciseType === selectedButton;
+        const matchesText = checkbox.exercise.toLowerCase().includes(inputText.toLowerCase())
+
+        // Se nenhuma opção estiver selecionada, exibir todos os exercícios
+        const matchesType = (!selectedButton) || (checkbox.exerciseType === selectedButton);
+
+        return matchesText && matchesType;
     });
-
-    // Filtrar os exercícios com base no texto de pesquisa
-    const searchFilteredExercises = checkboxes.filter((checkbox) =>
-        checkbox.exercise.toLowerCase().includes(inputText.toLowerCase())
-    );
-
 
     return (
         <View style={styles.prescricaoTreinos}>
@@ -162,7 +160,7 @@ const Prescricao = () => {
                     <ScrollView
                         showsVerticalScrollIndicator={false}
                         style={styles.exercises}>
-                        {(inputText.length > 0 ? searchFilteredExercises : filteredExercises).map((checkbox, index) => (
+                        { filteredExercises.map((checkbox, index) => (
                             <View key={checkbox.id} style={styles.exercise}>
                                 <TouchableOpacity
                                     style={checkbox.checked ? [styles.checkbox, styles.checked] : styles.checkbox}
