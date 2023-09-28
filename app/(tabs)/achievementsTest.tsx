@@ -20,7 +20,7 @@ const AchievementsTestScreen = () => {
 
   useEffect(() => {
     // Função assíncrona para buscar a lista de achievements
-    // Função assíncrona para buscar a lista de achievements
+
     async function fetchAchievements() {
       try {
         const achievementsData = await getAchievementsList();
@@ -34,28 +34,9 @@ const AchievementsTestScreen = () => {
   // Chama a função para buscar os achievements
   fetchAchievements();
 }, []);
-    // async function fetchAchievements() {
-    //   try {
-    //     // Substitua a próxima linha pela lógica de busca real dos achievements
-    //     const achievementsData: Achievement[] = [
-    //       { id: '1', achievementName: 'Conquista 1', description: 'Descrição da conquista 1' },
-    //       { id: '2', achievementName: 'Conquista 2', description: 'Descrição da conquista 2' },
-    //       // Adicione mais conquistas, se necessário
-    //     ];
-
-    //     setAchievements(achievementsData);
-    //     setFilteredAchievements(achievementsData);
-    //   } catch (error) {
-    //     console.error('Erro ao buscar a lista de achievements:', error);
-    //     // Trate o erro de acordo com a necessidade
-    //   }
-    // }
-
-    // Chama a função para buscar os achievements
-  //   fetchAchievements();
-  // }, []);
 
   useEffect(() => {
+
     // Filtra os achievements com base no texto de pesquisa
     const filtered = achievements.filter((achievement) =>
       achievement.achievementName.toLowerCase().includes(searchText.toLowerCase())
@@ -63,7 +44,8 @@ const AchievementsTestScreen = () => {
     setFilteredAchievements(filtered);
   }, [searchText, achievements]);
 
-  function renderItem({ item }: { item: Achievement }) {
+  // Componente: achievement
+  function renderItem({item }: { item: Achievement }) {
     return (
       <View style={styles.achievementItem}>
         {/* <Image source={{ uri: item.imageURL }} style={styles.achievementImage} /> */}
@@ -73,32 +55,26 @@ const AchievementsTestScreen = () => {
     );
   }
 
-
-
   return (
     <View style={{ flex: 1, paddingBottom: 60, backgroundColor: '#380062' }}>
+
+      {/* Header */}
       <View style={styles.header}>
+        {/* Botão voltar */}
         <TouchableOpacity
           style={{
             flexDirection: 'row',
             alignItems: 'center',
             backgroundColor: '4B0082',
             padding: 10,
-          }}
-        >
+          }}>
           <Ionicons name="arrow-back" size={24} color="white" />
           <Text style={{ color: 'white', marginLeft: 5 }}>Voltar</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.button}>
-          <Text>Press Here</Text>
         </TouchableOpacity>
       </View>
 
       {/* Barra de pesquisa */}
-      <View
-        style={styles.searchContainer}
-      >
+      <View style={styles.searchContainer}>
         <View style={styles.searchInputContainer}>
           <TextInput
             placeholder="Pesquisar desafio..."
@@ -116,6 +92,7 @@ const AchievementsTestScreen = () => {
         </View>
       </View>
 
+      {/* Lista de achievements */}
       <FlatList
         data={filteredAchievements}
         renderItem={renderItem}
@@ -126,6 +103,7 @@ const AchievementsTestScreen = () => {
 };
 
 
+// Estilização
 const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
