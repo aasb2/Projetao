@@ -9,21 +9,13 @@ import {
 } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { COLORS, FONTS, SIZES, images } from '../../constants'
-import {
-    MaterialIcons,
-    Ionicons,
-    Feather,
-    Foundation,
-    MaterialCommunityIcons,
-} from '@expo/vector-icons'
-import { LinearGradient } from 'expo-linear-gradient'
+import { images } from '../../constants'
 import { friends } from '../../constants/data'
 import FeedPost from '../../components/FeedPost';
 import { getFriendsList, getPostsList } from '../../services/functions/community/feedCommunity';
 import { getUserInfo } from '../../services/functions/login/loginUser';
 import { DocumentData, updateDoc, doc } from 'firebase/firestore';
-import { db } from '../../services/firebaseConfig';
+import { db } from '../../services/firebaseConfig'
 
 
 const users = [images.user1, images.user2, images.user3, images.user4]

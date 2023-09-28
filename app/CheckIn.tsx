@@ -10,7 +10,6 @@ export default function CheckIn() {
     const navigation = useNavigation();
 
     const handleInputChange = (text: string) => {
-        console.log('to aq')
         setInputValue(text);
     };
 

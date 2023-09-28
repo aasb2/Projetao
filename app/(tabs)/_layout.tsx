@@ -1,11 +1,9 @@
-import { View, Text, Platform, StyleSheet } from 'react-native'
-import React, { useEffect } from 'react'
+import { View, Platform, StyleSheet } from 'react-native'
+import React from 'react'
 import {
     Feather,
-    Ionicons,
     MaterialCommunityIcons,
     Entypo,
-    FontAwesome,
     FontAwesome5,
 } from '@expo/vector-icons'
 import { Tabs } from 'expo-router';

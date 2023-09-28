@@ -1,6 +1,5 @@
-import { db, storage } from '../../firebaseConfig';
-import { collection, getDocs, getDoc, query, orderBy, DocumentData, where } from 'firebase/firestore';
-import { ref, getDownloadURL, FirebaseStorage } from 'firebase/storage';
+import { db } from '../../firebaseConfig';
+import { collection, getDocs, getDoc, query, DocumentData, where } from 'firebase/firestore';
 import { getUserInfo } from '../login/loginUser';
 
 async function getFriendsList() {
