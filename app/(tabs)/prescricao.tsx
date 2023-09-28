@@ -7,10 +7,6 @@ import { useRouter } from "expo-router";
 import { useEffect } from "react";
 import { db } from "../../services/firebaseConfig";
 import { doc, addDoc, collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
-import { useIsFocused } from "@react-navigation/native";
-import globalState, { ExerciseStruct } from '../../components/store/prescricaoGlobalState';
-import { useId } from 'react';
-
 
 interface checkboxStruct {
     id: string;
@@ -25,128 +21,35 @@ const Prescricao = () => {
     const [inputText, setInputText] = React.useState<string>('');
     const [checkboxes, setCheckboxes] = React.useState<checkboxStruct[]>([]);
     const [selectedButton, setSelectedButton] = React.useState<string>('');
-    
-    const isFocused = useIsFocused();
-    
-    // const getPrescriptions = () => {
-    //     const collectionRef = collection(db, "prescriptions")
-    //     let prescriptions = []
-    //     getDocs(collectionRef).then((snapshot)=>{
-    //         // console.log("doc",snapshot.docs)
-    //         snapshot.docs.forEach((doc) => {
-    //         prescriptions.push({...doc.data(), id: doc.id})
-
-    //      })
-    //      console.log("Pre", prescriptions)
-    //     }).catch(err =>{console.log(err.message)})
-    //     setCheckboxes(prescriptions)
-    //     return prescriptions
-    // }
+        
 
     useEffect(() =>{
-        const collectionRef = collection(db, "prescriptions")
+        const collectionRef = collection(db, "exerciseTypes")
         onSnapshot(collectionRef,(snapshot)=>{
             let prescriptions:checkboxStruct[] = []
             
             snapshot.docs.forEach((doc) => {
-                if (doc.id==="uEDYZGRrI5crs3xrcQoY"){
                     let data = doc.data()
-                    // prescriptions.push({exercise:data.exerciseName, exerciseType:exerci, checked:false })
-                    // data.forEach((prescription) => {
                     prescriptions.push({
-                        id:data.id,
-                        exercise: data.exercise,
-                        exerciseType:data.exerciseType,
-                        checked: false //checked nao vai ser armazenado
+                        id:doc.id,
+                        exercise: data.name,
+                        exerciseType:data.type,
+                        checked: false
                     })
-                    // })
-                } else{
-                    console.log("ID",doc.id)
-                }
             })
             setCheckboxes(prescriptions)
-            console.log("pre",prescriptions)
+            //console.log("pre",prescriptions)
         })
-
-        //carrega os treinos do usuario atual
-        fetchSavedPresc();
     },[]) 
 
-    //executa sempre que a tela é aberta
-    useEffect(() => {
-        if (isFocused) {
-            updateFromGlobal();
-            console.log("updated screen");
-        }
-    }, [isFocused]);
-
-    const fetchSavedPresc = () => {
-         //id para teste, já que ainda não tem como pegar ele por enquanto
-        //eventualmente substituir por
-        //const currUser = await getUserInfo();
-        const userId = "4SyAAkeKRs71KxdhGv12";
-        const currUser = doc(db, 'users', userId);
-        const prescCollection = collection(db, 'prescriptions');
-        const prescQuery = query(prescCollection, where('user', '==', currUser));
-
-        //busca pela prescrição do usuario atual
-        getDocs(prescQuery).then((prescQuerySnapshot) => {
-            if (prescQuerySnapshot.size > 0) {
-                const prescData = prescQuerySnapshot.docs[0].data();
-
-                globalState.prescriptionRef =  prescQuerySnapshot.docs[0].ref;
-
-                //salva as prescrições do banco de dados no estado global
-                globalState.userExercises = prescData.prescriptions;
-
-                globalState.userExercises.forEach(ex => {
-                    ex.checked = true;
-                });
-                console.log("fetched from db");
-                updateFromGlobal();
-            }
-            else
-                console.log("none");
-        });
-    };
-     
-    const updateFromGlobal = () => {
-        console.log(globalState.userExercises)
-        globalState.userExercises.forEach((presc: ExerciseStruct) => {
-            if (!presc.checked)
-                return;
-            const matchedCheckbox = checkboxes.find((checkbox) => {
-                return checkbox.exercise === presc.exerciseName;
-            });
-
-            if (matchedCheckbox != undefined) {
-                toggleCheckbox(matchedCheckbox, true);
-            }
-        });
-    };
-
     const toggleCheckbox = (checkboxToSwitch: checkboxStruct, value?: boolean) => {
-        const matchedExercise = globalState.userExercises.find((ex) => {
-            return ex.exerciseName === checkboxToSwitch.exercise;
-        });
-
         if (value) {
             checkboxToSwitch.checked = value;
-            
         }
         else {
             checkboxToSwitch.checked = !checkboxToSwitch.checked;
         }
         
-        //atualiza o estado global tambem
-        if (matchedExercise != undefined) {
-            matchedExercise.checked = checkboxToSwitch.checked;
-        }
-        else {
-            globalState.userExercises.push(
-                { exerciseName: checkboxToSwitch.exercise, sets: [], checked: checkboxToSwitch.checked }
-            );
-        }
         setCheckboxes([...checkboxes]);
     };
 
@@ -173,9 +76,6 @@ const Prescricao = () => {
         alert('pesquisa por: ' + inputText);
     };
 
-    
-
-    
     const options = [
         { value: 'Costas' },
         { value: 'Pernas' },
@@ -287,7 +187,7 @@ const Prescricao = () => {
             </View>
             <View style={styles.buttonWrapper}>
                 <Pressable style={styles.button} onPress={handleSavePress}>
-                    <Text style={styles.buttonText}>Salvar e Continuar</Text>
+                    <Text style={styles.buttonText}>Continuar</Text>
                 </Pressable>
             </View>
         </View>
@@ -464,6 +364,7 @@ const styles = StyleSheet.create({
     },
     button: {
         alignSelf: 'center',
+        width:200,
         padding: 12,
         borderRadius: 20,
         backgroundColor: Color.prescricao.purple,

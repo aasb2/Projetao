@@ -1,57 +1,48 @@
 import * as React from "react";
-import { Text, StyleSheet, View, Image, ScrollView, TextInput, Pressable } from "react-native";
+import { Text, StyleSheet, View, Image, ScrollView, TextInput, Pressable, Modal } from "react-native";
 import { useFonts, Roboto_400Regular, Roboto_700Bold, Roboto_100Thin } from '@expo-google-fonts/roboto'
 import Color from '../../constants/Colors';
 import { useLocalSearchParams, router } from 'expo-router';
 import { db } from "../../services/firebaseConfig";
-import { doc, addDoc, collection, updateDoc } from 'firebase/firestore';
-import { useEffect } from "react";
-import globalState from "../../components/store/prescricaoGlobalState";
+import { doc, addDoc, collection, updateDoc, arrayUnion } from 'firebase/firestore';
+import { useEffect, useState } from "react";
 import { useIsFocused } from "@react-navigation/native";
 //import { getUserInfo } from '../../services/functions/login/loginUser';
 
 interface ExerciseStruct {
-    exerciseName: string;
-    sets: SetStruct[];
-}
-
-interface SetStruct {
-    load: number;
+    exercise: string;
+    kg: number;
     reps: number;
+    sets: number;
 }
 
 const PrescricaoEspecificacao = () => {
     const params = useLocalSearchParams<{ exercises: string }>();
 
-    const [exerciseOptions, setExercises] = React.useState<ExerciseStruct[]>([])
+    const [exerciseOptions, setExercises] = useState<ExerciseStruct[]>([]);
 
-    const isFocused = useIsFocused();
+    const [trainingName, setTrainingName] = useState<String>('');
+
+    const [isModalVisible, setModalVisible] = useState(false);
+
+    const togglePopup = () => {
+        setModalVisible(!isModalVisible);
+    };
 
     //atualiza os exercicios quando params muda
     useEffect(() => {
-        if (isFocused) {
-            if (Object.keys(params).length != 0) {
-                //console.log(params);
+        if (Object.keys(params).length != 0 && params.exercises != "") {
+            //console.log(params);
 
-                const matchGlobalExercise = (exName: string) => {
-                    const match = globalState.userExercises.find((globalEx) => {
-                        return globalEx.exerciseName === exName;
-                    });
+            const exercisesArr = params.exercises.split(',');
+            const chosenExercises = exercisesArr.map(ex => ({ exercise: ex, kg: 10, reps: 10, sets: 1 }));
 
-                    if (match == undefined)
-                        return { exerciseName: exName, sets: [] };
-                    else
-                        return match;
-                };
-                const exercisesArr = params.exercises.split(',');
-                //const chosenExercises = exercisesArr.map(matchGlobalExercise);
-                const chosenExercises = globalState.userExercises.filter((ex) => ex.checked == true);
-
-                globalState.userExercises.find
-                setExercises(chosenExercises);
-            }
+            setExercises(chosenExercises);
         }
-    }, [isFocused]);
+        else {
+            setExercises([]);
+        }
+    }, [params]);
 
     const [fontLoaded] = useFonts({
         Roboto_100Thin,
@@ -62,29 +53,24 @@ const PrescricaoEspecificacao = () => {
     if (!fontLoaded) {
         return null;
     }
-    const addNewExercise = (index: number) => {
+
+    const updateTrainSets = (sets: string, exIndex: number) => {
         const newExerciseOptions = [...exerciseOptions]
-        newExerciseOptions[index].sets.push({ reps: 10, load: 10 })
+        const numericSets = sets.replace(/[^0-9]/g, '');
+        newExerciseOptions[exIndex].sets = (numericSets == "") ? 0 : parseInt(numericSets);
         setExercises(newExerciseOptions);
     };
-
-    const removeExercise = (exIndex: number, sesIndex: number) => {
-        var newExerciseOptions = [...exerciseOptions];
-        exerciseOptions[exIndex].sets.splice(sesIndex, 1);
-        setExercises(newExerciseOptions);
-    };
-
-    const updateSetRep = (reps: string, exIndex: number, sesIndex: number) => {
+    const updateTrainRep = (reps: string, exIndex: number) => {
         const newExerciseOptions = [...exerciseOptions]
         const numericReps = reps.replace(/[^0-9]/g, '');
-        newExerciseOptions[exIndex].sets[sesIndex].reps = parseInt(numericReps);
+        newExerciseOptions[exIndex].reps = (numericReps == "") ? 0 : parseInt(numericReps);
         setExercises(newExerciseOptions);
     };
 
-    const updateSetLoad = (load: string, exIndex: number, sesIndex: number) => {
+    const updateTrainWeight = (weight: string, exIndex: number) => {
         const newExerciseOptions = [...exerciseOptions];
-        const numericLoad = load.replace(/[^0-9]/g, '');
-        newExerciseOptions[exIndex].sets[sesIndex].load = parseInt(numericLoad);
+        const numericWeight = weight.replace(/[^0-9]/g, '');
+        newExerciseOptions[exIndex].kg = (numericWeight == "") ? 0 : parseInt(numericWeight);
         setExercises(newExerciseOptions);
     };
 
@@ -92,26 +78,24 @@ const PrescricaoEspecificacao = () => {
         //id para teste, já que ainda não tem como pegar ele por enquanto
         //eventualmente substituir por
         //const currUser = await getUserInfo();
-        const userId = "4SyAAkeKRs71KxdhGv12";
+        const userId = "H0KOddwlI97ank63RKAG";
         const currUser = doc(db, 'users', userId);
 
-        const presCollection = collection(db, 'prescriptions');
+        const presCollection = collection(db, 'workouts');
 
-        if (globalState.prescriptionRef == null) {
-            const addedPresc = await addDoc(presCollection, {
-                user: currUser,
-                prescriptions: exerciseOptions
-            });
-            alert("Adicionado com sucesso em " + addedPresc.id);
-        }
-        else{
-            await updateDoc(globalState.prescriptionRef, {
-                user: currUser,
-                prescriptions: exerciseOptions
-            });
-            alert("Atualizado com sucesso em " + globalState.prescriptionRef.id);
-        }
+        //cria novo treino
+        const addedPresc = await addDoc(presCollection, {
+            prescriptions: exerciseOptions,
+            treino: trainingName
+        });
 
+        //atualiza referencias no usuario
+         await updateDoc(currUser,{
+            workouts: arrayUnion(addedPresc)
+        })
+
+        alert("Adicionado com sucesso em " + addedPresc.id);
+        togglePopup();
     };
 
     return (
@@ -129,6 +113,44 @@ const PrescricaoEspecificacao = () => {
 
 
             <View style={styles.body}>
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={isModalVisible}
+                    onRequestClose={togglePopup}
+                >
+                    <View style={styles.popup}>
+                        <View style={styles.popupBody}>
+                            <View style={styles.popupCloseWrapper}>
+                                <Pressable
+                                    style={styles.popupClose}
+                                    onPress={() => togglePopup()}>
+                                    <Image
+                                        style={[styles.icon]}
+                                        resizeMode="contain"
+                                        source={require('../../assets/images/close.png')}
+                                    />
+                                </Pressable>
+                            </View>
+                            <Text style={styles.popupText}>Dê um nome a seu treino</Text>
+                            <View style={styles.popupInputWrapper}>
+                                <TextInput
+                                    style={styles.popupInput}
+                                    placeholder=""
+                                    onChangeText={(text) => setTrainingName(text)}
+                                    value={trainingName.toString()}
+                                    keyboardType="ascii-capable"
+                                />
+                            </View>
+                            <View style={styles.buttonWrapper}>
+                                <Pressable style={styles.button} onPress={handleSavePress}>
+                                    <Text style={styles.buttonText}>Salvar Treino</Text>
+                                </Pressable>
+                            </View>
+                        </View>
+                    </View>
+
+                </Modal>
                 <ScrollView
                     showsVerticalScrollIndicator={false}
                     style={styles.exercises}>
@@ -139,95 +161,66 @@ const PrescricaoEspecificacao = () => {
 
                                 <View style={styles.exerciseTextWrapper}>
                                     <Text style={styles.exerciseText}>
-                                        {option.exerciseName}
+                                        {option.exercise}
                                     </Text>
                                 </View>
 
-                                <Pressable
-                                    onPress={() => addNewExercise(exIndex)}
-                                    style={styles.exerciseNewButton}
-                                >
-                                    <Image
-                                        style={[styles.icon]}
-                                        resizeMode="cover"
-                                        source={require('../../assets/images/plus.png')}
-                                    />
-
-                                </Pressable>
-
                             </View>
 
-                            <View style={styles.sets}>
-                                {exerciseOptions[exIndex].sets.length > 0 && (
-                                    <View style={styles.setIcons}>
-                                        <Image
-                                            style={[styles.icon]}
-                                            resizeMode="contain"
-                                            source={require('../../assets/images/reps.png')}
+                            <View style={styles.trainingProperties}>
+                                <View style={styles.trainingProp}>
+                                    <Text style={styles.trainingPropText}>
+                                        Séries
+                                    </Text>
+                                    <View style={styles.trainingInputWrapper}>
+                                        <TextInput
+                                            style={styles.trainingInput}
+                                            placeholder="0"
+                                            onChangeText={(text) => updateTrainSets(text, exIndex)}
+                                            value={option.sets.toString()}
+                                            keyboardType="numeric"
                                         />
-                                        <Image
-                                            style={[styles.icon]}
-                                            resizeMode='contain'
-                                            source={require('../../assets/images/weight.png')}
+                                    </View>
+                                </View>
+                                <View style={styles.trainingProp}>
+                                    <Text style={styles.trainingPropText}>
+                                        Repetições
+                                    </Text>
+                                    <View style={styles.trainingInputWrapper}>
+                                        <TextInput
+                                            style={styles.trainingInput}
+                                            placeholder="0"
+                                            onChangeText={(text) => updateTrainRep(text, exIndex)}
+                                            value={option.reps.toString()}
+                                            keyboardType="numeric"
                                         />
-
                                     </View>
-                                )}
+                                </View>
 
-                                {option.sets.map((set, setIndex) => (
-                                    <View key={setIndex} style={styles.set}>
-
-                                        <View style={styles.setIndex}>
-                                            <Text style={styles.setIndexText}>
-                                                {setIndex}
-                                            </Text>
-                                        </View>
-
-                                        <View style={styles.setRep}>
-
-                                            <TextInput
-                                                style={styles.setInput}
-                                                placeholder="10"
-                                                onChangeText={(text) => updateSetRep(text, exIndex, setIndex)}
-                                                value={set.reps.toString()}
-                                                keyboardType="numeric"
-                                            />
-
-                                        </View>
-
-                                        <View style={styles.setLoad}>
-
-                                            <TextInput
-                                                style={styles.setInput}
-                                                placeholder="10"
-                                                onChangeText={(text) => updateSetLoad(text, exIndex, setIndex)}
-                                                value={set.load.toString()}
-                                                keyboardType="numeric"
-                                            />
-
-                                        </View>
-
-                                        <Pressable
-                                            onPress={() => removeExercise(exIndex, setIndex)}
-                                            style={styles.setRemoveButton}
-                                        >
-                                            <Image
-                                                style={[styles.icon]}
-                                                resizeMode="cover"
-                                                source={require('../../assets/images/minus.png')}
-                                            />
-
-                                        </Pressable>
+                                <View style={styles.trainingProp}>
+                                    <Text style={styles.trainingPropText}>
+                                        Peso
+                                    </Text>
+                                    <View style={styles.trainingInputWrapper}>
+                                        <TextInput
+                                            style={styles.trainingInput}
+                                            placeholder="0"
+                                            onChangeText={(text) => updateTrainWeight(text, exIndex)}
+                                            value={option.kg.toString()}
+                                            keyboardType="numeric"
+                                        />
                                     </View>
-                                ))}
+                                </View>
+
+
                             </View>
                         </View>
                     ))}
 
                 </ScrollView>
                 <View style={styles.buttonWrapper}>
-                    <Pressable style={styles.button} onPress={handleSavePress}>
-                        <Text style={styles.buttonText}>Salvar Treino</Text>
+                    <Pressable style={styles.button} onPress={togglePopup}>
+                        <Text style={styles.buttonText}>Continuar</Text>
                     </Pressable>
                 </View>
 
@@ -255,9 +248,9 @@ const styles = StyleSheet.create({
         flexDirection: "row",
     },
     body: {
-        padding: 48,
-        paddingTop: 16,
-        height: '90%',
+        padding: 44,
+        paddingTop: 10,
+        height: '93%',
     },
     icon: {
         width: 24,
@@ -278,92 +271,115 @@ const styles = StyleSheet.create({
     },
     exerciseOption: {
         flexDirection: 'column',
+        paddingBottom: 10,
+        marginBottom: 10,
+        borderWidth: 2,
+        borderRadius: 14,
+        borderColor: Color.prescricao.purple,
     },
     exerciseMain: {
         height: 48,
         flexDirection: 'row',
     },
     exerciseTextWrapper: {
-        borderRadius: 40,
+        borderRadius: 10,
         justifyContent: "center",
-        borderWidth: 1,
-        borderColor: "#4b0082",
-        width: '84%',
+        width: '100%',
         height: '100%',
+        backgroundColor: Color.prescricao.purple,
     },
     exerciseText: {
-        fontFamily: 'Roboto_400Regular',
+        fontFamily: 'Roboto_700Bold',
         fontSize: 18,
         marginLeft: 16,
+        color: 'white'
     },
-    exerciseNewButton: {
-        marginLeft: 'auto',
-        marginBottom: 'auto',
-        marginTop: 'auto'
-    },
-    sets: {
-        rowGap: 10,
-        marginRight: 30,
-        width: '84%',
+    trainingProperties: {
+        width: '100%',
         marginBottom: 12,
+        marginRight: 30,
         marginTop: 12,
-    },
-    set: {
+        columnGap: 10,
         flexDirection: 'row',
         justifyContent: 'center',
-        alignItems: 'center',
-        columnGap: 20
     },
-    setIndex: {
-        backgroundColor: Color.prescricao.purple,
-        height: 32,
-        width: 32,
-        borderRadius: 6,
-        alignItems: 'center',
+    trainingProp: {
+        flexDirection: 'column',
         justifyContent: 'center',
+        alignItems: 'center',
+        rowGap: 10,
+        marginLeft: 8,
+        width: '27%'
     },
-    setIndexText: {
-        color: 'white',
-    },
-    setRep: {
-        borderWidth: 1,
+    trainingInputWrapper: {
+        borderWidth: 2,
         borderColor: Color.prescricao.purple,
-        borderRadius: 40,
+        borderRadius: 10,
         padding: 8,
     },
-    setLoad: {
-        borderWidth: 1,
-        borderColor: Color.prescricao.purple,
-        borderRadius: 40,
-        padding: 8,
+    trainingPropText: {
+        textAlign: 'center',
+        width: '100%',
+        fontSize: 14,
+        fontFamily: 'Roboto_700Bold',
     },
-    setRemoveButton: {
-    },
-    setInput: {
+    trainingInput: {
         textAlign: 'center',
         width: 36,
-        fontSize: 16
-    },
-    setIcons: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        columnGap: 50,
-        marginLeft: 8
+        fontSize: 16,
+        fontFamily: 'Roboto_700Bold',
     },
     buttonWrapper: {
         marginTop: 16,
     },
     button: {
+        alignSelf: 'center',
+        width: 200,
         padding: 12,
         borderRadius: 20,
         backgroundColor: Color.prescricao.purple,
     },
     buttonText: {
-        color: 'white',
+        color: Color.prescricao.white,
         textAlign: 'center',
         fontSize: 16,
     },
+    popup: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    popupBody: {
+        width: '60%',
+        backgroundColor: Color.prescricao.white,
+        padding: 10,
+        borderRadius: 10,
+        borderWidth: 2,
+        borderColor: Color.prescricao.purple,
+    },
+    popupCloseWrapper: {
+        marginLeft: 'auto'
+    },
+    popupClose: {
+    },
+    popupText: {
+        width: '100%',
+        textAlign: 'center',
+        fontSize: 16,
+        marginTop: 8,
+        marginBottom: 8,
+        fontFamily: 'Roboto_700Bold',
+    },
+    popupInputWrapper: {
+        borderRadius: 10,
+        borderWidth: 2,
+        borderColor: Color.prescricao.purple,
+    },
+    popupInput: {
+        fontSize: 20,
+        padding: 4,
+
+    }
 });
 
 export default PrescricaoEspecificacao;
