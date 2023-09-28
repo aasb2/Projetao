@@ -21,26 +21,26 @@ const Prescricao = () => {
     const [inputText, setInputText] = React.useState<string>('');
     const [checkboxes, setCheckboxes] = React.useState<checkboxStruct[]>([]);
     const [selectedButton, setSelectedButton] = React.useState<string>('');
-        
 
-    useEffect(() =>{
+
+    useEffect(() => {
         const collectionRef = collection(db, "exerciseTypes")
-        onSnapshot(collectionRef,(snapshot)=>{
-            let prescriptions:checkboxStruct[] = []
-            
+        onSnapshot(collectionRef, (snapshot) => {
+            let prescriptions: checkboxStruct[] = []
+
             snapshot.docs.forEach((doc) => {
-                    let data = doc.data()
-                    prescriptions.push({
-                        id:doc.id,
-                        exercise: data.name,
-                        exerciseType:data.type,
-                        checked: false
-                    })
+                let data = doc.data()
+                prescriptions.push({
+                    id: doc.id,
+                    exercise: data.name,
+                    exerciseType: data.type,
+                    checked: false
+                })
             })
             setCheckboxes(prescriptions)
             //console.log("pre",prescriptions)
         })
-    },[]) 
+    }, [])
 
     const toggleCheckbox = (checkboxToSwitch: checkboxStruct, value?: boolean) => {
         if (value) {
@@ -49,7 +49,7 @@ const Prescricao = () => {
         else {
             checkboxToSwitch.checked = !checkboxToSwitch.checked;
         }
-        
+
         setCheckboxes([...checkboxes]);
     };
 
@@ -73,7 +73,7 @@ const Prescricao = () => {
     };
 
     const handleSubmit = () => {
-        alert('pesquisa por: ' + inputText);
+        //alert('pesquisa por: ' + inputText);
     };
 
     const options = [
@@ -83,30 +83,30 @@ const Prescricao = () => {
         { value: 'Ombros' },
         { value: 'Glúteos' },
     ]
-    
+
     const [fontLoaded] = useFonts({
         Roboto_100Thin,
         Roboto_400Regular,
         Roboto_700Bold
     })
-    
-    
+
+
     if (!fontLoaded) {
         return null;
     }
-    
+
     // Filtrar os exercícios com base na opção selecionada
     const filteredExercises = checkboxes.filter((checkbox) => {
         if (!selectedButton) return true; // Se nenhuma opção estiver selecionada, exibir todos os exercícios
         return checkbox.exerciseType === selectedButton;
     });
 
-  // Filtrar os exercícios com base no texto de pesquisa
-  const searchFilteredExercises = checkboxes.filter((checkbox) =>
-    checkbox.exercise.toLowerCase().includes(inputText.toLowerCase())
-  );
-  
-  
+    // Filtrar os exercícios com base no texto de pesquisa
+    const searchFilteredExercises = checkboxes.filter((checkbox) =>
+        checkbox.exercise.toLowerCase().includes(inputText.toLowerCase())
+    );
+
+
     return (
         <View style={styles.prescricaoTreinos}>
             <View style={styles.headerMobile}>
@@ -120,30 +120,31 @@ const Prescricao = () => {
                 </Text>
             </View>
 
-            <View style={styles.exerciseTypesWrapper}>
-                <ScrollView horizontal
-                    showsHorizontalScrollIndicator={false}
-                    style={styles.exerciseTypes}>
-
-                    {options.map((option, index) => (
-                        <Pressable
-                            key={option.value}
-                            style={selectedButton === option.value ? [styles.exerciseType, styles.selected] : styles.exerciseType}
-                            onPress={() => handleOptionPress(option.value)}>
-                            <Text
-                                style={selectedButton === option.value ? [styles.exerciseTypeText, styles.selected] : styles.exerciseTypeText}
-                            >{option.value}</Text>
-                        </Pressable>
-                    ))}
-                </ScrollView>
-            </View>
-
             <View style={styles.body}>
+                <View style={styles.exerciseTypesWrapper}>
+                    <ScrollView horizontal
+                        showsHorizontalScrollIndicator={false}
+                        style={styles.exerciseTypes}>
+
+                        {options.map((option, index) => (
+                            <Pressable
+                                key={option.value}
+                                style={selectedButton === option.value ? [styles.exerciseType, styles.selected] : styles.exerciseType}
+                                onPress={() => handleOptionPress(option.value)}>
+                                <Text
+                                    style={selectedButton === option.value ? [styles.exerciseTypeText, styles.selected] : styles.exerciseTypeText}
+                                >{option.value}</Text>
+                            </Pressable>
+                        ))}
+                    </ScrollView>
+                </View>
+
                 <View style={styles.searchBar}>
                     <View style={[styles.inputField]}>
                         <TextInput
                             style={styles.searchText}
                             placeholder="Pesquisar"
+                            placeholderTextColor="#1B006266"
                             onChangeText={handleInputChange}
                             value={inputText}
                         />
@@ -161,7 +162,7 @@ const Prescricao = () => {
                     <ScrollView
                         showsVerticalScrollIndicator={false}
                         style={styles.exercises}>
-                            {(inputText.length > 0 ? searchFilteredExercises : filteredExercises).map((checkbox, index) => (
+                        {(inputText.length > 0 ? searchFilteredExercises : filteredExercises).map((checkbox, index) => (
                             <View key={checkbox.id} style={styles.exercise}>
                                 <TouchableOpacity
                                     style={checkbox.checked ? [styles.checkbox, styles.checked] : styles.checkbox}
@@ -183,13 +184,14 @@ const Prescricao = () => {
                     </ScrollView>
                 </View>
 
+                <View style={styles.buttonWrapper}>
+                    <Pressable style={styles.button} onPress={handleSavePress}>
+                        <Text style={styles.buttonText}>Continuar</Text>
+                    </Pressable>
+                </View>
 
             </View>
-            <View style={styles.buttonWrapper}>
-                <Pressable style={styles.button} onPress={handleSavePress}>
-                    <Text style={styles.buttonText}>Continuar</Text>
-                </Pressable>
-            </View>
+
         </View>
     );
 };
@@ -205,7 +207,6 @@ const styles = StyleSheet.create({
     },
     headerMobile: {
         width: '100%',
-        height: '10%',
         padding: 20,
         paddingTop: 30,
         alignSelf: "stretch",
@@ -213,10 +214,10 @@ const styles = StyleSheet.create({
         flexDirection: "row",
     },
     body: {
-        padding: 48,
-        paddingTop: 16,
-        height: '80%',
-        boxSizing: 'border-box',
+        paddingBottom: 44,
+        height: '93%',
+        width:'100%',
+        minHeight: 500,
     },
     icon: {
         width: 24,
@@ -228,26 +229,30 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontFamily: 'Roboto_400Regular',
     },
+    exerciseTypesWrapper: {
+        height: 40,
+        margin:12,
+        marginBottom:16,
+    },
     exerciseTypes: {
         display: 'flex',
         flexDirection: 'row',
         columnGap: 12,
+        boxSizing: 'contentBox',
         width: '100%',
-        padding: 10,
         overflowX: 'hidden',
-        marginTop: 10,
     },
     exerciseTypeText: {
         fontSize: 16,
         textAlign: "center",
         color: "#4b0082",
-        fontFamily: 'Roboto_400Regular',
+        fontFamily: 'Roboto_700Bold',
         borderRadius: 20
     },
     exerciseType: {
         borderRadius: 20,
         justifyContent: "center",
-        borderWidth: 1,
+        borderWidth: 2,
         borderColor: "#4b0082",
         shadowOpacity: 0.4,
         shadowRadius: 4,
@@ -259,16 +264,13 @@ const styles = StyleSheet.create({
         height: '100%',
         marginRight: 10,
     },
-    exerciseTypesWrapper: {
-        height: 70
-    },
     inputField: {
         borderRadius: 30,
         paddingHorizontal: 20,
         paddingVertical: 2,
-        width: '100%',
+        width: '80%',
         height: 42,
-        borderWidth: 1,
+        borderWidth: 2,
         alignItems: "center",
         flexDirection: "row",
         borderColor: "#4b0082",
@@ -276,7 +278,9 @@ const styles = StyleSheet.create({
         backgroundColor: Color.prescricao.white,
     },
     searchBar: {
-        flexDirection: 'row'
+        flexDirection: 'row',
+        width:'100%',
+        justifyContent:'center',
     },
     searchText: {
         width: '90%',
@@ -284,21 +288,18 @@ const styles = StyleSheet.create({
         marginRight: 8,
     },
     exercisesWrapper: {
-        marginTop: 20,
+        marginTop: 12,
         width: '100%',
-        height: '80%',
+        height: '72%',
     },
     exercises: {
         flexDirection: 'column',
         width: '100%',
-        height: '64%',
         margin: 'auto',
     },
     exercise: {
-        borderWidth: 1.2,
-        borderColor: "#4b0082",
-        borderStyle: "solid",
-        borderRadius: 20,
+        backgroundColor: Color.prescricao.purple,
+        borderRadius: 14,
         height: 70,
         width: 240,
         flexDirection: 'row',
@@ -310,25 +311,23 @@ const styles = StyleSheet.create({
     checkbox: {
         height: 26,
         width: 26,
-        shadowOpacity: 1,
-        elevation: 4,
-        shadowRadius: 4,
-        shadowOffset: {
-            width: 0,
-            height: 4,
-        },
-        shadowColor: "rgba(0, 0, 0, 0.25)",
-        borderWidth: 4,
-        borderColor: "#4b0082",
+        borderWidth: 0,
+        borderColor: Color.prescricao.white,
+        backgroundColor: Color.prescricao.white,
         borderStyle: "solid",
         borderRadius: 3,
         marginHorizontal: 16,
         marginTop: 'auto',
         marginBottom: 'auto',
-        boxSizing: 'border-box'
+    },
+    checkIcon: {
+        marginTop: 'auto',
+        marginBottom: 'auto',
+        marginLeft: 'auto',
+        marginRight: 'auto',
     },
     checked: {
-        backgroundColor: "#4b0082",
+        backgroundColor: Color.prescricao.purple,
         borderWidth: 0
     },
     exerciseTexts: {
@@ -338,33 +337,23 @@ const styles = StyleSheet.create({
         marginRight: 26
     },
     exerciseText: {
+        color: Color.prescricao.white,
         textAlign: "center",
         fontSize: 16,
-        fontFamily: 'Roboto_400Regular',
+        fontFamily: 'Roboto_700Bold',
     },
     exerciseTextSmall: {
-        color: Color.prescricao.gray,
+        color: Color.prescricao.white,
         textAlign: "center",
         fontSize: 14,
         fontFamily: 'Roboto_400Regular',
     },
-    checkIcon: {
-        height: "50%",
-        width: "50%",
-        marginTop: 'auto',
-        marginBottom: 'auto',
-        marginLeft: 'auto',
-        marginRight: 'auto',
-    },
     buttonWrapper: {
-        position: 'absolute',
-        bottom: 20,
-        justifyContent: 'center',
-        width: '100%',
+        marginTop: 16,
     },
     button: {
         alignSelf: 'center',
-        width:200,
+        width: 200,
         padding: 12,
         borderRadius: 20,
         backgroundColor: Color.prescricao.purple,

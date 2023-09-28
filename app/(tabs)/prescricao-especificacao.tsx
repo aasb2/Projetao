@@ -90,7 +90,7 @@ const PrescricaoEspecificacao = () => {
         });
 
         //atualiza referencias no usuario
-         await updateDoc(currUser,{
+        await updateDoc(currUser, {
             workouts: arrayUnion(addedPresc)
         })
 
@@ -251,6 +251,7 @@ const styles = StyleSheet.create({
         padding: 44,
         paddingTop: 10,
         height: '93%',
+        minHeight: 500,
     },
     icon: {
         width: 24,
