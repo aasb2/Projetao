@@ -56,8 +56,8 @@ const Feed = () => {
     function renderContainer() {
         
         const [friendsData, setFriendsData] = useState<DocumentData[]>(friends);
-        const [userCommunity, setUserCommunity] = useState<DocumentData | undefined>(undefined);
-        const [isLoading, setIsLoading] = useState(true);
+        const [userCommunity, setUserCommunity] = useState < DocumentData | undefined > (undefined);
+        const [userIcons, setUserIcons] = useState<{ [key: string]: string }>({});
 
         useEffect(() => {
             const fetchFriends = async () => {
@@ -67,7 +67,6 @@ const Feed = () => {
 
                     setUserCommunity(communityUser);
                     setFriendsData(dataFriends);
-                    setIsLoading(false);
                 } catch (error) {
                 console.error('Erro ao buscar a lista de amigos:', error);
                 }
@@ -85,7 +84,6 @@ const Feed = () => {
             // Retorna uma função de limpeza para interromper o ouvinte quando o componente for desmontado
             return () => unsubscribe();
         }, []);
-        const communityName = userCommunity?.communityInfo?.name || '';
 
         async function handleStartTraining() {
             try {
@@ -109,9 +107,22 @@ const Feed = () => {
             }
         }
 
+        const toggleUserIcon = (userId) => {
+            setUserIcons((prevIcons) => ({
+                ...prevIcons,
+                [userId]: prevIcons[userId] === 'weight-lifter' ? 'arm-flex' : 'weight-lifter',
+            }));
+
+            setTimeout(() => {
+                setUserIcons((prevIcons) => ({
+                ...prevIcons,
+                [userId]: 'weight-lifter',
+                }));
+            }, 2000);
+        };
 
 
-
+        const communityName = userCommunity?.communityInfo?.name || '';
         const filteredFriendsData = friendsData.filter(item => item.isTraining);
 
 
@@ -171,7 +182,7 @@ const Feed = () => {
                 <FlatList
                     horizontal={true}
                     data={filteredFriendsData}
-                    keyExtractor={(item) => item.id}
+                    keyExtractor={(item) => item.id} //keyExtractor={(item) => item.id}
                     renderItem={({ item, index }) => (
                         <View
                             key={item.id}
@@ -189,28 +200,30 @@ const Feed = () => {
                                     marginRight: 10,
                                 }}
                             >
-                                {item.isTraining && (
-                                    <LinearGradient
-                                        colors={['#4B0082', '#6D458B']}
-                                        style={{
-                                            height: 30,
-                                            width: 30,
-                                            borderRadius: 15,
-                                            position: 'absolute',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            zIndex: 1,
-                                            bottom: -3,
-                                            right: 32,
-                                        }}
-                                    >
+                                
+                                <LinearGradient
+                                    colors={['#4B0082', '#6D458B']}
+                                    style={{
+                                        height: 30,
+                                        width: 30,
+                                        borderRadius: 15,
+                                        position: 'absolute',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        zIndex: 1,
+                                        bottom: -3,
+                                        right: 32,
+                                    }}
+                                >
+                                    <TouchableOpacity onPress={() => toggleUserIcon(item.id._key.path.segments.slice(-1)[0])}>
                                         <MaterialCommunityIcons
-                                            name="weight-lifter"
+                                            name={userIcons[item.id._key.path.segments.slice(-1)[0]] || 'weight-lifter'} // Use o ícone do estado ou 'weight-lifter' por padrão
                                             size={20}
                                             color={COLORS.white}
                                         />
-                                    </LinearGradient>
-                                )}
+                                    </TouchableOpacity>
+                                </LinearGradient>
+                              
 
                                 <Image
                                     source={{ uri: item.imageURL }}
