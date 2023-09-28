@@ -4,6 +4,8 @@ import { Ionicons } from '@expo/vector-icons'; // Importe o ícone desejado da b
 import { getAchievementsList } from '../../services/functions/achievements/functionAchievements'; // Substitua pelo caminho correto do seu arquivo getAchievementsList
 import appTheme from '../../constants/theme';
 import { background } from 'native-base/lib/typescript/theme/styled-system';
+import { Button } from 'react-native';
+
 
 // Defina o tipo de objeto para os achievements
 type Achievement = {
@@ -17,6 +19,10 @@ const AchievementsTestScreen = () => {
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [searchText, setSearchText] = useState('');
   const [filteredAchievements, setFilteredAchievements] = useState<Achievement[]>([]);
+
+  const [showAchievements, setShowAchievements] = useState(true);
+  const [showChallenges, setShowChallenges] = useState(false);
+
 
   useEffect(() => {
     // Função assíncrona para buscar a lista de achievements
@@ -73,6 +79,28 @@ const AchievementsTestScreen = () => {
         </TouchableOpacity>
       </View>
 
+      {/* Botões para selecionar entre achievements ou challenges */}
+      <View style={styles.buttonSelectionContainer}>
+        <TouchableOpacity
+          style={showAchievements ? styles.selectedButton : styles.unselectedButton}
+          onPress={() => {
+            setShowAchievements(true);
+            setShowChallenges(false);
+          }}
+        >
+          <Text style={styles.buttonText}>Conquistas</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={showChallenges ? styles.selectedButton : styles.unselectedButton}
+          onPress={() => {
+            setShowAchievements(false);
+            setShowChallenges(true);
+          }}
+        >
+          <Text style={styles.buttonText}>Desafios</Text>
+        </TouchableOpacity>
+      </View>
+
       {/* Barra de pesquisa */}
       <View style={styles.searchContainer}>
         <View style={styles.searchInputContainer}>
@@ -92,12 +120,20 @@ const AchievementsTestScreen = () => {
         </View>
       </View>
 
-      {/* Lista de achievements */}
+      {/* RENDERIZAÇÃO: Achievements */}
+      {/* @victor */}
+      {showAchievements && (
       <FlatList
         data={filteredAchievements}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
       />
+      )}
+
+      {/* RENDERIZAÇÃO: Challenges */}
+      {/* @bonna */}
+
+
     </View>
   );
 };
@@ -131,7 +167,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'black',
   },
-
   searchContainer: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -154,6 +189,31 @@ const styles = StyleSheet.create({
     padding: 10,
     marginLeft: 10,
   },
+  buttonSelectionContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10, 
+  
+  },
+  selectedButton: {
+    backgroundColor: '#B397C8', // Cor de fundo quando o botão está selecionado
+    borderRadius: 5, // Borda arredondada
+    padding: 10, // Preenchimento interno
+    marginHorizontal: 5, // Espaçamento horizontal entre botões
+  },
+  unselectedButton: {
+    backgroundColor: '#4B0082', // Cor de fundo quando o botão não está selecionado
+    borderRadius: 5, // Borda arredondada
+    padding: 10, // Preenchimento interno
+    marginHorizontal: 5, // Espaçamento horizontal entre botões
+  },
+  buttonText: {
+    color: 'white', // Cor do texto
+    fontSize: 16,   // Tamanho da fonte do texto
+    fontWeight: 'bold', // Peso da fonte (pode ser ajustado conforme necessário)
+  },
+  
 
 });
 
