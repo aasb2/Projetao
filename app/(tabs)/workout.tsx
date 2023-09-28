@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, CheckBox, FlatList, Picker, TextInput  } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { getWorkoutsList } from '../../services/functions/workout/functionWorkout';
-
+import { retrieveWorkouts } from '../../services/functions/workout/retrieveWorkouts';
+import { updateWeights as updateMaxWeights } from '../../services/functions/workout/updateMaximumWeights';
+import {incrementCompletedWorkouts} from '../../services/functions/workout/updateCompletedWorkouts'
 
 const WorkoutScreen = () => {
   const [workouts, setWorkouts] = useState([]);
@@ -16,7 +17,7 @@ const WorkoutScreen = () => {
   useEffect(() => {
     async function fetchWorkouts() {
       try {
-        const workoutsData = await getWorkoutsList(userid);
+        const workoutsData = await retrieveWorkouts(userid);
         setWorkouts(workoutsData);
 
       } catch (error) {
@@ -34,32 +35,59 @@ const WorkoutScreen = () => {
     }
   }, [workouts]);
 
+  async function updateCompletedWorkouts (userid: string) {
+    try {
+      await incrementCompletedWorkouts(userid);
+
+    } catch (error) {
+      console.error('Erro ao buscar a lista de treinos:', error);
+    }
+  }
+
+  async function updateMaximumWeights(userid: string, pesos: {[key: string]: number}) {
+    try {
+      await updateMaxWeights(userid, pesos);
+
+    } catch (error) {
+      console.error('Erro ao buscar a lista de treinos:', error);
+    }
+  }
+
 
   // Função para desmarcar os checkboxs e enviar os pesos máximos
   const handleDesmarcarTodos = () => {
+    var anyChecked = false;
+    
     const novoArrayPesos = {};
-
+  
     isCheckedList.forEach((isChecked, index) => {
       if (isChecked) {
+        anyChecked = true;
         const nomeExercicio = selectedWorkout.exercises[index].exercise;
         const novoPeso = pesos[index];
         novoArrayPesos[nomeExercicio] = novoPeso;
       }
     });
 
+    if (anyChecked){updateCompletedWorkouts(userid);}
+  
     setPesosPorExercicio(novoArrayPesos);
         
     setIsCheckedList(Array(selectedWorkout.exercises.length).fill(false));
+
+    updateMaximumWeights(userid, novoArrayPesos);
+  
     // output no console
-    console.log('Array pesosPorExercicio:', pesosPorExercicio);
+    console.log('Dicionário pesosPorExercicio:', pesosPorExercicio);
     for (const chave in pesosPorExercicio) {
       if (pesosPorExercicio.hasOwnProperty(chave)) {
         const valor = pesosPorExercicio[chave];
         console.log(`Chave: ${chave}, Valor: ${valor}`);
       }
     }
-
   };
+  
+  
     
   // Função para desmarcar o checkbox
   const handleFinalizarTreino = () => {
