@@ -1,23 +1,21 @@
-import { db, storage } from '../../firebaseConfig';
-import { collection, getDocs, getDoc, query, orderBy, DocumentData, where } from 'firebase/firestore';
-import { ref, getDownloadURL, FirebaseStorage } from 'firebase/storage';
+import { db } from '../../firebaseConfig';
+import { collection, getDocs, getDoc, query, DocumentData, where } from 'firebase/firestore';
 import { getUserInfo } from '../login/loginUser';
 
+// Função para pegar a lista de alunos da comunidade
 async function getFriendsList() {
   try {
-    // Obtem as informações do usuário logado, incluindo a comunidade
     const currUser = await getUserInfo();
 
-    // Verifica se há informações de usuário e de comunidade
     if (currUser && currUser.community) {
-      // Obtenha a referência da comunidade
       const communityRef = currUser.community;
 
       // Consulta para buscar os amigos do usuário com base na comunidade
       const friendsCollection = collection(db, 'users');
       const friendsQuery = query(
         friendsCollection,
-        where('community', '==', communityRef)
+        where('community', '==', communityRef),
+        //where('isTraining', '==', true)
       );
       
       const friendsQuerySnapshot = await getDocs(friendsQuery);
@@ -50,53 +48,61 @@ async function getFriendsList() {
 
 // ...
 
+// Função para pegar os posts da comunidade
 async function getPostsList() {
   try {
-    // Obtem as informações do usuário logado, incluindo a comunidade
     const currUser = await getUserInfo();
 
-    // Verifica se há informações de usuário e de comunidade
     if (currUser && currUser.community) {
-      // Obtenha a referência da comunidade
       const communityRef = currUser.community;
 
-      // Consulta para buscar dos posts com base na comunidade
       const postsCollection = collection(db, 'posts');
-      const postsQuery = query(
+
+      // Primeira consulta: Filtra por comunidade
+      const postsQueryCommunity = query(
         postsCollection,
         where('community', '==', communityRef)
       );
-      
-      const postsQuerySnapshot = await getDocs(postsQuery);
 
-      const posts: { user: DocumentData; }[] = [];
+      const postsQuerySnapshotCommunity = await getDocs(postsQueryCommunity);
 
-      // Use Promise.all para aguardar todas as operações assíncronas
-      await Promise.all(postsQuerySnapshot.docs.map(async (docRef) => {
+      const posts: {
+        createdAt: any; user: DocumentData 
+      }[] = [];
+
+      // Itera sobre os documentos retornados pela primeira consulta
+      for (const docRef of postsQuerySnapshotCommunity.docs) {
         const postData = docRef.data();
 
-        // Acessa a referência ao usuário associado ao post
         const userRef = postData.user;
         const userDoc = await getDoc(userRef);
 
         if (userDoc.exists()) {
-          const userData = userDoc.data() as DocumentData; // Dados do documento de usuário
+          const userData = userDoc.data() as DocumentData;
 
           // URL da imagem do campo 'image'
           const imageURL = userData.image;
           userData.imageURL = imageURL;
 
-          // Combine os dados do post e do usuário
           const combinedData = {
             ...postData,
-            user: userData, // Substitui a referência pelo objeto de usuário
+            createdAt: postData.createdAt,
+            user: userData,
           };
 
           posts.push(combinedData);
         }
-      }));
+      }
 
-      return posts;
+      // Após obter os posts com base na comunidade, ordene-os por data de criação
+      const orderedPosts = posts.sort((a, b) =>
+        b.createdAt.toMillis() - a.createdAt.toMillis()
+      );
+
+      //console.log('Posts ordenados:', orderedPosts);
+
+      // Retorne os posts ordenados
+      return orderedPosts;
     } else {
       console.log('O usuário não possui informações de usuário ou de comunidade.');
       return [];
@@ -108,8 +114,98 @@ async function getPostsList() {
 }
 
 
-export { getFriendsList, getPostsList };
+async function getComments(postId: any) {
+  const currUser = await getUserInfo();
 
+  try {
+    if (currUser && currUser.community) {
+      const postsCollection = collection(db, 'posts');
+      const postsQuery = query(
+        postsCollection,
+        where('id', '==', postId),
+      );
+      const postsQuerySnapshot = await getDocs(postsQuery);
+      await Promise.all(postsQuerySnapshot.docs.map(async (docRef) => {
+        const postData = docRef.data();
+  
+        const comments = postData.comments;
+        console.log(comments)
+        return comments;
+  
+      }));
+    }
+  } catch(error) {
+    console.error(error)
+  }
+  
+}
+
+
+
+export { getFriendsList, getPostsList, getComments };
+
+// async function getPostsList() {
+//   try {
+//     // Obtem as informações do usuário logado, incluindo a comunidade
+//     const currUser = await getUserInfo();
+
+//     // Verifica se há informações de usuário e de comunidade
+//     if (currUser && currUser.community) {
+//       // Obtenha a referência da comunidade
+//       const communityRef = currUser.community;
+
+//       // Consulta para buscar dos posts com base na comunidade
+//       const postsCollection = collection(db, 'posts');
+//       const postsQueryCommunity = query(
+//         postsCollection,
+//         where('community', '==', communityRef)
+//       );
+//       const postsQuery = query(
+//         postsQueryCommunity,
+//         orderBy('createdAt', 'desc')
+//       );
+
+//       const postsQuerySnapshot = await getDocs(postsQuery);
+
+//       const posts: { user: DocumentData; }[] = [];
+
+//       // Use Promise.all para aguardar todas as operações assíncronas
+//       await Promise.all(postsQuerySnapshot.docs.map(async (docRef) => {
+//         const postData = docRef.data();
+
+//         // Acessa a referência ao usuário associado ao post
+//         const userRef = postData.user;
+//         const userDoc = await getDoc(userRef);
+
+//         if (userDoc.exists()) {
+//           const userData = userDoc.data() as DocumentData; // Dados do documento de usuário
+
+//           // URL da imagem do campo 'image'
+//           const imageURL = userData.image;
+//           userData.imageURL = imageURL;
+
+//           // Combine os dados do post e do usuário
+//           const combinedData = {
+//             ...postData,
+//             user: userData, // Substitui a referência pelo objeto de usuário
+//           };
+
+//           posts.push(combinedData);
+//         }
+//       }));
+
+//       return posts;
+//     } else {
+//       console.log('O usuário não possui informações de usuário ou de comunidade.');
+//       return [];
+//     }
+//   } catch (error) {
+//     console.error('Erro ao buscar a lista de posts:', error);
+//     throw error;
+//   }
+// }
+
+//..
   
 // async function getPostsList() {
 //   try {

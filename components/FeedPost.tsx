@@ -3,30 +3,39 @@ import {
     View,
     Text,
     TouchableOpacity,
-    ScrollView,
-    FlatList,
     Image,
     TextInput,
 } from 'react-native'
-import React, { useState, useEffect } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { COLORS, FONTS, SIZES, images } from '../constants'
+import React, { useState } from 'react'
+import { COLORS, SIZES, images } from '../constants'
 import {
-    MaterialIcons,
     Ionicons,
-    Feather,
-    Foundation,
     MaterialCommunityIcons,
 } from '@expo/vector-icons'
-
+import { useNavigation } from 'expo-router'
 
 const users = [images.user1, images.user2, images.user3, images.user4]
 
 
-const FeedPost = ({ postsData, handleLikePost, userImage }) => {
+const FeedPost = ({ postsData, handleLikePost, userImage }: any) => {
+    const [comments, setComments] = useState(postsData.map(() => ''));
+    const navigation = useNavigation();
+
+    const handleCommentChange = (text: String, index: number) => {
+        const newComments = [...comments];
+        newComments[index] = text;
+        setComments(newComments);
+    };
+
+    const openComments = (postId: any) => {
+        // mandar p outra tela com o id do post
+        navigation.navigate('Comments', postId)
+    }
+
+
     return (
         <View>
-            {postsData.map((post) => (
+            {postsData.map((post: any, index: number) => (
                 <View
                     key={post.id}
                     style={{
@@ -66,7 +75,7 @@ const FeedPost = ({ postsData, handleLikePost, userImage }) => {
 
                             <View style={{ marginLeft: 12 }}>
                                 <Text
-                                    style={{ ...FONTS.body4, fontWeight: 'bold' }}
+                                    style={{ fontSize: 14, fontWeight: 'bold' }}
                                 >
                                     {post.user.name}
                                 </Text>
@@ -88,7 +97,7 @@ const FeedPost = ({ postsData, handleLikePost, userImage }) => {
                             marginVertical: 8,
                         }}
                     >
-                        <Text style={{ ...FONTS.body4 }}>
+                        <Text style={{ fontSize: 14 }}>
                             {post.content}
                         </Text>
                     </View>
@@ -113,7 +122,7 @@ const FeedPost = ({ postsData, handleLikePost, userImage }) => {
                                 marginLeft: 4,
                             }}
                         >
-                            Academia Couro e Osso | 10 mins atrás
+                            {post.location} | 10 mins atrás
                         </Text>
                     </View>
 
@@ -141,20 +150,20 @@ const FeedPost = ({ postsData, handleLikePost, userImage }) => {
                                 marginRight: SIZES.padding2,
                             }}
                         >
-                            <Ionicons
+                            <MaterialCommunityIcons
                                 name="heart"
                                 size={20}
                                 color={post.isLiked ? COLORS.red : COLORS.black} // Altere a cor do ícone com base no estado de "isLiked" do post
                             />
-                            <Text style={{ ...FONTS.body4, marginLeft: 2 }}>
+                            <Text style={{ fontSize: 14, marginLeft: 2 }}>
                                 {post.numLike}
                             </Text>
                         </TouchableOpacity>
 
-                            <View
+                            <TouchableOpacity
+                                onPress={() => openComments(post.id)} 
                                 style={{
                                     flexDirection: 'row',
-
                                     alignItems: 'center',
                                 }}
                             >
@@ -163,16 +172,16 @@ const FeedPost = ({ postsData, handleLikePost, userImage }) => {
                                     size={20}
                                     color={COLORS.black}
                                 />
-                                <Text style={{ ...FONTS.body4, marginLeft: 2 }}>
+                                <Text style={{ fontSize: 14, marginLeft: 2 }}>
                                     {post.numComment}
                                 </Text>
-                            </View>
+                            </TouchableOpacity>
                         </View>
 
                         <View style={{ flexDirection: 'row' }}>
                             <View>
                                 <Text
-                                    style={{ ...FONTS.body4, fontWeight: 'bold' }}
+                                    style={{ fontSize: 14, fontWeight: 'bold' }}
                                 >
                                     
                                 </Text>
@@ -239,8 +248,27 @@ const FeedPost = ({ postsData, handleLikePost, userImage }) => {
                             <TextInput
                                 placeholder="Add comentário"
                                 placeholderTextColor="#CCC"
+                                value={comments[index]}
+                                onChangeText={(text) => handleCommentChange(text, index)}
                             />
                         </View>
+                        <TouchableOpacity
+                            onPress={() => {
+                                console.log("Comentário enviado");
+                                const newComments = [...comments];
+                                newComments[index] = '';
+                                setComments(newComments);
+                            }}
+                            style={{
+                                paddingHorizontal: 8,
+                                alignItems: 'center',
+                                flexDirection: 'row'
+                            }}
+                        >
+                            <Text style={{ color: COLORS.primary, fontWeight: 'bold' , alignItems: 'center'}}>
+                                Add
+                            </Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             ))}

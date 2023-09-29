@@ -40,6 +40,7 @@ yarn-error.*
 expo-env.d.ts
 # @end expo-cli
 
-# Firebase
+# # Firebase
+# Tirar o comentário na hora de fazer o build para o apk
 services/firebaseConfig.js
 services/firebaseConfig.ts

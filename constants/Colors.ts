@@ -1,7 +1,16 @@
 const tintColorLight = '#2f95dc';
 const tintColorDark = '#fff';
 
+
+
 export default {
+  prescricao: {
+    white: "#fff",
+    purple: "#4b0082",
+    gray: "#444",
+    light_gray: "#f9fafb",
+    black: "#000",
+  },
   light: {
     text: '#000',
     background: '#fff',
