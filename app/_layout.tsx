@@ -64,6 +64,7 @@ function RootLayoutNav() {
                         }
                     }                    
                 } />
+                <Stack.Screen name="Comments" />
             </Stack>
         </ThemeProvider>
     );

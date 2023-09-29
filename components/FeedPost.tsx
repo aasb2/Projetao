@@ -3,37 +3,39 @@ import {
     View,
     Text,
     TouchableOpacity,
-    ScrollView,
-    FlatList,
     Image,
     TextInput,
 } from 'react-native'
-import React, { useState, useEffect } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { COLORS, FONTS, SIZES, images } from '../constants'
+import React, { useState } from 'react'
+import { COLORS, SIZES, images } from '../constants'
 import {
-    MaterialIcons,
     Ionicons,
-    Feather,
-    Foundation,
     MaterialCommunityIcons,
 } from '@expo/vector-icons'
-
+import { useNavigation } from 'expo-router'
 
 const users = [images.user1, images.user2, images.user3, images.user4]
 
 
-const FeedPost = ({ postsData, handleLikePost, userImage }) => {
+const FeedPost = ({ postsData, handleLikePost, userImage }: any) => {
     const [comments, setComments] = useState(postsData.map(() => ''));
+    const navigation = useNavigation();
 
     const handleCommentChange = (text: String, index: number) => {
         const newComments = [...comments];
         newComments[index] = text;
         setComments(newComments);
     };
+
+    const openComments = (postId: any) => {
+        // mandar p outra tela com o id do post
+        navigation.navigate('Comments', postId)
+    }
+
+
     return (
         <View>
-            {postsData.map((post, index: number) => (
+            {postsData.map((post: any, index: number) => (
                 <View
                     key={post.id}
                     style={{
@@ -158,10 +160,10 @@ const FeedPost = ({ postsData, handleLikePost, userImage }) => {
                             </Text>
                         </TouchableOpacity>
 
-                            <View
+                            <TouchableOpacity
+                                onPress={() => openComments(post.id)} 
                                 style={{
                                     flexDirection: 'row',
-
                                     alignItems: 'center',
                                 }}
                             >
@@ -173,7 +175,7 @@ const FeedPost = ({ postsData, handleLikePost, userImage }) => {
                                 <Text style={{ fontSize: 14, marginLeft: 2 }}>
                                     {post.numComment}
                                 </Text>
-                            </View>
+                            </TouchableOpacity>
                         </View>
 
                         <View style={{ flexDirection: 'row' }}>

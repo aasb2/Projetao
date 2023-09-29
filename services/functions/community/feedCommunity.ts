@@ -108,7 +108,35 @@ async function getPostsList() {
 }
 
 
-export { getFriendsList, getPostsList };
+async function getComments(postId: any) {
+  const currUser = await getUserInfo();
+
+  try {
+    if (currUser && currUser.community) {
+      const postsCollection = collection(db, 'posts');
+      const postsQuery = query(
+        postsCollection,
+        where('id', '==', postId),
+      );
+      const postsQuerySnapshot = await getDocs(postsQuery);
+      await Promise.all(postsQuerySnapshot.docs.map(async (docRef) => {
+        const postData = docRef.data();
+  
+        const comments = postData.comments;
+        console.log(comments)
+        return comments;
+  
+      }));
+    }
+  } catch(error) {
+    console.error(error)
+  }
+  
+}
+
+
+
+export { getFriendsList, getPostsList, getComments };
 
   
 // async function getPostsList() {
