@@ -24,6 +24,8 @@ async function getAchievementsList() {
       const imageURL = achievementData.image;
       achievementData.imageURL = imageURL;
 
+      console.log(achievementData.imageURL);
+
       // Descrição do achievement
       const description = achievementData.description;
       achievementData.description = description;
@@ -31,6 +33,7 @@ async function getAchievementsList() {
       achievementsData.push(achievementData);
     }
     console.log("aqui");
+    
 
     return achievementsData;
   } catch (error) {

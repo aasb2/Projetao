@@ -21,6 +21,7 @@ type Achievement = {
   id: string;
   achievementName: string;
   description: string;
+  imageURL: string;
 };
 
 const AchievementsTestScreen = () => {
@@ -50,59 +51,64 @@ const AchievementsTestScreen = () => {
     setFilteredAchievements(filtered);
   }, [searchText, achievements]);
 
-  function renderItem({ item }: { item: Achievement }) {
-    return (
-      <View style={styles.achievementItem}>
-        <Text style={styles.achievementName}>{item.achievementName}</Text>
-        <Text style={styles.achievementDescription}>{item.description}</Text>
-      </View>
-    );
-  }
 
-  const rectangleContents = [
-    {
-      topText: 'Mora na academia',
-      bottomText: '100% de frequência durante 6 meses',
-      imageURL: 'URL_DA_SUA_IMAGEM_1',
-    },
-    {
-      topText: 'Ombro de aço',
-      bottomText: '50kg no desenvolvimento com barra',
-      imageURL: 'URL_DA_SUA_IMAGEM_2',
-    },
-    {
-      topText: 'Bíceps real natty',
-      bottomText: '10kg na rosca de bíceps',
-      imageURL: 'URL_DA_SUA_IMAGEM_3',
-    },
-    {
-      topText: 'Projeto de Monstro',
-      bottomText: '40 treinos completados',
-      imageURL: 'URL_DA_SUA_IMAGEM_4',
-    },
-    {
-      topText: 'Bíceps do Popeye',
-      bottomText: '15kg na rosca de bíceps ',
-      imageURL: 'URL_DA_SUA_IMAGEM_5',
-    },
-    {
-      topText: 'Mestre do agachamento',
-      bottomText: '300 séries de agachamento realizados',
-      imageURL: 'URL_DA_SUA_IMAGEM_6',
-    },
-  ];
-
-  const rectangles = rectangleContents.map((content, index) => (
-    <View style={[styles.rectangle, { maxWidth: maxRectangleWidth }]} key={index}>
-      <Text style={styles.topText}>{content.topText}</Text>
+function renderItem({ item }: { item: Achievement }) {
+  return (
+    <View style={styles.rectangleContainer}>
+      <Text style={styles.achievementName}>{item.achievementName}</Text>
       <Image
-        source={{ uri: content.imageURL }}
-        style={styles.image}
-        resizeMode="cover"
+        source={{ uri: item.imageURL }} // Defina a URL da imagem aqui
+        style={{ width: 100, height: 100 }} // Defina as dimensões da imagem conforme necessário
       />
-      <Text style={styles.bottomText}>{content.bottomText}</Text>
+      <Text style={styles.achievementDescription}>{item.description}</Text>
     </View>
-  ));
+  );
+}
+
+  // const rectangleContents = [
+  //   {
+  //     topText: 'Mora na academia',
+  //     bottomText: '100% de frequência durante 6 meses',
+  //     imageURL: 'URL_DA_SUA_IMAGEM_1',
+  //   },
+  //   {
+  //     topText: 'Ombro de aço',
+  //     bottomText: '50kg no desenvolvimento com barra',
+  //     imageURL: 'URL_DA_SUA_IMAGEM_2',
+  //   },
+  //   {
+  //     topText: 'Bíceps real natty',
+  //     bottomText: '10kg na rosca de bíceps',
+  //     imageURL: 'URL_DA_SUA_IMAGEM_3',
+  //   },
+  //   {
+  //     topText: 'Projeto de Monstro',
+  //     bottomText: '40 treinos completados',
+  //     imageURL: 'URL_DA_SUA_IMAGEM_4',
+  //   },
+  //   {
+  //     topText: 'Bíceps do Popeye',
+  //     bottomText: '15kg na rosca de bíceps ',
+  //     imageURL: 'URL_DA_SUA_IMAGEM_5',
+  //   },
+  //   {
+  //     topText: 'Mestre do agachamento',
+  //     bottomText: '300 séries de agachamento realizados',
+  //     imageURL: 'URL_DA_SUA_IMAGEM_6',
+  //   },
+  // ];
+
+  // const rectangles = rectangleContents.map((content, index) => (
+  //   <View style={[styles.rectangle, { maxWidth: maxRectangleWidth }]} key={index}>
+  //     <Text style={styles.topText}>{content.topText}</Text>
+  //     <Image
+  //       source={{ uri: content.imageURL }}
+  //       style={styles.image}
+  //       resizeMode="cover"
+  //     />
+  //     <Text style={styles.bottomText}>{content.bottomText}</Text>
+  //   </View>
+  // ));
 
   return (
     <View style={{ flex: 1, paddingBottom: 60, backgroundColor: '#380062' }}>
@@ -156,15 +162,42 @@ const AchievementsTestScreen = () => {
         </View>
       </View>
 
-      {showAchievements && (
+      {/* {showAchievements && (
         <FlatList
           data={filteredAchievements}
+          
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
         />
-      )}
+      )} */}
 
-      {showAchievements && (
+{showAchievements && (
+  <FlatList
+    data={filteredAchievements}
+    numColumns={2}
+    renderItem={({ item, index }) => (
+      <View
+        style={[
+          styles.rectangleContainer,
+          index === filteredAchievements.length - 1 && filteredAchievements.length % 2 === 1 && {
+            flex: 1, // Define um estilo especial para o último elemento ímpar
+          },
+        ]}
+      >
+        <Text style={styles.achievementName}>{item.achievementName}</Text>
+        <Image
+          source={{ uri: item.imageURL }}
+          style={{ width: 100, height: 100 }}
+        />
+        <Text style={styles.achievementDescription}>{item.description}</Text>
+      </View>
+    )}
+    keyExtractor={(item) => item.id.toString()}
+    style={{ marginTop: 20 }}
+  />
+)}
+
+{/* {showAchievements && (
         <FlatList
           data={rectangles}
           numColumns={2}
@@ -174,7 +207,7 @@ const AchievementsTestScreen = () => {
           keyExtractor={(_, index) => index.toString()}
           style={{ marginTop: 20 }}
         />
-      )}
+      )} */}
     </View>
   );
 };
@@ -201,12 +234,14 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 5, // Adicionado espaço entre o nome e a descrição
+    marginBottom: 5,
+    marginTop: 10
   },
   achievementDescription: {
     fontSize: 14,
     color: 'white',
     textAlign: 'center',
+    marginBottom: 15
   },
   searchContainer: {
     justifyContent: 'center',
@@ -256,17 +291,11 @@ const styles = StyleSheet.create({
   rectangleContainer: {
     flex: 1,
     paddingHorizontal: horizontalSpacing / 2,
-    marginBottom: 20,
-  },
-  rectangle: {
-    width: '100%',
-    maxWidth: maxRectangleWidth,
+    marginHorizontal: horizontalSpacing / 2, // Adiciona espaçamento horizontal
     aspectRatio: 153 / 198,
+    marginBottom: 20,
     backgroundColor: '#4B0082',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 10,
-    alignSelf: 'center',
   },
   topText: {
     color: 'white',
