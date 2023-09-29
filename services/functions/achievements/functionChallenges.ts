@@ -1,5 +1,8 @@
-import { db } from '../../firebaseConfig';
+import { db, auth } from '../../firebaseConfig';
 import { collection, getDocs } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
+import { storage } from '../../firebaseConfig';
+import { ref, getDownloadURL, FirebaseStorage } from 'firebase/storage';
 
 async function getChallengesList() {
   try {
@@ -20,7 +23,9 @@ async function getChallengesList() {
       challengeData.challengeName = challengeName;
 
       // URL da imagem do desafio
-      const imageURL = challengeData.image;
+      
+      const imageURLRef = ref(storage, challengeData.image);
+      const imageURL = await getDownloadURL(imageURLRef); 
       challengeData.imageURL = imageURL;
 
       // Concluído (true ou false)
