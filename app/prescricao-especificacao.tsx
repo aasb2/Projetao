@@ -19,7 +19,7 @@ interface ExerciseStruct {
 const PrescricaoEspecificacao = () => {
     // const params = useLocalSearchParams<{ exercises: string }>();
     const router = useRoute();
-    const params: any = router.params;
+    let params: any = router.params;
     console.log(params)
 
     const [exerciseOptions, setExercises] = useState<ExerciseStruct[]>([]);
