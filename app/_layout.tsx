@@ -65,7 +65,7 @@ function RootLayoutNav() {
                     }                    
                 } />
                 <Stack.Screen name="Comments" />
-                <Stack.Screen name="prescricao-especificacao" />
+                <Stack.Screen options={{ headerShown: false }} name="prescricao-especificacao" />
             </Stack>
         </ThemeProvider>
     );

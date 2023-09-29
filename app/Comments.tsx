@@ -9,7 +9,7 @@ export default async function Comments() {
 
 
     const commentCard = (postId: any) => {
-        const comments = await getComments(postId);
+        // const comments = await getComments(postId);
                 
         return (
             <View>
