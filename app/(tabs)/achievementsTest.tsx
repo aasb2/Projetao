@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { getAchievementsList } from '../../services/functions/achievements/functionAchievements';
+import { ChallengeCard } from '../../components/challengeCard';
 
 const { width } = Dimensions.get('window');
 
@@ -58,7 +59,7 @@ function renderItem({ item }: { item: Achievement }) {
       <Text style={styles.achievementName}>{item.achievementName}</Text>
       <Image
         source={{ uri: item.imageURL }} // Defina a URL da imagem aqui
-        style={{ width: 100, height: 100 }} // Defina as dimensões da imagem conforme necessário
+        style={ styles.image } // Defina as dimensões da imagem conforme necessário
       />
       <Text style={styles.achievementDescription}>{item.description}</Text>
     </View>
@@ -147,6 +148,10 @@ function renderItem({ item }: { item: Achievement }) {
           style={{ marginTop: 20 }}
         />
       )} */}
+
+     {showChallenges && (
+      <ChallengeCard/>
+      )} 
     </View>
   );
 };
@@ -173,8 +178,12 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 5,
     marginTop: 10
+  },
+  image: {
+    width: 120,
+    height: 120, 
+    resizeMode: 'contain'
   },
   achievementDescription: {
     fontSize: 14,
@@ -235,6 +244,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     backgroundColor: '#4B0082',
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
   topText: {
     color: 'white',
@@ -247,10 +257,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 10,
     textAlign: 'center',
-  },
-  image: {
-    width: '100%',
-    height: '45%', 
   },
 });
 

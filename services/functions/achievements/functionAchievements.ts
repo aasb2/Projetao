@@ -1,6 +1,8 @@
 import { db, auth } from '../../firebaseConfig';
 import { collection, getDocs } from 'firebase/firestore';
 import { doc, setDoc } from 'firebase/firestore';
+import { storage } from '../../firebaseConfig';
+import { ref, getDownloadURL, FirebaseStorage } from 'firebase/storage';
 
 async function getAchievementsList() {
   try {
@@ -20,11 +22,10 @@ async function getAchievementsList() {
       const achievementName = achievementData.name;
       achievementData.achievementName = achievementName;
 
-      //URL da imagem do achievement
-      const imageURL = achievementData.image;
+      // URL da imagem do achievement
+      const imageURLRef = ref(storage, achievementData.image);
+      const imageURL = await getDownloadURL(imageURLRef); 
       achievementData.imageURL = imageURL;
-
-      console.log(achievementData.imageURL);
 
       // Descrição do achievement
       const description = achievementData.description;
@@ -33,7 +34,6 @@ async function getAchievementsList() {
       achievementsData.push(achievementData);
     }
     console.log("aqui");
-    
 
     return achievementsData;
   } catch (error) {
