@@ -58,9 +58,9 @@ const BottomTabNavigation = () => {
                 options={{
                     tabBarIcon: ({ focused }) => {
                         return (
-                            <Entypo
-                                name="bar-graph"
-                                size={24}
+                            <MaterialCommunityIcons
+                                name="podium"
+                                size={25}
                                 color={focused ? COLORS.white : COLORS.tabSecondary}
                             />
                         )
@@ -105,7 +105,7 @@ const BottomTabNavigation = () => {
                         return (
                             <MaterialCommunityIcons
                                 name="weight-lifter"
-                                size={24}
+                                size={25}
                                 color={focused ? COLORS.white : COLORS.tabSecondary}
                             />
                         )
