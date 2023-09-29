@@ -6,8 +6,21 @@ import { getComments } from '../services/functions/community/feedCommunity';
 export default async function Comments() {
     const router = useRoute();
     const postId = router.params;
-    // const comments = await getComments(postId);
-    // console.log(comments)
+
+
+    const commentCard = (postId: any) => {
+        const comments = await getComments(postId);
+                
+        return (
+            <View>
+                {/* {comments.map((comment: any, index: any) => (
+                    
+                ))} */}
+            </View>
+        )
+    }
+
+
     return (
         <View
             style={{
@@ -20,6 +33,8 @@ export default async function Comments() {
                 marginVertical: 12,
             }}
         >
+            { commentCard(postId) }
+
             <Text>TO aq</Text>
         </View>
     )
