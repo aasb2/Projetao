@@ -71,8 +71,7 @@ const RankingTestScreen = () => {
       <View style={[styles.podiumItem, position === 1 && styles.firstPlace]}>
         <Image source={{ uri: user.imageURL }} style={styles.podiumImage} />
         <Text style={styles.podiumUserName}>{user.firstName}</Text>
-        {position !== 1 && <View style={styles.podiumRectangle} />}{" "}
-        {/* Evitar retângulo no primeiro colocado */}
+        {position !== 1 && <View style={styles.podiumRectangle} />}
       </View>
     );
 
@@ -91,9 +90,8 @@ const RankingTestScreen = () => {
   function renderRanking() {
     const usersRaking = friendsData.slice(3);
     return (
-      <ScrollView
+      <View
         style={styles.headerContainer}
-        contentContainerStyle={styles.headerContentContainer}
       >
         <FlatList
           data={friendsData}
@@ -109,7 +107,7 @@ const RankingTestScreen = () => {
             </View>
           )}
         />
-      </ScrollView>
+      </View>
     );
   }
 
@@ -178,6 +176,7 @@ const styles = StyleSheet.create({
     //height: 30,
     maxHeight: "50%",
     flex: 1,
+    paddingBottom: 35,
   },
   headerContentContainer: {
     paddingBottom: 30,
@@ -301,7 +300,7 @@ export default RankingTestScreen;
 
 //     function renderHeader() {
 //     return (
-//         <ScrollView
+//         <View
 //         style={{
 //             position: 'absolute',
 //             bottom: 0,
@@ -330,7 +329,7 @@ export default RankingTestScreen;
 //             </View>
 //             )}
 //         />
-//         </ScrollView>
+//         </View>
 //     );
 //     }
 

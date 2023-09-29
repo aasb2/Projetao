@@ -95,41 +95,35 @@ async function getUserInfo() {
   } catch (error) {
     console.error('Erro ao buscar informações do usuário logado:', error);
   }
+
 }
 
+async function linkToPersonal(id: string) {
+  try {
+    const user = auth.currentUser;
+    if (user) {
+      const personalCollection = collection(db, 'personal');
+      const personalQuery = query(personalCollection, where('checkIn', '==', id));
+      const personalQuerySnapshot = await getDocs(personalQuery);
 
+      const communityId = personalQuerySnapshot.docs[0].data().community;
 
-// // Função para buscar informações do usuário logado
-// async function getUserInfo() {
-//   try {
-//     const user = auth.currentUser;
-//     if (user) {
-//       console.log('Usuário autenticado:', user);
-//       // Resto do código
-//     } else {
-//       console.log('Nenhum usuário autenticado.');
-//     }
+      const usersCollection = collection(db, 'users');
+      const userQuery = query(usersCollection, where('uid', '==', user.uid));
+      const userQuerySnapshot = await getDocs(userQuery);
+      
+      const userDocRef = userQuerySnapshot.docs[0].ref;
 
-//     if (user) {
-//       const usersCollection = collection(db, 'users');
-//       const userQuery = query(usersCollection, where('uid', '==', user.uid));
-//       const userQuerySnapshot = await getDocs(userQuery);
+      const newUserDocReference: DocumentReference = doc(db, 'users', userDocRef.id);
+      await setDoc(newUserDocReference, { community: communityId }, { merge: true });   
+      
+      console.log('Campo feito com sucesso!')
+    } else {
+      console.log('Nenhum documento encontrado para o usuário logado.');
+    }
+  } catch (error) {
+    console.error('Erro ao buscar informações do usuário logado:', error);
+  }
+}
 
-//       if (userQuerySnapshot.size > 0) {
-//         const userData = userQuerySnapshot.docs[0].data();
-
-//         console.log('Informações do usuário logado:', userData);
-//         return userData;
-//       } else {
-//         console.log('Nenhum documento encontrado para o usuário logado.');
-//       }
-//     } else {
-//       console.log('Nenhum usuário logado.');
-//     }
-//   } catch (error) {
-//     console.error('Erro ao buscar informações do usuário logado:', error);
-//   }
-// }
-
-export { createNewUserDocument, getUserInfo };
-
+export { createNewUserDocument, getUserInfo, linkToPersonal };

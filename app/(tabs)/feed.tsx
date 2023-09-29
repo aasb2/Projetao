@@ -23,7 +23,7 @@ import { friends } from '../../constants/data'
 import FeedPost from '../../components/FeedPost';
 import { getFriendsList, getPostsList } from '../../services/functions/community/feedCommunity';
 import { getUserInfo } from '../../services/functions/login/loginUser';
-import { DocumentData, updateDoc, doc, onSnapshot, collection, getDoc, getDocs } from 'firebase/firestore';
+import { DocumentData, updateDoc, doc, onSnapshot, collection } from 'firebase/firestore';
 import { db } from '../../services/firebaseConfig';
 
 
@@ -68,7 +68,7 @@ const Feed = () => {
                     setUserCommunity(communityUser);
                     setFriendsData(dataFriends);
                 } catch (error) {
-                console.error('Erro ao buscar a lista de amigos:', error);
+                    console.error('Erro ao buscar a lista de amigos:', error);
                 }
             };
 
@@ -107,7 +107,7 @@ const Feed = () => {
             }
         }
 
-        const toggleUserIcon = (userId) => {
+        const toggleUserIcon = (userId: any) => {
             setUserIcons((prevIcons) => ({
                 ...prevIcons,
                 [userId]: prevIcons[userId] === 'weight-lifter' ? 'arm-flex' : 'weight-lifter',
