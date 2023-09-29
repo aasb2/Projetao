@@ -65,6 +65,7 @@ function RootLayoutNav() {
                     }                    
                 } />
                 <Stack.Screen name="Comments" />
+                <Stack.Screen name="prescricao-especificacao" />
             </Stack>
         </ThemeProvider>
     );

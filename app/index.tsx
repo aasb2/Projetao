@@ -5,7 +5,7 @@ import { auth } from '../services/firebaseConfig';
 import { createNewUserDocument } from '../services/functions/login/loginUser';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from "expo-auth-session/providers/google"
-import { Login } from "./Login/Login";
+import { Login } from "./login/Login";
 import { useNavigation } from 'expo-router'
 
 

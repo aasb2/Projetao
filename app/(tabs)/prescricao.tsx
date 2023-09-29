@@ -3,7 +3,7 @@ import { Text, StyleSheet, View, Image, ScrollView, Touchable, TouchableOpacity,
 import { useFonts, Roboto_400Regular, Roboto_700Bold, Roboto_100Thin } from '@expo-google-fonts/roboto'
 import { TextInput } from "react-native-gesture-handler";
 import Color from '../../constants/Colors';
-import { useRouter } from "expo-router";
+import { useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
 import { db } from "../../services/firebaseConfig";
 import { doc, addDoc, collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
@@ -16,7 +16,7 @@ interface checkboxStruct {
 }
 
 const Prescricao = () => {
-    const router = useRouter();
+    const navigation = useNavigation();
 
     const [inputText, setInputText] = React.useState<string>('');
     const [checkboxes, setCheckboxes] = React.useState<checkboxStruct[]>([]);
@@ -73,7 +73,8 @@ const Prescricao = () => {
         const chosenExercises = checkedCheckboxes.map((checkbox) => checkbox.exercise);
 
         //vai para a pagina de especificaçao enviando os exercicios escolhidos
-        router.push({ 'pathname': '/prescricao-especificacao', params: { 'exercises': chosenExercises } });
+        navigation.navigate('prescricao-especificacao', {'exercices': chosenExercises})
+        // router.push({ 'pathname': '../prescricao-especificacao/prescricao-especificacao', params: { 'exercises': chosenExercises } });
     };
     const handleOptionPress = (value: string) => {
         if (selectedButton == value) {
@@ -194,15 +195,15 @@ const Prescricao = () => {
                                 </View>
                             </View>
                         ))}
+
+                        <View style={styles.buttonWrapper}>
+                            <Pressable style={styles.button} onPress={handleSavePress}>
+                                <Text style={styles.buttonText}>Continuar</Text>
+                            </Pressable>
+                        </View>
+
                     </ScrollView>
                 </View>
-
-                <View style={styles.buttonWrapper}>
-                    <Pressable style={styles.button} onPress={handleSavePress}>
-                        <Text style={styles.buttonText}>Continuar</Text>
-                    </Pressable>
-                </View>
-
             </View>
 
         </View>
@@ -369,6 +370,7 @@ const styles = StyleSheet.create({
         width: 200,
         padding: 12,
         borderRadius: 20,
+        marginBottom: 30,
         backgroundColor: Color.prescricao.purple,
     },
     buttonText: {

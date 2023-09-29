@@ -1,12 +1,12 @@
 import * as React from "react";
 import { Text, StyleSheet, View, Image, ScrollView, TextInput, Pressable, Modal } from "react-native";
 import { useFonts, Roboto_400Regular, Roboto_700Bold, Roboto_100Thin } from '@expo-google-fonts/roboto'
-import Color from '../../constants/Colors';
+import Color from '../constants/Colors';
 import { useLocalSearchParams, router } from 'expo-router';
-import { db } from "../../services/firebaseConfig";
+import { db } from "../services/firebaseConfig";
 import { doc, addDoc, collection, updateDoc, arrayUnion } from 'firebase/firestore';
 import { useEffect, useState } from "react";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused, useRoute } from "@react-navigation/native";
 //import { getUserInfo } from '../../services/functions/login/loginUser';
 
 interface ExerciseStruct {
@@ -17,7 +17,10 @@ interface ExerciseStruct {
 }
 
 const PrescricaoEspecificacao = () => {
-    const params = useLocalSearchParams<{ exercises: string }>();
+    // const params = useLocalSearchParams<{ exercises: string }>();
+    const router = useRoute();
+    const params: any = router.params;
+    console.log(params)
 
     const [exerciseOptions, setExercises] = useState<ExerciseStruct[]>([]);
 
@@ -104,7 +107,7 @@ const PrescricaoEspecificacao = () => {
                 <Image
                     style={[styles.icon]}
                     resizeMode="cover"
-                    source={require('../../assets/images/left.png')}
+                    source={require('../assets/images/left.png')}
                 />
                 <Text style={[styles.headerText]}>
                     Treinos - Especificação
@@ -128,7 +131,7 @@ const PrescricaoEspecificacao = () => {
                                     <Image
                                         style={[styles.icon]}
                                         resizeMode="contain"
-                                        source={require('../../assets/images/close.png')}
+                                        source={require('../assets/images/close.png')}
                                     />
                                 </Pressable>
                             </View>
@@ -216,14 +219,14 @@ const PrescricaoEspecificacao = () => {
                             </View>
                         </View>
                     ))}
+                    <View style={styles.buttonWrapper}>
+                        <Pressable style={styles.button} onPress={togglePopup}>
+                            <Text style={styles.buttonText}>Continuar</Text>
+                        </Pressable>
+                    </View>
 
                 </ScrollView>
-                <View style={styles.buttonWrapper}>
-                    <Pressable style={styles.button} onPress={togglePopup}>
-                        <Text style={styles.buttonText}>Continuar</Text>
-                    </Pressable>
-                </View>
-
+                
             </View>
         </View>
 
@@ -238,6 +241,8 @@ const styles = StyleSheet.create({
         width: "100%",
         maxWidth: 550,
         backgroundColor: Color.prescricao.white,
+        paddingBottom: 15,
+        marginBottom: 10
     },
     headerMobile: {
         width: '100%',
@@ -336,7 +341,8 @@ const styles = StyleSheet.create({
     button: {
         alignSelf: 'center',
         width: 200,
-        padding: 12,
+        padding: 30,
+        marginBottom: 30,
         borderRadius: 20,
         backgroundColor: Color.prescricao.purple,
     },
