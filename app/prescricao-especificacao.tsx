@@ -36,8 +36,8 @@ const PrescricaoEspecificacao = () => {
     useEffect(() => {
         if (Object.keys(params).length != 0 && params.exercises != "") {
             //console.log(params);
-
-            const exercisesArr = params.exercises.split(',');
+            
+            const exercisesArr:string[] = params.exercises;
             const chosenExercises = exercisesArr.map(ex => ({ exercise: ex, kg: 10, reps: 10, sets: 1 }));
 
             setExercises(chosenExercises);
