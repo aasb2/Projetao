@@ -3,7 +3,7 @@ import { Text, StyleSheet, View, Image, ScrollView, Touchable, TouchableOpacity,
 import { useFonts, Roboto_400Regular, Roboto_700Bold, Roboto_100Thin } from '@expo-google-fonts/roboto'
 import { TextInput } from "react-native-gesture-handler";
 import Color from '../../constants/Colors';
-import { useNavigation } from "@react-navigation/native";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
 import { db } from "../../services/firebaseConfig";
 import { doc, addDoc, collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
@@ -16,7 +16,7 @@ interface checkboxStruct {
 }
 
 const Prescricao = () => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<NavigationProp<any>>();
 
     const [inputText, setInputText] = React.useState<string>('');
     const [checkboxes, setCheckboxes] = React.useState<checkboxStruct[]>([]);
@@ -73,7 +73,7 @@ const Prescricao = () => {
         const chosenExercises = checkedCheckboxes.map((checkbox) => checkbox.exercise);
 
         //vai para a pagina de especificaçao enviando os exercicios escolhidos
-        navigation.navigate('prescricao-especificacao', {'exercices': chosenExercises})
+        navigation.navigate('prescricao-especificacao', {exercises: chosenExercises});
         // router.push({ 'pathname': '../prescricao-especificacao/prescricao-especificacao', params: { 'exercises': chosenExercises } });
     };
     const handleOptionPress = (value: string) => {
