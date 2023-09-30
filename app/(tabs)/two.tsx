@@ -1,10 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Image, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  SafeAreaView,
+  TouchableOpacity,
+  Image,
+  TextInput,
+} from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons"; // Importe o ícone de localização
 import * as ImagePicker from "expo-image-picker";
-import { COLORS } from '../../constants'
-import { createNewPost } from '../../services/functions/community/postCreate';
-import { getUserInfo } from '../../services/functions/login/loginUser';
+import { COLORS } from "../../constants";
+import { createNewPost } from "../../services/functions/community/postCreate";
+import { getUserInfo } from "../../services/functions/login/loginUser";
 
 const PostScreen = () => {
   const [postText, setPostText] = useState("");
@@ -23,27 +31,26 @@ const PostScreen = () => {
       setPostImage(result.assets[0].uri);
       console.log(result);
     }
-  }
+  };
 
   // Quando o usuário criar um novo post
   const handleCreatePost = async () => {
     const content = postText;
     const image = postImage;
-    const postLocation = location; 
-    console.log("handleCreatePost", content)
+    const postLocation = location;
+    console.log("handleCreatePost", content);
 
     try {
       const newPostId = await createNewPost(content, image, postLocation);
-      console.log('ID do novo post:', newPostId);
+      console.log("ID do novo post:", newPostId);
 
       setPostText("");
       setPostImage(null);
       setLocation("");
-
     } catch (error) {
-      console.error('Erro ao criar o post:', error);
+      console.error("Erro ao criar o post:", error);
     }
-  }
+  };
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -51,23 +58,27 @@ const PostScreen = () => {
         const userInfo = await getUserInfo();
         setUserImage(userInfo.image);
       } catch (error) {
-        console.error('Erro ao buscar informações do usuário:', error);
+        console.error("Erro ao buscar informações do usuário:", error);
       }
     };
 
     fetchUserInfo();
   }, []);
 
-
   return (
     <SafeAreaView style={styles.container}>
       {/* Cabeçalho */}
       <View style={styles.header}>
         <TouchableOpacity>
-          <Ionicons name="md-arrow-back" size={24} color={COLORS.tabSecondary}></Ionicons>
+          <MaterialCommunityIcons
+            name="post-outline"
+            size={24}
+            color={COLORS.tabSecondary}
+          ></MaterialCommunityIcons>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.postButton}
+        <TouchableOpacity
+          style={styles.postButton}
           onPress={() => handleCreatePost()}
         >
           <Text style={styles.postButtonText}>Post</Text>
@@ -79,10 +90,7 @@ const PostScreen = () => {
         <View style={styles.commentContainer}>
           {/* Seção do usuário */}
           <View style={styles.userSection}>
-            <Image
-              source={{ uri: userImage }}
-              style={styles.userImage}
-            />
+            <Image source={{ uri: userImage }} style={styles.userImage} />
             <View style={styles.locationContainer}>
               <MaterialCommunityIcons
                 name="map-marker"
@@ -109,7 +117,7 @@ const PostScreen = () => {
               style={[styles.commentInput, { color: COLORS.primary }]}
               placeholder="O que você quer compartilhar?"
               value={postText}
-              onChangeText={text => setPostText(text)}
+              onChangeText={(text) => setPostText(text)}
             />
           </View>
         </View>
@@ -117,7 +125,11 @@ const PostScreen = () => {
 
       {/* Adicionar Imagem */}
       <TouchableOpacity style={styles.photo} onPress={pickImage}>
-        <Ionicons name="md-camera" size={32} color={COLORS.tabSecondary}></Ionicons>
+        <Ionicons
+          name="md-camera"
+          size={32}
+          color={COLORS.tabSecondary}
+        ></Ionicons>
       </TouchableOpacity>
 
       {/* Visualização da Imagem */}
@@ -128,20 +140,20 @@ const PostScreen = () => {
       )}
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E7E7E7',
+    backgroundColor: "#E7E7E7",
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     paddingHorizontal: 32,
-    paddingVertical: 12,
+    paddingVertical: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#D8D9DB',
+    borderBottomColor: "#D8D9DB",
   },
   postButton: {
     backgroundColor: COLORS.tabSecondary,
@@ -151,22 +163,22 @@ const styles = StyleSheet.create({
   },
   postButtonText: {
     fontWeight: "500",
-    color: '#fff',
+    color: "#fff",
   },
   commentContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     paddingHorizontal: 20,
-    flexDirection: 'column',
-    width: '100%',
+    flexDirection: "column",
+    width: "100%",
     borderRadius: 30,
     borderWidth: 1,
-    borderColor: '#fff',
+    borderColor: "#fff",
     marginVertical: 12,
   },
   userSection: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
     marginTop: 10,
     marginHorizontal: 10,
   },
@@ -176,8 +188,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   locationContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginLeft: 10,
     flex: 1,
   },
@@ -186,7 +198,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   inputContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginHorizontal: 20,
     marginVertical: 8,
   },
@@ -210,10 +222,6 @@ const styles = StyleSheet.create({
 });
 
 export default PostScreen;
-
-
-
-
 
 // import { StyleSheet } from 'react-native';
 

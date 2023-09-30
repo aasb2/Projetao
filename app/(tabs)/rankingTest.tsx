@@ -44,6 +44,7 @@ import { TouchableHighlight } from "react-native-gesture-handler";
 
 const RankingScreen = () => {
   const [friendsData, setFriendsData] = useState<DocumentData[]>([]);
+  const [isMonthScore, setIsMonthScore] = useState(true);
 
   useEffect(() => {
     const fetchFriends = async () => {
@@ -67,6 +68,35 @@ const RankingScreen = () => {
     return () => unsubscribe();
   }, []);
 
+  const handleUpdateScore = () => {
+    // Atualize o score para 10% do seu valor atual
+    const updatedFriendsData = friendsData.map((friend) => ({
+      ...friend,
+      score: isMonthScore ? Math.round(friend.score * 0.1) : friend.score * 10,
+    }));
+    setFriendsData(updatedFriendsData);
+    setIsMonthScore(!isMonthScore);
+  };
+
+  // const handleResetScore = async () => {
+  //   // Atualize o score para 10% do seu valor atual
+  //   if (resetButtonPressed == false) {
+  //     const originalData = await getFriendsList();
+  //     setFriendsData(originalData);
+  //     setUpdateButtonPressed(false);
+  //     setResetButtonPressed(true);
+  //   }
+  // };
+
+  const score = [
+    200, 185, 178, 164, 140, 138, 125, 112, 105, 90, 82, 70, 68, 60,
+  ];
+  const sortFriendsData = [...friendsData].sort((a, b) => b.score - a.score);
+  const insertText = {
+    id: "zone-desconto",
+  };
+  sortFriendsData.splice(3, 0, insertText);
+
   function renderHeader() {
     return (
       <View
@@ -86,13 +116,16 @@ const RankingScreen = () => {
     );
   }
 
-  const score = [
-    200, 185, 178, 164, 140, 138, 125, 112, 105, 90, 82, 70, 68, 60,
-  ];
-
   return (
     <SafeAreaView style={styles.container}>
       {renderHeader()}
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.button} onPress={handleUpdateScore}>
+          <Text style={styles.buttonText}>
+            {isMonthScore ? "Geral" : "Mês"}
+          </Text>
+        </TouchableOpacity>
+      </View>
       <View style={{ alignItems: "center" }}>
         <Image
           style={styles.image}
@@ -108,16 +141,27 @@ const RankingScreen = () => {
         }}
       >
         <FlatList
-          data={friendsData}
+          data={sortFriendsData}
           keyExtractor={(item) => item.id}
           renderItem={({ item, index }) => (
             <View style={styles.listItem}>
-              <View style={styles.rankContainer}>
-                <Text style={styles.rankText}>{index + 1}</Text>
-              </View>
-              <Image style={styles.logoUser} source={{ uri: item.imageURL }} />
-              <Text style={styles.nameText}>{item.name}</Text>
-              <Text style={styles.scoreText}>{score[index]}</Text>
+              {item.id === "zone-desconto" ? (
+                <Text style={styles.zoneText}>⬆ ZONA DE PROMOÇÂO ⬆</Text>
+              ) : (
+                <>
+                  <View style={styles.rankContainer}>
+                    <Text style={styles.rankText}>
+                      {index >= 4 ? index : index + 1}
+                    </Text>
+                  </View>
+                  <Image
+                    style={styles.logoUser}
+                    source={{ uri: item.imageURL }}
+                  />
+                  <Text style={styles.nameText}>{item.name}</Text>
+                  <Text style={styles.scoreText}>{item.score}</Text>
+                </>
+              )}
             </View>
           )}
         />
@@ -130,13 +174,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "flex-start",
-    //backgroundColor: "#fff",
     backgroundColor: COLORS.primary,
   },
   image: {
     height: 180,
     width: 180,
-    marginTop: 60,
+    marginTop: -10,
   },
   listItem: {
     flexDirection: "row",
@@ -144,7 +187,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 16,
     alignItems: "center",
-    //justifyContent: "space-around",
     borderBottomWidth: 1,
     borderBottomColor: "#F3F3F3",
   },
@@ -176,23 +218,43 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: COLORS.primary,
   },
+  zoneText: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: "bold",
+    color: COLORS.primary,
+    textAlign: "center",
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    alignItems: "center",
+    paddingVertical: 30,
+  },
+
+  button: {
+    backgroundColor: COLORS.primary,
+    paddingHorizontal: 16,
+    paddingVertical: 4,
+    borderRadius: 20,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    elevation: 3,
+  },
+
+  buttonText: {
+    color: COLORS.white,
+    fontSize: 13,
+    fontWeight: "500",
+  },
 });
 
 export default RankingScreen;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import {
 //   View,
