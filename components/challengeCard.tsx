@@ -34,7 +34,7 @@ export function ChallengeCard() {
   useEffect(() => {
     async function fetchChallenges() {
       try {
-        const challengesData = await getChallengesList();
+        const challengesData = await getChallengesList('4SyAAkeKRs71KxdhGv12');
         setChallenges(challengesData);
       } catch (error) {
         console.error('Erro ao buscar a lista de challenges:', error);
