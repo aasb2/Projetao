@@ -10,6 +10,7 @@ import {
   Dimensions,
   Image,
 } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 
 // Defina o tipo de objeto para os challenges
 type Challenge = {
@@ -51,8 +52,8 @@ export function ChallengeCard() {
       <View style={styles.Container}>
         <Text style={styles.challengeName}>{item.challengeName}</Text>
         <Image
-        source={{ uri: item.imageURL }} 
-        style={ styles.image }
+          source={{ uri: item.imageURL }} 
+          style={ styles.image }
         />
         {/* <Text style={styles.challengeName}>{item.completed}</Text> */}
         
@@ -71,7 +72,7 @@ export function ChallengeCard() {
   }
 
   return (
-    <View >
+    <View>
       <FlatList
         data={challenges}
         renderItem={renderItem}

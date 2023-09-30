@@ -8,6 +8,7 @@ import {
   TextInput,
   Dimensions,
   Image,
+  ScrollView
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { retrieveAchievements } from '../../services/functions/achievements/retrieveAchievements';
@@ -72,18 +73,18 @@ const AchievementsTestScreen = () => {
   }, [searchText, achievements]);
 
 
-function renderItem({ item }: { item: Achievement }) {
-  return (
-    <View style={styles.rectangleContainer}>
-      <Text style={styles.achievementName}>{item.achievementName}</Text>
-      <Image
-        source={{ uri: item.imageURL }} // Defina a URL da imagem aqui
-        style={ styles.image } // Defina as dimensões da imagem conforme necessário
-      />
-      <Text style={styles.achievementDescription}>{item.description}</Text>
-    </View>
-  );
-}
+  function renderItem({ item }: { item: Achievement }) {
+    return (
+      <View style={styles.rectangleContainer}>
+        <Text style={styles.achievementName}>{item.achievementName}</Text>
+        <Image
+          source={{ uri: item.imageURL }} // Defina a URL da imagem aqui
+          style={styles.image} // Defina as dimensões da imagem conforme necessário
+        />
+        <Text style={styles.achievementDescription}>{item.description}</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={{ flex: 1, paddingBottom: 60, backgroundColor: '#380062' }}>
@@ -129,9 +130,9 @@ function renderItem({ item }: { item: Achievement }) {
             style={styles.searchInput}
             value={searchText}
             onChangeText={(text) => setSearchText(text)}
-            onSubmitEditing={() => {}}
+            onSubmitEditing={() => { }}
           />
-          <TouchableOpacity style={styles.searchButton} onPress={() => {}}>
+          <TouchableOpacity style={styles.searchButton} onPress={() => { }}>
             <Ionicons name="search" size={24} color="black" />
           </TouchableOpacity>
         </View>
@@ -146,17 +147,17 @@ function renderItem({ item }: { item: Achievement }) {
         />
       )} */}
 
-{showAchievements && (
-  <FlatList
-    data={filteredAchievements} // Usamos filteredAchievements em vez de rectangles
-    numColumns={2}
-    renderItem={renderItem} // Passamos a função renderItem diretamente
-    keyExtractor={(item) => item.id.toString()} // Certifique-se de usar um identificador único aqui
-    style={{ marginTop: 20 }}
-  />
-)}
+      {showAchievements && (
+          <FlatList
+            data={filteredAchievements} // Usamos filteredAchievements em vez de rectangles
+            numColumns={2}
+            renderItem={renderItem} // Passamos a função renderItem diretamente
+            keyExtractor={(item) => item.id.toString()} // Certifique-se de usar um identificador único aqui
+            style={{ marginTop: 20 }}
+          />
+      )}
 
-{/* {showAchievements && (
+      {/* {showAchievements && (
         <FlatList
           data={rectangles}
           numColumns={2}
@@ -168,9 +169,9 @@ function renderItem({ item }: { item: Achievement }) {
         />
       )} */}
 
-     {showChallenges && (
-      <ChallengeCard/>
-      )} 
+      {showChallenges && (
+        <ChallengeCard />
+      )}
     </View>
   );
 };
@@ -201,7 +202,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 120,
-    height: 120, 
+    height: 120,
     resizeMode: 'contain'
   },
   achievementDescription: {
@@ -258,7 +259,7 @@ const styles = StyleSheet.create({
   rectangleContainer: {
     flex: 1,
     paddingHorizontal: horizontalSpacing / 2,
-    marginHorizontal: horizontalSpacing / 2, 
+    marginHorizontal: horizontalSpacing / 2,
     aspectRatio: 153 / 198,
     marginBottom: 20,
     backgroundColor: '#4B0082',

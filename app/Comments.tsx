@@ -1,24 +1,30 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Text } from 'react-native'
 import { useRoute } from '@react-navigation/native';
 import { getComments } from '../services/functions/community/feedCommunity';
+import { combineContextAndProps } from 'native-base';
 
-export default async function Comments() {
+const Comments = () => {
     const router = useRoute();
+    const [comments, setComments] = useState<any>();
+
     const postId = router.params;
+    useEffect(() => {
+        const getAllComments = async (postId: any)  => {
+            const allComments = await getComments(postId);
+            setComments(allComments);
+            console.log(comments)
+        }
+        getAllComments(postId)
+        
+        // return () => unsubscribe();
+    }, []);
 
 
-    const commentCard = (postId: any) => {
-        // const comments = await getComments(postId);
-                
-        return (
-            <View>
-                {/* {comments.map((comment: any, index: any) => (
-                    
-                ))} */}
-            </View>
-        )
-    }
+    
+    
+
+    
 
 
     return (
@@ -33,9 +39,8 @@ export default async function Comments() {
                 marginVertical: 12,
             }}
         >
-            { commentCard(postId) }
-
-            <Text>TO aq</Text>
         </View>
     )
 }
+
+export default Comments

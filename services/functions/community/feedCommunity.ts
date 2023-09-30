@@ -1,5 +1,5 @@
 import { db } from '../../firebaseConfig';
-import { collection, getDocs, getDoc, query, DocumentData, where } from 'firebase/firestore';
+import { collection, getDocs, getDoc, query, DocumentData, where, doc } from 'firebase/firestore';
 import { getUserInfo } from '../login/loginUser';
 
 // Função para pegar a lista de alunos da comunidade
@@ -112,34 +112,34 @@ async function getPostsList() {
     throw error;
   }
 }
-
-
 async function getComments(postId: any) {
   const currUser = await getUserInfo();
 
   try {
     if (currUser && currUser.community) {
       const postsCollection = collection(db, 'posts');
-      const postsQuery = query(
-        postsCollection,
-        where('id', '==', postId),
-      );
+      const postsQuery = query(postsCollection, where('id', '==', postId));
       const postsQuerySnapshot = await getDocs(postsQuery);
-      await Promise.all(postsQuerySnapshot.docs.map(async (docRef) => {
-        const postData = docRef.data();
-  
-        const comments = postData.comments;
-        console.log(comments)
-        return comments;
-  
-      }));
-    }
-  } catch(error) {
-    console.error(error)
-  }
-  
-}
 
+      if (!postsQuerySnapshot.empty) {
+        const dataQuery = postsQuerySnapshot.docs;
+        const comments = dataQuery[0].data().comments;
+        
+        if (comments !== undefined) {
+          return comments;
+        } else {
+          console.error('O documento não possui a propriedade "comments".', dataQuery[0].data());
+        }
+      } else {
+        console.error('Nenhum documento encontrado para o postId:', postId);
+      }
+    }
+  } catch (error) {
+    console.error('Erro ao buscar comentários:', error);
+  }
+
+  return null; // ou qualquer valor padrão que faça sentido para o seu caso
+}
 
 
 export { getFriendsList, getPostsList, getComments };
