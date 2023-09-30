@@ -34,10 +34,12 @@ import {
   collection,
 } from "firebase/firestore";
 import { db } from "../../services/firebaseConfig";
+import { NavigationProp, useNavigation } from "@react-navigation/native";
 
 const users = [images.user1, images.user2, images.user3, images.user4];
 
 const Feed = () => {
+  const navigation = useNavigation<NavigationProp<any>>();
   function renderHeader() {
     return (
       <View
@@ -96,6 +98,10 @@ const Feed = () => {
       // Retorna uma função de limpeza para interromper o ouvinte quando o componente for desmontado
       return () => unsubscribe();
     }, []);
+
+    const handleProfile = (userId) => {
+      navigation.navigate("Profile", userId);
+    };
 
     async function handleStartTraining() {
       try {
@@ -212,7 +218,7 @@ const Feed = () => {
               }}
             >
               <TouchableOpacity
-                onPress={() => console.log("Pressed")}
+                onPress={() => handleProfile(item.id)}
                 style={{
                   paddingVertical: 4,
                   marginRight: 10,

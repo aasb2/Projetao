@@ -78,6 +78,7 @@ function RootLayoutNav() {
           name="prescricao-especificacao"
         />
         <Stack.Screen name="workout" options={{ headerShown: false }} />
+        <Stack.Screen name="Profile" options={{ headerShown: false }} />
       </Stack>
     </ThemeProvider>
   );

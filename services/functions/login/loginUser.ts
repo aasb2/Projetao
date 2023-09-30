@@ -30,6 +30,7 @@ async function createNewUserDocument(user: User) {
         name: user.displayName,
         image: user.photoURL,
         isTraining: false,
+        score: 0,
         community: communityRef,
       });
 
