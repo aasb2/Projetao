@@ -7,13 +7,14 @@ import * as WebBrowser from 'expo-web-browser';
 import * as Google from "expo-auth-session/providers/google"
 import { Login } from "./login/Login";
 import { useNavigation } from 'expo-router'
+import { NavigationProp } from "@react-navigation/native";
 
 
 WebBrowser.maybeCompleteAuthSession();
 
 export default function Index() {
     WebBrowser.maybeCompleteAuthSession();
-    const navigation = useNavigation();
+    const navigation = useNavigation<NavigationProp<any>>();
 
 
     const [userInfo, setUserInfo] = useState<User | null>();

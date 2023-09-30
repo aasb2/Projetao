@@ -4,12 +4,13 @@ import React, { useState } from "react";
 import { COLORS, SIZES, images } from "../constants";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "expo-router";
+import { NavigationProp } from "@react-navigation/native";
 
 const users = [images.user1, images.user2, images.user3, images.user4];
 
 const FeedPost = ({ postsData, handleLikePost, userImage }: any) => {
   const [comments, setComments] = useState(postsData.map(() => ""));
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<any>>();
 
   const handleCommentChange = (text: String, index: number) => {
     const newComments = [...comments];

@@ -129,7 +129,7 @@ const RankingScreen = () => {
       <View style={{ alignItems: "center" }}>
         <Image
           style={styles.image}
-          source={{ uri: "../../assets/images/ranking.png" }}
+          source={require("../../assets/images/ranking.png")}
         />
       </View>
       <View

@@ -3,11 +3,12 @@ import { Button, StyleSheet, Text, TextInput, TouchableOpacity, View } from "rea
 import appTheme from "../constants/theme";
 import { linkToPersonal } from "../services/functions/login/loginUser";
 import { useNavigation } from "expo-router";
+import { NavigationProp } from "@react-navigation/native";
 
 
 export default function CheckIn() {
     const [inputValue, setInputValue] = useState<string | undefined>(undefined);
-    const navigation = useNavigation();
+    const navigation = useNavigation<NavigationProp<any>>();
 
     const handleInputChange = (text: string) => {
         setInputValue(text);
