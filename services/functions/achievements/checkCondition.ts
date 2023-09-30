@@ -1,8 +1,11 @@
 import { db, auth } from '../../firebaseConfig';
 import { doc, getDoc, updateDoc, collection, getDocs } from 'firebase/firestore';
+import { getUserInfo } from '../login/loginUser';
 
-async function checkCondition(userID: string) {
+async function checkCondition() {
   try {
+    const loggedUser = await getUserInfo();
+    const userID = loggedUser.id._key.path.segments.slice(-1)[0];
     // Consulta para obter o documento do usuário
     const userDocRef = doc(db, 'users', userID);
     const userDocSnapshot = await getDoc(userDocRef);

@@ -15,7 +15,8 @@ import { retrieveAchievements } from '../../services/functions/achievements/retr
 import { ChallengeCard } from '../../components/challengeCard';
 import { checkCondition } from '../../services/functions/achievements/checkCondition';
 import { auth, db } from '../../services/firebaseConfig';
-import { collection, getDoc } from 'firebase/firestore';
+import { collection, getDoc, onSnapshot } from 'firebase/firestore';
+import { getUserInfo } from '../../services/functions/login/loginUser';
 
 const { width } = Dimensions.get('window');
 
@@ -23,7 +24,7 @@ const maxRectangleWidth = width * 0.45;
 const horizontalSpacing = 10;
 const userID = '4SyAAkeKRs71KxdhGv12';
 
-const user = auth.currentUser;
+
 
 type Achievement = {
   id: string;
@@ -49,20 +50,31 @@ const AchievementsTestScreen = () => {
   const [filteredAchievements, setFilteredAchievements] = useState<Achievement[]>([]);
   const [showAchievements, setShowAchievements] = useState(true);
   const [showChallenges, setShowChallenges] = useState(false);
+  const [userData, setUserData] = useState('');
 
   useEffect(() => {
     async function fetchAchievements() {
       try {
-        await checkCondition('4SyAAkeKRs71KxdhGv12');
-        const achievementsData = await retrieveAchievements(userID);
+        await checkCondition();
+        const achievementsData = await retrieveAchievements();
         console.log(achievementsData);
         setAchievements(achievementsData);
       } catch (error) {
         console.error('Erro ao buscar a lista de achievements:', error);
       }
     }
+    const reload = onSnapshot(
+      collection(db, "users"),
+      async (snapshot) => {
+        await checkCondition();
+        const achievementsData = await retrieveAchievements();
+        console.log("Mensagem de dentro do snapshot");
+        console.log(achievementsData);
+        setAchievements(achievementsData);
+      })
 
     fetchAchievements();
+    return () => reload();
   }, []);
 
   useEffect(() => {
@@ -70,7 +82,7 @@ const AchievementsTestScreen = () => {
       achievement.achievementName.toLowerCase().includes(searchText.toLowerCase())
     );
     setFilteredAchievements(filtered);
-    console.log(user);
+
   }, [searchText, achievements]);
 
 
@@ -171,7 +183,7 @@ function renderItem({ item }: { item: Achievement }) {
       )} */}
 
      {showChallenges && (
-      <ChallengeCard/>
+      <ChallengeCard userID = {userData}/>
       )} 
     </View>
   );

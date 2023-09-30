@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getChallengesList } from '../services/functions/achievements/functionChallenges';
+import { getUserInfo } from '../services/functions/login/loginUser';
 import {
   View,
   Text,
@@ -27,14 +28,21 @@ type Challenge = {
   }[];
 };
 
+const userid = '4SyAAkeKRs71KxdhGv12';
 
-export function ChallengeCard() {
+
+export function ChallengeCard(props: { userID: string }) {
+  const userID = props.userID;
   const [challenges, setChallenges] = useState<Challenge[]>([]);
+  const [userDataChallenges, setUserData] = useState('');
 
   useEffect(() => {
     async function fetchChallenges() {
       try {
-        const challengesData = await getChallengesList('4SyAAkeKRs71KxdhGv12');
+        // const auxUserDataChallenges = await getUserInfo();
+        // setUserData(auxUserDataChallenges.id._key.path.segments.slice(-1)[0]);
+        // console.log(userDataChallenges);
+        const challengesData = await getChallengesList();
         setChallenges(challengesData);
       } catch (error) {
         console.error('Erro ao buscar a lista de challenges:', error);
