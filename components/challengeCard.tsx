@@ -79,13 +79,14 @@ export function ChallengeCard(props: { userID: string }) {
   }
 
   return (
-    <View >
+    <View style={{ flex: 1 }}>
       <FlatList
         data={challenges}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
-        style={{ marginTop: 20 }}
+        style={{ marginTop: 20, height: '80%' }} 
       />
+
     </View>
   );
 }
