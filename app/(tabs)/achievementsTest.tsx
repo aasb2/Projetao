@@ -11,18 +11,36 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { getAchievementsList } from '../../services/functions/achievements/functionAchievements';
+import { retrieveAchievements } from '../../services/functions/achievements/retrieveAchievements';
 import { ChallengeCard } from '../../components/challengeCard';
+import { checkCondition } from '../../services/functions/achievements/checkCondition';
+import { auth, db } from '../../services/firebaseConfig';
+import { collection, getDoc } from 'firebase/firestore';
 
 const { width } = Dimensions.get('window');
 
 const maxRectangleWidth = width * 0.45;
 const horizontalSpacing = 10;
+const userID = '4SyAAkeKRs71KxdhGv12';
+
+const user = auth.currentUser;
 
 type Achievement = {
   id: string;
   achievementName: string;
   description: string;
   imageURL: string;
+};
+
+type Challenge = {
+  id: string;
+  image: string;
+  name: string;
+  conditions: {
+    description: string;
+    key: string;
+    value: number;
+  };
 };
 
 const AchievementsTestScreen = () => {
@@ -35,7 +53,9 @@ const AchievementsTestScreen = () => {
   useEffect(() => {
     async function fetchAchievements() {
       try {
-        const achievementsData = await getAchievementsList();
+        await checkCondition('4SyAAkeKRs71KxdhGv12');
+        const achievementsData = await retrieveAchievements(userID);
+        console.log(achievementsData);
         setAchievements(achievementsData);
       } catch (error) {
         console.error('Erro ao buscar a lista de achievements:', error);
@@ -50,6 +70,7 @@ const AchievementsTestScreen = () => {
       achievement.achievementName.toLowerCase().includes(searchText.toLowerCase())
     );
     setFilteredAchievements(filtered);
+    console.log(user);
   }, [searchText, achievements]);
 
 
