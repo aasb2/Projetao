@@ -4,6 +4,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { retrieveWorkouts } from '../../services/functions/workout/retrieveWorkouts';
 import { updateWeights as updateMaxWeights } from '../../services/functions/workout/updateMaximumWeights';
 import {incrementCompletedWorkouts} from '../../services/functions/workout/updateCompletedWorkouts'
+import { getUserInfo } from '../../services/functions/login/loginUser';
+import { checkCondition } from '../../services/functions/achievements/checkCondition';
 
 const WorkoutScreen = () => {
   const [workouts, setWorkouts] = useState([]);
@@ -13,19 +15,20 @@ const WorkoutScreen = () => {
   const [pesos, setPesos] = useState([]);
   const userid = '4SyAAkeKRs71KxdhGv12'
   const [pesosPorExercicio, setPesosPorExercicio] = useState({}); // Inicialize um objeto vazio para armazenar os pesos
+  const [userData, setUserData] = useState('')
 
   useEffect(() => {
     async function fetchWorkouts() {
       try {
-        const workoutsData = await retrieveWorkouts(userid);
+        const workoutsData = await retrieveWorkouts();
         setWorkouts(workoutsData);
 
       } catch (error) {
         console.error('Erro ao buscar a lista de treinos:', error);
       }
     }
-
     fetchWorkouts();
+    console.log("Fetched")
   }, []);
 
   useEffect(() => {
@@ -35,18 +38,18 @@ const WorkoutScreen = () => {
     }
   }, [workouts]);
 
-  async function updateCompletedWorkouts (userid: string) {
+  async function updateCompletedWorkouts () {
     try {
-      await incrementCompletedWorkouts(userid);
+      await incrementCompletedWorkouts();
 
     } catch (error) {
       console.error('Erro ao buscar a lista de treinos:', error);
     }
   }
 
-  async function updateMaximumWeights(userid: string, pesos: {[key: string]: number}) {
+  async function updateMaximumWeights(pesos: {[key: string]: number}) {
     try {
-      await updateMaxWeights(userid, pesos);
+      await updateMaxWeights(pesos);
 
     } catch (error) {
       console.error('Erro ao buscar a lista de treinos:', error);
@@ -69,13 +72,14 @@ const WorkoutScreen = () => {
       }
     });
 
-    if (anyChecked){updateCompletedWorkouts(userid);}
+    if (anyChecked){updateCompletedWorkouts();}
   
     setPesosPorExercicio(novoArrayPesos);
         
     setIsCheckedList(Array(selectedWorkout.exercises.length).fill(false));
 
-    updateMaximumWeights(userid, novoArrayPesos);
+    updateMaximumWeights(novoArrayPesos);
+    checkCondition();
   
     // output no console
     console.log('Dicionário pesosPorExercicio:', pesosPorExercicio);
