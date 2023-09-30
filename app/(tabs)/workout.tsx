@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, CheckBox, FlatList, Picker, TextInput  } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput  } from 'react-native';
+import { Picker } from '@react-native-picker/picker'
+import { Checkbox } from 'expo-checkbox'
 import { Ionicons } from '@expo/vector-icons';
 import { retrieveWorkouts } from '../../services/functions/workout/retrieveWorkouts';
 import { updateWeights as updateMaxWeights } from '../../services/functions/workout/updateMaximumWeights';
@@ -150,7 +152,7 @@ const WorkoutScreen = () => {
             <View style={styles.container}>
             <View style={styles.card}>
                 <View style={styles.checkboxContainer}>
-                <CheckBox
+                <Checkbox
                     value={isCheckedList[index]}
                     onValueChange={() => handleCheckBoxChange(index)}
                 />

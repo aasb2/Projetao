@@ -10,12 +10,10 @@ import {
   Image,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { getAchievementsList } from '../../services/functions/achievements/functionAchievements';
 import { retrieveAchievements } from '../../services/functions/achievements/retrieveAchievements';
 import { ChallengeCard } from '../../components/challengeCard';
 import { checkCondition } from '../../services/functions/achievements/checkCondition';
-import { auth, db } from '../../services/firebaseConfig';
-import { collection, getDoc } from 'firebase/firestore';
+import { auth } from '../../services/firebaseConfig';
 
 const { width } = Dimensions.get('window');
 

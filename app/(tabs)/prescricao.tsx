@@ -7,6 +7,8 @@ import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
 import { db } from "../../services/firebaseConfig";
 import { doc, addDoc, collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { COLORS } from "../../constants";
 
 interface checkboxStruct {
     id: string;
@@ -123,15 +125,17 @@ const Prescricao = () => {
 
     return (
         <View style={styles.prescricaoTreinos}>
-            <View style={styles.headerMobile}>
-                <Image
-                    style={[styles.icon]}
-                    resizeMode="contain"
-                    source={require('../../assets/images/left.png')}
-                />
-                <Text style={[styles.headerText]}>
-                    Treinos
-                </Text>
+             <View style={styles.header}>
+                <View>
+                    <Text style={{fontFamily: 'Roboto_700Bold', fontSize: 17}}>Prescrição</Text>
+                </View>
+
+                <TouchableOpacity
+                    style={styles.postButton}
+                    onPress={() => console.log()}
+                >
+                <Text style={styles.postButtonText}>Workout</Text>
+                </TouchableOpacity>
             </View>
 
             <View style={styles.body}>
@@ -381,7 +385,27 @@ const styles = StyleSheet.create({
     selected: {
         backgroundColor: Color.prescricao.purple,
         color: Color.prescricao.white
-    }
+    },
+    header: {
+        flexDirection: "row",
+        alignItems: 'center',
+        justifyContent: "space-between",
+        paddingHorizontal: 32,
+        marginTop: 25,
+        paddingBottom: 5,
+        borderBottomWidth: 1,
+        borderBottomColor: "#D8D9DB",
+      },
+      postButton: {
+        backgroundColor: COLORS.primary,
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        borderRadius: 8,
+      },
+      postButtonText: {
+        fontWeight: "bold",
+        color: "#fff",
+      },
 });
 
 export default Prescricao;
