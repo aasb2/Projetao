@@ -51,6 +51,13 @@ export function ChallengeCard(props: { userID: string }) {
     fetchChallenges();
   }, []);
 
+  // Obtenha a largura da tela
+  const windowWidth = Dimensions.get('window').width;
+
+  // Ajuste as dimensões com base na largura da tela
+  const containerWidth = windowWidth * 0.9;
+  const scoreCircleSize = windowWidth * 0.1;
+
   // Função renderItem para renderizar cada item (card de desafio)
   function renderItem({ item, index }: { item: Challenge; index: number }) {
     let score = 0;
@@ -65,52 +72,30 @@ export function ChallengeCard(props: { userID: string }) {
     }
 
     return (
-      <View  style={styles.Align}>
-
-        <View style={styles.Container}>
-
-        <View style={styles.containerFlexCol }> 
-
-          <View style={styles.containerFlex }>  
-            <Image
-              source={{ uri: item.imageURL }} 
-              style={ styles.image }
+      <View style={styles.Align}>
+        <View style={[styles.Container, { width: containerWidth }]}>
+          <View style={styles.containerFlexCol}>
+            <View style={styles.containerFlex}>
+              <Image
+                source={{ uri: item.imageURL }}
+                style={styles.image}
               />
-          
-            <Text style={styles.challengeName}>{item.challengeName}</Text>
+              <Text style={styles.challengeName}>{item.challengeName}</Text>
+            </View>
 
-              {/* Círculo no canto superior direito */}
-              <View style={styles.scoreCircle}>
-                <Text style={styles.scoreText}>{score}</Text>
-              </View>
+            {/* Círculo no canto superior direito */}
+            <View style={[styles.scoreCircle, { width: scoreCircleSize, height: scoreCircleSize }]}>
+              <Text style={styles.scoreText}>{score}</Text>
             </View>
           </View>
 
-          <View style={styles.containerDescription }>
-              <Text style={styles.challengeDescription}>
-                {item.conditions['description']}
-              </Text>
+          <View style={styles.containerDescription}>
+            <Text style={styles.challengeDescription}>
+              {item.conditions['description']}
+            </Text>
           </View>
         </View>
-          
-
-
-
-          {/* <View>
-  {Array.isArray(item.conditions) ? (
-    item.conditions.map((condition, index) => (
-      <Text key={index} style={styles.challengeName}>
-        {condition.description}
-      </Text>
-    ))
-  ) : (
-    <Text style={styles.challengeName}>Condições não disponíveis</Text>
-  )}
-</View> */}
-
-
-        </View>
-      
+      </View>
     );
   }
 
@@ -128,13 +113,12 @@ export function ChallengeCard(props: { userID: string }) {
 
 const styles = StyleSheet.create({
   Container: {
-    width: '90%', 
-    height: 100, 
     backgroundColor: '#C7B0D8',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    // alignItems: 'center',
     borderRadius: 19.705,
+    paddingHorizontal: 15,
+    marginVertical: 10,
   },
   
   Align: {
@@ -142,69 +126,50 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginTop: 5,
   },
-  cardHeader: {
+  containerFlex: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  icon: {
-    width: 30,
-    height: 30,
-    marginRight: 10,
-  },
-  containerFlex :{
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-
-  },
-  containerFlexCol:{
-    flex: 2,
+  containerFlexCol: {
     flexDirection: 'column',
   },
   challengeName: {
     fontSize: 23,
     color: 'black',
     fontWeight: 'bold',
-    // textAlign: 'center',
-    marginTop: 10
+    marginTop: 10,
   },
   challengeDescription: {
     fontSize: 18,
     color: 'black',
     fontWeight: 'bold',
-    // marginBottom: 20,
-    marginLeft: 88
+    marginLeft: 88,
   },
-  containerDescription :{
+  containerDescription: {
     marginBottom: 10,
   },
   image: {
     width: 60,
-    height: 60, 
+    height: 60,
     resizeMode: 'contain',
     marginBottom: 5,
     marginTop: 20,
     marginRight: 15,
-    marginLeft: 15
+    marginLeft: 15,
   },
   scoreCircle: {
     position: 'absolute',
     top: 10,
     right: 10,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    borderRadius: 50, // Use borderRadius para torná-lo circular
     borderColor: 'black',
     borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',
   },
   scoreText: {
-    color: 'white',
+    color: 'black',
     fontSize: 18,
-    fontWeight: 'bold',    marginTop: 20,
-    marginRight: 15,
-    marginLeft: 15
-
+    fontWeight: 'bold',
   },
 });
