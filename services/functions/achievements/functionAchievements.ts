@@ -33,7 +33,6 @@ async function getAchievementsList() {
 
       achievementsData.push(achievementData);
     }
-    console.log("aqui");
 
     return achievementsData;
   } catch (error) {

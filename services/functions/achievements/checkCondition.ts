@@ -21,19 +21,19 @@ async function checkCondition() {
     const userData = userDocSnapshot.data();
     for (const challengeDoc of challengesQuerySnapshot.docs){
         const challengeData = challengeDoc.data();
-        console.log(challengeData);
+        // console.log(challengeData);
         
         // Obtenha as condições do desafio
         const conditions = challengeData.conditions || {};
         // Verifique as condições
         const challengeKey = conditions.key;
         const challengeValue = conditions.value;
-        console.log(userData.maximum_weights[challengeKey]);
-        console.log(challengeValue);
+        // console.log(userData.maximum_weights[challengeKey]);
+        // console.log(challengeValue);
 
 
         if (userData.maximum_weights[challengeKey] >= challengeValue) {
-            console.log(challengeData.name)
+            // console.log(challengeData.name)
             
             // Atualize o valor do desafio para true
             const userChallengesRef = doc(db, 'users', userID);
