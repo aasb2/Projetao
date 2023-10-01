@@ -24,8 +24,6 @@ const maxRectangleWidth = width * 0.45;
 const horizontalSpacing = 10;
 const userID = '4SyAAkeKRs71KxdhGv12';
 
-
-
 type Achievement = {
   id: string;
   achievementName: string;
@@ -51,6 +49,7 @@ const AchievementsTestScreen = () => {
   const [showAchievements, setShowAchievements] = useState(true);
   const [showChallenges, setShowChallenges] = useState(false);
   const [userData, setUserData] = useState('');
+  const [searchPlaceholder, setSearchPlaceholder] = useState('Pesquisar desafio');
 
   useEffect(() => {
     async function fetchAchievements() {
@@ -85,19 +84,18 @@ const AchievementsTestScreen = () => {
 
   }, [searchText, achievements]);
 
-
-function renderItem({ item }: { item: Achievement }) {
-  return (
-    <View style={styles.rectangleContainer}>
-      <Text style={styles.achievementName}>{item.achievementName}</Text>
-      <Image
-        source={{ uri: item.imageURL }} // Defina a URL da imagem aqui
-        style={ styles.image } // Defina as dimensões da imagem conforme necessário
-      />
-      <Text style={styles.achievementDescription}>{item.description}</Text>
-    </View>
-  );
-}
+  function renderItem({ item }: { item: Achievement }) {
+    return (
+      <View style={styles.rectangleContainer}>
+        <Text style={styles.achievementName}>{item.achievementName}</Text>
+        <Image
+          source={{ uri: item.imageURL }} // Defina a URL da imagem aqui
+          style={styles.image} // Defina as dimensões da imagem conforme necessário
+        />
+        <Text style={styles.achievementDescription}>{item.description}</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={{ flex: 1, paddingBottom: 60, backgroundColor: '#380062' }}>
@@ -121,6 +119,7 @@ function renderItem({ item }: { item: Achievement }) {
           onPress={() => {
             setShowAchievements(true);
             setShowChallenges(false);
+            setSearchPlaceholder('Pesquisar conquista');
           }}
         >
           <Text style={styles.buttonText}>Conquistas</Text>
@@ -130,6 +129,7 @@ function renderItem({ item }: { item: Achievement }) {
           onPress={() => {
             setShowAchievements(false);
             setShowChallenges(true);
+            setSearchPlaceholder('Pesquisar desafio');
           }}
         >
           <Text style={styles.buttonText}>Desafios</Text>
@@ -139,7 +139,7 @@ function renderItem({ item }: { item: Achievement }) {
       <View style={styles.searchContainer}>
         <View style={styles.searchInputContainer}>
           <TextInput
-            placeholder="Pesquisar desafio..."
+            placeholder={searchPlaceholder}
             style={styles.searchInput}
             value={searchText}
             onChangeText={(text) => setSearchText(text)}
@@ -151,43 +151,23 @@ function renderItem({ item }: { item: Achievement }) {
         </View>
       </View>
 
-      {/* {showAchievements && (
+      {showAchievements && (
         <FlatList
           data={filteredAchievements}
-          
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-        />
-      )} */}
-
-{showAchievements && (
-  <FlatList
-    data={filteredAchievements} // Usamos filteredAchievements em vez de rectangles
-    numColumns={2}
-    renderItem={renderItem} // Passamos a função renderItem diretamente
-    keyExtractor={(item) => item.id.toString()} // Certifique-se de usar um identificador único aqui
-    style={{ marginTop: 20 }}
-  />
-)}
-
-{/* {showAchievements && (
-        <FlatList
-          data={rectangles}
           numColumns={2}
-          renderItem={({ item }) => (
-            <View style={styles.rectangleContainer}>{item}</View>
-          )}
-          keyExtractor={(_, index) => index.toString()}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id.toString()}
           style={{ marginTop: 20 }}
         />
-      )} */}
+      )}
 
-     {showChallenges && (
-      <ChallengeCard userID = {userData}/>
-      )} 
+      {showChallenges && (
+        <ChallengeCard userID={userData} />
+      )}
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   header: {
