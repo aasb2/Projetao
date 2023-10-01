@@ -79,6 +79,7 @@ function RootLayoutNav() {
             headerShown: true,
             title: "Comentários",
             headerTitleAlign: "center",
+            headerTintColor: "white",
             headerStyle: {
               backgroundColor: COLORS.primary,
             },
