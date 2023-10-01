@@ -99,7 +99,6 @@ const AchievementsTestScreen = () => {
   return (
     <View style={{ flex: 1, paddingBottom: 60, backgroundColor: '#380062' }}>
 
-
       <View style={styles.buttonSelectionContainer}>
         <TouchableOpacity
           style={showAchievements ? styles.selectedButton : styles.unselectedButton}
@@ -174,28 +173,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 15
   },
-  searchContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  searchInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    borderRadius: 20,
-    paddingHorizontal: 10,
-  },
-  searchInput: {
-    flex: 1,
-    height: 40,
-  },
-  searchButton: {
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 10,
-    marginLeft: 10,
-  },
+
   buttonSelectionContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
