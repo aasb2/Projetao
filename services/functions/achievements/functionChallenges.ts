@@ -25,6 +25,13 @@ async function getChallengesList() {
       const challengeName = challengeData.name;
       challengeData.challengeName = challengeName;
 
+      // Condicoes do desafio
+      const challengeConditions = challengeData.conditions;
+      challengeData.challengeConditions = challengeConditions;
+
+      console.log(challengeConditions.description);
+
+
       // URL da imagem do desafio
       const imageURLRef = ref(storage, challengeData.image);
       const imageURL = await getDownloadURL(imageURLRef); 

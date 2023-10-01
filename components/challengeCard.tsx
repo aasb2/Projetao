@@ -13,19 +13,23 @@ import {
 } from 'react-native';
 
 // Defina o tipo de objeto para os challenges
+type ChallengeCondition = {
+  description: string;
+  key: string;
+  value: number;
+};
+
 type Challenge = {
   id: string;
   challengeName: string;
   imageURL: string;
   completed: boolean;
+  // conditions: { [key: string]: ChallengeCondition };
   conditions: {
-    completed: boolean;
-    condition: string;
     description: string;
-    field: string;
     key: string;
     value: number;
-  }[];
+  };
 };
 
 const userid = '4SyAAkeKRs71KxdhGv12';
@@ -56,24 +60,39 @@ export function ChallengeCard(props: { userID: string }) {
   function renderItem({ item }: { item: Challenge }) {
     return (
       <View  style={styles.Align}>
-      <View style={styles.Container}>
-        <Text style={styles.challengeName}>{item.challengeName}</Text>
-        <Image
-        source={{ uri: item.imageURL }} 
-        style={ styles.image }
-        />
-        {/* <Text style={styles.challengeName}>{item.completed}</Text> */}
-        
-        {/* aqui era pra ser a condição, mas nao aparece */}
-        {/* <View>
-          {item.conditions.map((condition, index) => (
-            <Text key={index} style={styles.challengeName}>
-              {condition.description}
-            </Text>
-          ))}
-        </View> */}
+        <View style={styles.Container}>
+          
+          <Text style={styles.challengeName}>{item.challengeName}</Text>
+          <Image
+          source={{ uri: item.imageURL }} 
+          style={ styles.image }
+          />
+          {/* <Text style={styles.challengeName}>{item.completed}</Text> */}
+          
+          {/* aqui era pra ser a condição, mas nao aparece */}
+          <View>
+              <Text style={styles.descriptionName}>
+                {item.conditions['description']}
+              </Text>
+          </View>
+          
 
-      </View>
+
+
+          {/* <View>
+  {Array.isArray(item.conditions) ? (
+    item.conditions.map((condition, index) => (
+      <Text key={index} style={styles.challengeName}>
+        {condition.description}
+      </Text>
+    ))
+  ) : (
+    <Text style={styles.challengeName}>Condições não disponíveis</Text>
+  )}
+</View> */}
+
+
+        </View>
       </View>
     );
   }
@@ -94,23 +113,32 @@ export function ChallengeCard(props: { userID: string }) {
 
 const styles = StyleSheet.create({
   Container: {
-    width: '90%', 
-    height: 200, 
+    width: '85%', 
+    height: 150, 
     backgroundColor: '#C7B0D8',
     justifyContent: 'space-between',
     alignItems: 'center',
+    borderRadius: 5,
   },
   Align :{
     alignItems: 'center',
     marginBottom: 10,
-    marginTop: 10
+    marginTop: 5
   },
   challengeName: {
-    fontSize: 28,
-    color: 'white',
+    fontSize: 23,
+    color: 'black',
     fontWeight: 'bold',
     textAlign: 'center',
     marginTop: 10
+  },
+  descriptionName: {
+    fontSize: 20,
+    color: 'black',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 5,
+    marginBottom: 6
   },
   image: {
     width: 60,
