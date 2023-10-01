@@ -96,7 +96,7 @@ async function getUserInfo() {
       const usersCollection = collection(db, "users");
       const userQuery = query(
         usersCollection,
-        where("uid", "==", "djvDBeK9hFeiz5PWYrl42CQVuSv1")
+        where("uid", "==", "Paarf9Ts4vQA7LsvYlMLp0nQTNn1")
       ); //user.uid  OU  "djvDBeK9hFeiz5PWYrl42CQVuSv1";
       const userQuerySnapshot = await getDocs(userQuery);
 
