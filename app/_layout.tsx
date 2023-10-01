@@ -12,6 +12,7 @@ import {
   Roboto_700Bold,
 } from "@expo-google-fonts/roboto";
 import appTheme from "../constants/theme";
+import { COLORS } from "../constants";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -72,7 +73,17 @@ function RootLayoutNav() {
             },
           }}
         />
-        <Stack.Screen name="Comments" />
+        <Stack.Screen
+          name="Comments"
+          options={{
+            headerShown: true,
+            title: "Comentários",
+            headerTitleAlign: "center",
+            headerStyle: {
+              backgroundColor: COLORS.primary,
+            },
+          }}
+        />
         <Stack.Screen
           options={{ headerShown: false }}
           name="prescricao-especificacao"

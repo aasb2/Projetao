@@ -1,6 +1,15 @@
-import { db } from '../../firebaseConfig';
-import { collection, getDocs, getDoc, query, DocumentData, where, doc } from 'firebase/firestore';
-import { getUserInfo } from '../login/loginUser';
+import { db } from "../../firebaseConfig";
+import {
+  collection,
+  getDocs,
+  getDoc,
+  query,
+  DocumentData,
+  where,
+  doc,
+  DocumentSnapshot,
+} from "firebase/firestore";
+import { getUserInfo } from "../login/loginUser";
 
 // Função para pegar a lista de alunos da comunidade
 async function getFriendsList() {
@@ -11,13 +20,13 @@ async function getFriendsList() {
       const communityRef = currUser.community;
 
       // Consulta para buscar os amigos do usuário com base na comunidade
-      const friendsCollection = collection(db, 'users');
+      const friendsCollection = collection(db, "users");
       const friendsQuery = query(
         friendsCollection,
-        where('community', '==', communityRef),
+        where("community", "==", communityRef)
         //where('isTraining', '==', true)
       );
-      
+
       const friendsQuerySnapshot = await getDocs(friendsQuery);
 
       const friendsData = [];
@@ -29,7 +38,7 @@ async function getFriendsList() {
         friendData.imageURL = imageURL;
         // Primeiro nome do user
         const fullName = friendData.name;
-        const nameParts = fullName.split(' ');
+        const nameParts = fullName.split(" ");
         const firstName = nameParts[0];
         friendData.firstName = firstName;
 
@@ -37,11 +46,13 @@ async function getFriendsList() {
       }
       return friendsData;
     } else {
-      console.log('O usuário não possui informações de usuário ou de comunidade.');
+      console.log(
+        "O usuário não possui informações de usuário ou de comunidade."
+      );
       return [];
     }
   } catch (error) {
-    console.error('Erro ao buscar a lista de amigos:', error);
+    console.error("Erro ao buscar a lista de amigos:", error);
     throw error;
   }
 }
@@ -56,18 +67,19 @@ async function getPostsList() {
     if (currUser && currUser.community) {
       const communityRef = currUser.community;
 
-      const postsCollection = collection(db, 'posts');
+      const postsCollection = collection(db, "posts");
 
       // Primeira consulta: Filtra por comunidade
       const postsQueryCommunity = query(
         postsCollection,
-        where('community', '==', communityRef)
+        where("community", "==", communityRef)
       );
 
       const postsQuerySnapshotCommunity = await getDocs(postsQueryCommunity);
 
       const posts: {
-        createdAt: any; user: DocumentData 
+        createdAt: any;
+        user: DocumentData;
       }[] = [];
 
       // Itera sobre os documentos retornados pela primeira consulta
@@ -95,8 +107,8 @@ async function getPostsList() {
       }
 
       // Após obter os posts com base na comunidade, ordene-os por data de criação
-      const orderedPosts = posts.sort((a, b) =>
-        b.createdAt.toMillis() - a.createdAt.toMillis()
+      const orderedPosts = posts.sort(
+        (a, b) => b.createdAt.toMillis() - a.createdAt.toMillis()
       );
 
       //console.log('Posts ordenados:', orderedPosts);
@@ -104,43 +116,115 @@ async function getPostsList() {
       // Retorne os posts ordenados
       return orderedPosts;
     } else {
-      console.log('O usuário não possui informações de usuário ou de comunidade.');
+      console.log(
+        "O usuário não possui informações de usuário ou de comunidade."
+      );
       return [];
     }
   } catch (error) {
-    console.error('Erro ao buscar a lista de posts:', error);
+    console.error("Erro ao buscar a lista de posts:", error);
     throw error;
   }
 }
-async function getComments(postId: any) {
-  const currUser = await getUserInfo();
 
+//...
+
+async function getComments(postId: unknown) {
   try {
-    if (currUser && currUser.community) {
-      const postsCollection = collection(db, 'posts');
-      const postsQuery = query(postsCollection, where('id', '==', postId));
-      const postsQuerySnapshot = await getDocs(postsQuery);
+    const postsCollection = collection(db, "posts");
+    const q = query(postsCollection, where("id", "==", postId));
+    const querySnapshot = await getDocs(q);
 
-      if (!postsQuerySnapshot.empty) {
-        const dataQuery = postsQuerySnapshot.docs;
-        const comments = dataQuery[0].data().comments;
-        
-        if (comments !== undefined) {
-          return comments;
-        } else {
-          console.error('O documento não possui a propriedade "comments".', dataQuery[0].data());
-        }
-      } else {
-        console.error('Nenhum documento encontrado para o postId:', postId);
-      }
+    if (querySnapshot.docs.length === 0) {
+      throw new Error("Post não encontrado.");
     }
-  } catch (error) {
-    console.error('Erro ao buscar comentários:', error);
-  }
 
-  return null; // ou qualquer valor padrão que faça sentido para o seu caso
+    const postDoc: DocumentSnapshot = querySnapshot.docs[0];
+    const commentsData = postDoc.data()?.comments;
+
+    if (!commentsData) {
+      return [];
+    }
+
+    const commentsArray = await Promise.all(
+      Object.values(commentsData).map(async (comment: any) => {
+        if (comment.user) {
+          const userRef = comment.user;
+          const userDoc = await getDoc(userRef);
+          const userData = userDoc.data();
+          return {
+            ...comment,
+            user: userData,
+          };
+        } else {
+          return comment;
+        }
+      })
+    );
+
+    return commentsArray;
+  } catch (error) {
+    console.error("Erro ao buscar comentários:", error);
+    throw error;
+  }
 }
 
+// async function getComments(postId: unknown) {
+//   try {
+//     const postsCollection = collection(db, "posts");
+//     const q = query(postsCollection, where("id", "==", postId));
+//     const querySnapshot = await getDocs(q);
+
+//     if (querySnapshot.docs.length === 0) {
+//       throw new Error("Post não encontrado.");
+//     }
+//     const postDoc: DocumentSnapshot = querySnapshot.docs[0];
+//     const commentsData = postDoc.data()?.comments;
+//     if (!commentsData) {
+//       return [];
+//     }
+//     const commentsArray: DocumentData[] = Object.values(commentsData);
+//     //console.log("AAAAAAH", commentsArray[0].content);
+//     return commentsArray;
+//   } catch (error) {
+//     console.error("Erro ao buscar comentários:", error);
+//     throw error;
+//   }
+// }
+
+// async function getComments(postId: any) {
+//   console.log("POSTID", postId);
+//   const currUser = await getUserInfo();
+
+//   try {
+//     if (currUser && currUser.community) {
+//       const postsCollection = collection(db, "posts");
+//       const postsQuery = query(postsCollection, where("id", "==", postId));
+//       const postsQuerySnapshot = await getDocs(postsQuery);
+
+//       if (!postsQuerySnapshot.empty) {
+//         const dataQuery = postsQuerySnapshot.docs;
+//         const comments = dataQuery[0].data().comments;
+
+//         if (comments !== undefined) {
+//           console.log("comentários", comments);
+//           return comments;
+//         } else {
+//           console.error(
+//             'O documento não possui a propriedade "comments".',
+//             dataQuery[0].data()
+//           );
+//         }
+//       } else {
+//         console.error("Nenhum documento encontrado para o postId:", postId);
+//       }
+//     }
+//   } catch (error) {
+//     console.error("Erro ao buscar comentários:", error);
+//   }
+//   console.log("ROTRNOU MERDA NENHUMA");
+//   return null; // ou qualquer valor padrão que faça sentido para o seu caso
+// }
 
 export { getFriendsList, getPostsList, getComments };
 
@@ -206,7 +290,7 @@ export { getFriendsList, getPostsList, getComments };
 // }
 
 //..
-  
+
 // async function getPostsList() {
 //   try {
 //     const postsRef = collection(db, 'posts'); // Referência à coleção "posts"
@@ -217,7 +301,7 @@ export { getFriendsList, getPostsList, getComments };
 //     // Itera pelos documentos da coleção "posts"
 //     for (const doc of querySnapshot.docs) {
 //       const postData = doc.data(); // Dados do documento "posts"
-      
+
 //       // Acessa a referência ao usuário associado ao post
 //       const userRef = postData.user;
 //       const userDoc = await getDoc(userRef);
@@ -249,5 +333,3 @@ export { getFriendsList, getPostsList, getComments };
 //     throw error; // Você pode optar por tratar o erro aqui ou lançá-lo novamente
 //   }
 // }
-
-

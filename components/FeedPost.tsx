@@ -20,7 +20,7 @@ const FeedPost = ({ postsData, handleLikePost, userImage }: any) => {
 
   const openComments = (postId: any) => {
     // mandar p outra tela com o id do post
-    navigation.navigate("Comments", postId);
+    navigation.navigate("Comments", { postId });
   };
 
   return (
