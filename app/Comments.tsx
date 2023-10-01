@@ -70,16 +70,19 @@ const Comments = () => {
           data={comments}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item }) => (
-            <View>
-              <Image
-                style={styles.logoUser}
-                source={{ uri: item.user.image }}
-              />
-              <View style={{ marginVertical: 12 }}>
-                <Text>{item.user.name}</Text>
+            <View style={styles.comment}>
+              <View style={styles.headerComments}>
+                <Image
+                  style={styles.logoUser}
+                  source={{ uri: item.user.image }}
+                />
+                <Text style={{}}>{item.user.name}</Text>
+              </View>
+              <View style={styles.commentText}>
                 <Text>{item.content}</Text>
               </View>
             </View>
+
           )}
         />
       </View>
@@ -91,14 +94,27 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#E7E7E7",
+    paddingHorizontal: 9
   },
-  commentContainer: {
+  headerComments: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  comment: {
+    paddingHorizontal: 15,
+    paddingVertical: 9,
     backgroundColor: "#fff",
-    flexDirection: "column",
-    width: "100%",
     borderRadius: 26,
     borderWidth: 1,
     borderColor: "#fff",
+    marginBottom: 10,
+    elevation: 10,
+  },
+  commentContainer: {
+    flexDirection: "column",
+    width: "100%",
+    
     marginVertical: 12,
   },
   logoUser: {
@@ -106,7 +122,11 @@ const styles = StyleSheet.create({
     height: 37,
     borderRadius: 20,
     marginRight: 8,
+    marginTop: 5,
   },
+  commentText: {
+    marginLeft: 46
+  }
 });
 
 export default Comments;
