@@ -24,7 +24,6 @@ type Challenge = {
   challengeName: string;
   imageURL: string;
   completed: boolean;
-  // conditions: { [key: string]: ChallengeCondition };
   conditions: {
     description: string;
     key: string;
@@ -34,7 +33,6 @@ type Challenge = {
 
 const userid = '4SyAAkeKRs71KxdhGv12';
 
-
 export function ChallengeCard(props: { userID: string }) {
   const userID = props.userID;
   const [challenges, setChallenges] = useState<Challenge[]>([]);
@@ -43,9 +41,6 @@ export function ChallengeCard(props: { userID: string }) {
   useEffect(() => {
     async function fetchChallenges() {
       try {
-        // const auxUserDataChallenges = await getUserInfo();
-        // setUserData(auxUserDataChallenges.id._key.path.segments.slice(-1)[0]);
-        // console.log(userDataChallenges);
         const challengesData = await getChallengesList();
         setChallenges(challengesData);
       } catch (error) {
@@ -57,7 +52,18 @@ export function ChallengeCard(props: { userID: string }) {
   }, []);
 
   // Função renderItem para renderizar cada item (card de desafio)
-  function renderItem({ item }: { item: Challenge }) {
+  function renderItem({ item, index }: { item: Challenge; index: number }) {
+    let score = 0;
+
+    // Defina as pontuações com base no índice do desafio
+    if (index === 0) {
+      score = 10;
+    } else if (index === 1) {
+      score = 20;
+    } else if (index === 2) {
+      score = 100;
+    }
+
     return (
       <View  style={styles.Align}>
 
@@ -72,6 +78,12 @@ export function ChallengeCard(props: { userID: string }) {
               />
           
             <Text style={styles.challengeName}>{item.challengeName}</Text>
+
+              {/* Círculo no canto superior direito */}
+              <View style={styles.scoreCircle}>
+                <Text style={styles.scoreText}>{score}</Text>
+              </View>
+            </View>
           </View>
 
           <View style={styles.containerDescription }>
@@ -98,7 +110,7 @@ export function ChallengeCard(props: { userID: string }) {
 
 
         </View>
-      </View>
+      
     );
   }
 
@@ -108,27 +120,36 @@ export function ChallengeCard(props: { userID: string }) {
         data={challenges}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
-        style={{ marginTop: 20, height: '80%' }} 
+        style={{ marginTop: 20, height: '80%' }}
       />
-
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   Container: {
     width: '90%', 
     height: 100, 
     backgroundColor: '#C7B0D8',
+    flexDirection: 'column',
     justifyContent: 'space-between',
     // alignItems: 'center',
-    borderRadius: 8,
+    borderRadius: 19.705,
   },
-  Align :{
+  
+  Align: {
     alignItems: 'center',
     marginBottom: 10,
-    marginTop: 5
+    marginTop: 5,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  icon: {
+    width: 30,
+    height: 30,
+    marginRight: 10,
   },
   containerFlex :{
     flex: 1,
@@ -163,6 +184,25 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     marginBottom: 5,
     marginTop: 20,
+    marginRight: 15,
+    marginLeft: 15
+  },
+  scoreCircle: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderColor: 'black',
+    borderWidth: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  scoreText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',    marginTop: 20,
     marginRight: 15,
     marginLeft: 15
 
