@@ -49,7 +49,6 @@ const AchievementsTestScreen = () => {
   const [showAchievements, setShowAchievements] = useState(true);
   const [showChallenges, setShowChallenges] = useState(false);
   const [userData, setUserData] = useState('');
-  const [searchPlaceholder, setSearchPlaceholder] = useState('Pesquisar desafio');
 
   useEffect(() => {
     async function fetchAchievements() {
@@ -119,7 +118,6 @@ const AchievementsTestScreen = () => {
           onPress={() => {
             setShowAchievements(true);
             setShowChallenges(false);
-            setSearchPlaceholder('Pesquisar conquista');
           }}
         >
           <Text style={styles.buttonText}>Conquistas</Text>
@@ -129,26 +127,10 @@ const AchievementsTestScreen = () => {
           onPress={() => {
             setShowAchievements(false);
             setShowChallenges(true);
-            setSearchPlaceholder('Pesquisar desafio');
           }}
         >
           <Text style={styles.buttonText}>Desafios</Text>
         </TouchableOpacity>
-      </View>
-
-      <View style={styles.searchContainer}>
-        <View style={styles.searchInputContainer}>
-          <TextInput
-            placeholder={searchPlaceholder}
-            style={styles.searchInput}
-            value={searchText}
-            onChangeText={(text) => setSearchText(text)}
-            onSubmitEditing={() => {}}
-          />
-          <TouchableOpacity style={styles.searchButton} onPress={() => {}}>
-            <Ionicons name="search" size={24} color="black" />
-          </TouchableOpacity>
-        </View>
       </View>
 
       {showAchievements && (
