@@ -82,6 +82,8 @@ async function getCommunityInfo(communityRef: any) {
 async function getUserInfo() {
   try {
     const user = auth.currentUser;
+    //const user = true;
+
     // if (user) {
     //   console.log('Usuário autenticado:', user);
     // } else {
@@ -90,7 +92,7 @@ async function getUserInfo() {
 
     if (user) {
       const usersCollection = collection(db, "users");
-      const userQuery = query(usersCollection, where("uid", "==", user.uid));
+      const userQuery = query(usersCollection, where("uid", "==", user.uid)); //user.uid "djvDBeK9hFeiz5PWYrl42CQVuSv1";
       const userQuerySnapshot = await getDocs(userQuery);
 
       if (userQuerySnapshot.size > 0) {
@@ -159,4 +161,4 @@ async function linkToPersonal(id: string) {
   }
 }
 
-export { createNewUserDocument, getUserInfo, linkToPersonal };
+export { createNewUserDocument, getUserInfo, linkToPersonal, getCommunityInfo };

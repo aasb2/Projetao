@@ -100,7 +100,7 @@ const Feed = () => {
     }, []);
 
     const handleProfile = (userId) => {
-      navigation.navigate("Profile", userId);
+      navigation.navigate("Profile", { userId });
     };
 
     async function handleStartTraining() {

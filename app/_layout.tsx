@@ -89,7 +89,17 @@ function RootLayoutNav() {
           name="prescricao-especificacao"
         />
         <Stack.Screen name="workout" options={{ headerShown: false }} />
-        <Stack.Screen name="Profile" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="Profile"
+          options={{
+            headerShown: true,
+            title: "Perfil",
+            headerTitleAlign: "center",
+            headerStyle: {
+              backgroundColor: COLORS.primary,
+            },
+          }}
+        />
       </Stack>
     </ThemeProvider>
   );
