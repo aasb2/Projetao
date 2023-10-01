@@ -81,8 +81,10 @@ async function getCommunityInfo(communityRef: any) {
 // Função para buscar informações do usuário logado
 async function getUserInfo() {
   try {
-    const user = auth.currentUser;
-    //const user = true;
+    // Descomenar linha abaixo caso não queira MOKAR
+    //const user = auth.currentUser;
+
+    const user = true;
 
     // if (user) {
     //   console.log('Usuário autenticado:', user);
@@ -92,7 +94,10 @@ async function getUserInfo() {
 
     if (user) {
       const usersCollection = collection(db, "users");
-      const userQuery = query(usersCollection, where("uid", "==", user.uid)); //user.uid "djvDBeK9hFeiz5PWYrl42CQVuSv1";
+      const userQuery = query(
+        usersCollection,
+        where("uid", "==", "djvDBeK9hFeiz5PWYrl42CQVuSv1")
+      ); //user.uid  OU  "djvDBeK9hFeiz5PWYrl42CQVuSv1";
       const userQuerySnapshot = await getDocs(userQuery);
 
       if (userQuerySnapshot.size > 0) {
