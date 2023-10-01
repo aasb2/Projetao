@@ -113,8 +113,8 @@ const styles = StyleSheet.create({
     marginTop: 10
   },
   image: {
-    width: 120,
-    height: 120, 
+    width: 60,
+    height: 60, 
     resizeMode: 'contain'
   },
 });
