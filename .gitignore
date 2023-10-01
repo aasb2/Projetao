@@ -42,5 +42,5 @@ expo-env.d.ts
 
 # # Firebase
 # Tirar o comentário na hora de fazer o build para o apk
-# services/firebaseConfig.js
-# services/firebaseConfig.ts
+services/firebaseConfig.js
+services/firebaseConfig.ts
