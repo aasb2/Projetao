@@ -98,19 +98,7 @@ const AchievementsTestScreen = () => {
 
   return (
     <View style={{ flex: 1, paddingBottom: 60, backgroundColor: '#380062' }}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            backgroundColor: '#4B0082',
-            padding: 10,
-          }}
-        >
-          <Ionicons name="arrow-back" size={24} color="white" />
-          <Text style={{ color: 'white', marginLeft: 5 }}>Voltar</Text>
-        </TouchableOpacity>
-      </View>
+
 
       <View style={styles.buttonSelectionContainer}>
         <TouchableOpacity
@@ -212,7 +200,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 25,
   },
   selectedButton: {
     backgroundColor: '#B397C8',
