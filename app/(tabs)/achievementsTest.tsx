@@ -107,8 +107,7 @@ const AchievementsTestScreen = () => {
             padding: 10,
           }}
         >
-          <Ionicons name="arrow-back" size={24} color="white" />
-          <Text style={{ color: 'white', marginLeft: 5 }}>Voltar</Text>
+
         </TouchableOpacity>
       </View>
 
@@ -186,28 +185,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 15
   },
-  searchContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  searchInputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    borderRadius: 20,
-    paddingHorizontal: 10,
-  },
-  searchInput: {
-    flex: 1,
-    height: 40,
-  },
-  searchButton: {
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 10,
-    marginLeft: 10,
-  },
+
   buttonSelectionContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
