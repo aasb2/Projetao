@@ -60,21 +60,26 @@ export function ChallengeCard(props: { userID: string }) {
   function renderItem({ item }: { item: Challenge }) {
     return (
       <View  style={styles.Align}>
+
         <View style={styles.Container}>
+
+        <View style={styles.containerFlexCol }> 
+
+          <View style={styles.containerFlex }>  
+            <Image
+              source={{ uri: item.imageURL }} 
+              style={ styles.image }
+              />
           
-          <Text style={styles.challengeName}>{item.challengeName}</Text>
-          <Image
-          source={{ uri: item.imageURL }} 
-          style={ styles.image }
-          />
-          {/* <Text style={styles.challengeName}>{item.completed}</Text> */}
-          
-          {/* aqui era pra ser a condição, mas nao aparece */}
-          <View>
-              <Text style={styles.descriptionName}>
+            <Text style={styles.challengeName}>{item.challengeName}</Text>
+          </View>
+
+          <View style={styles.containerDescription }>
+              <Text style={styles.challengeDescription}>
                 {item.conditions['description']}
               </Text>
           </View>
+        </View>
           
 
 
@@ -113,38 +118,53 @@ export function ChallengeCard(props: { userID: string }) {
 
 const styles = StyleSheet.create({
   Container: {
-    width: '85%', 
-    height: 150, 
+    width: '90%', 
+    height: 100, 
     backgroundColor: '#C7B0D8',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    borderRadius: 5,
+    // alignItems: 'center',
+    borderRadius: 8,
   },
   Align :{
     alignItems: 'center',
     marginBottom: 10,
     marginTop: 5
   },
+  containerFlex :{
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+
+  },
+  containerFlexCol:{
+    flex: 2,
+    flexDirection: 'column',
+  },
   challengeName: {
     fontSize: 23,
     color: 'black',
     fontWeight: 'bold',
-    textAlign: 'center',
+    // textAlign: 'center',
     marginTop: 10
   },
-  descriptionName: {
-    fontSize: 20,
+  challengeDescription: {
+    fontSize: 18,
     color: 'black',
     fontWeight: 'bold',
-    textAlign: 'center',
-    marginTop: 5,
-    marginBottom: 6
+    // marginBottom: 20,
+    marginLeft: 88
+  },
+  containerDescription :{
+    marginBottom: 10,
   },
   image: {
     width: 60,
     height: 60, 
     resizeMode: 'contain',
     marginBottom: 5,
+    marginTop: 20,
+    marginRight: 15,
+    marginLeft: 15
 
   },
 });
