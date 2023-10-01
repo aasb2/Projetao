@@ -29,6 +29,10 @@ async function getChallengesList() {
       const challengeConditions = challengeData.conditions;
       challengeData.challengeConditions = challengeConditions;
 
+      // Condicoes do desafio
+      const challengePoints = challengeData.points;
+      challengeData.challengePoints = challengePoints;
+
       console.log(challengeConditions.description);
 
 
