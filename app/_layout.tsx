@@ -12,6 +12,7 @@ import {
   Roboto_700Bold,
 } from "@expo-google-fonts/roboto";
 import appTheme from "../constants/theme";
+import { COLORS } from "../constants";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -72,12 +73,7 @@ function RootLayoutNav() {
             },
           }}
         />
-        <Stack.Screen name="Comments" />
-        {/* <Stack.Screen
-          options={{ headerShown: false }}
-          name="prescricao-especificacao"
-        /> */}
-        <Stack.Screen name="Profile" options={{ headerShown: false }} />
+      
         <Stack.Screen
           name="workout"
           options={{
@@ -103,6 +99,29 @@ function RootLayoutNav() {
             headerTintColor: "white",
             headerTitleStyle: {
               fontSize: 18,
+            }}}
+          />
+        <Stack.Screen
+          name="Comments"
+          options={{
+            headerShown: true,
+            title: "Comentários",
+            headerTitleAlign: "center",
+            headerTintColor: "white",
+            headerStyle: {
+              backgroundColor: COLORS.primary,
+            },
+          }}
+        />
+        
+        <Stack.Screen
+          name="Profile"
+          options={{
+            headerShown: true,
+            title: "Perfil",
+            headerTitleAlign: "center",
+            headerStyle: {
+              backgroundColor: COLORS.primary,
             },
           }}
         />

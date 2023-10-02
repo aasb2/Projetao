@@ -81,7 +81,11 @@ async function getCommunityInfo(communityRef: any) {
 // Função para buscar informações do usuário logado
 async function getUserInfo() {
   try {
-    const user = auth.currentUser;
+    // Descomenar linha abaixo caso não queira MOKAR
+    //const user = auth.currentUser;
+
+    const user = true;
+
     // if (user) {
     //   console.log('Usuário autenticado:', user);
     // } else {
@@ -90,7 +94,10 @@ async function getUserInfo() {
 
     if (user) {
       const usersCollection = collection(db, "users");
-      const userQuery = query(usersCollection, where("uid", "==", user.uid));
+      const userQuery = query(
+        usersCollection,
+        where("uid", "==", "Paarf9Ts4vQA7LsvYlMLp0nQTNn1")
+      ); //user.uid  OU  "djvDBeK9hFeiz5PWYrl42CQVuSv1";
       const userQuerySnapshot = await getDocs(userQuery);
 
       if (userQuerySnapshot.size > 0) {
@@ -159,4 +166,4 @@ async function linkToPersonal(id: string) {
   }
 }
 
-export { createNewUserDocument, getUserInfo, linkToPersonal };
+export { createNewUserDocument, getUserInfo, linkToPersonal, getCommunityInfo };
