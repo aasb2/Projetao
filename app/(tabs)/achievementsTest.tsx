@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 25,
+    marginTop: 45,
   },
   selectedButton: {
     backgroundColor: '#B397C8',

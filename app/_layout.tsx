@@ -120,6 +120,7 @@ function RootLayoutNav() {
             headerShown: true,
             title: "Perfil",
             headerTitleAlign: "center",
+            headerTintColor: "white",
             headerStyle: {
               backgroundColor: COLORS.primary,
             },

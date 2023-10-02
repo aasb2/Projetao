@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, CheckBox, FlatList, Picker, TextInput  } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput } from 'react-native';
+import { Picker } from "@react-native-picker/picker";
+import { Checkbox } from "expo-checkbox";
 import { Ionicons } from '@expo/vector-icons';
 import { retrieveWorkouts } from '../services/functions/workout/retrieveWorkouts';
 import { updateWeights as updateMaxWeights } from '../services/functions/workout/updateMaximumWeights';
-import {incrementCompletedWorkouts} from '../services/functions/workout/updateCompletedWorkouts'
+import { incrementCompletedWorkouts } from '../services/functions/workout/updateCompletedWorkouts'
 import { getUserInfo } from '../services/functions/login/loginUser';
 import { checkCondition } from '../services/functions/achievements/checkCondition';
 
@@ -37,7 +39,7 @@ const WorkoutScreen = () => {
     }
   }, [workouts]);
 
-  async function updateCompletedWorkouts () {
+  async function updateCompletedWorkouts() {
     try {
       await incrementCompletedWorkouts();
 
@@ -46,7 +48,7 @@ const WorkoutScreen = () => {
     }
   }
 
-  async function updateMaximumWeights(pesos: {[key: string]: number}) {
+  async function updateMaximumWeights(pesos: { [key: string]: number }) {
     try {
       await updateMaxWeights(pesos);
       await checkCondition();
@@ -60,9 +62,9 @@ const WorkoutScreen = () => {
   // Função para desmarcar os checkboxs e enviar os pesos máximos
   const handleDesmarcarTodos = () => {
     var anyChecked = false;
-    
+
     const novoArrayPesos = {};
-  
+
     isCheckedList.forEach((isChecked, index) => {
       if (isChecked) {
         anyChecked = true;
@@ -72,14 +74,14 @@ const WorkoutScreen = () => {
       }
     });
 
-    if (anyChecked){updateCompletedWorkouts();}
-  
+    if (anyChecked) { updateCompletedWorkouts(); }
+
     setPesosPorExercicio(novoArrayPesos);
-        
+
     setIsCheckedList(Array(selectedWorkout.exercises.length).fill(false));
 
     updateMaximumWeights(novoArrayPesos);
-  
+
     // output no console
     for (const chave in pesosPorExercicio) {
       if (pesosPorExercicio.hasOwnProperty(chave)) {
@@ -87,21 +89,21 @@ const WorkoutScreen = () => {
       }
     }
   };
-  
-  
-    
+
+
+
   // Função para desmarcar o checkbox
   const handleFinalizarTreino = () => {
     setIsChecked(false);
   };
-    // Função para marcar ou desmarcar um checkbox específico
-    const handleCheckBoxChange = (index) => {
-      const newIsCheckedList = [...isCheckedList];
-      newIsCheckedList[index] = !newIsCheckedList[index];
-      setIsCheckedList(newIsCheckedList);
-    };
+  // Função para marcar ou desmarcar um checkbox específico
+  const handleCheckBoxChange = (index) => {
+    const newIsCheckedList = [...isCheckedList];
+    newIsCheckedList[index] = !newIsCheckedList[index];
+    setIsCheckedList(newIsCheckedList);
+  };
 
-      // Função para selecionar um treino
+  // Função para selecionar um treino
   const selectWorkout = (index) => {
     setSelectedWorkout(workouts[index]);
     setSelectedWorkoutIndex(index);
@@ -132,63 +134,63 @@ const WorkoutScreen = () => {
         </TouchableOpacity>
       </View> */}
 
-        {/* Caixa de seleção para escolher o treino */}
-        <Picker
+      {/* Caixa de seleção para escolher o treino */}
+      <Picker
         selectedValue={selectedWorkoutIndex}
         style={{ backgroundColor: '#FFFFFF', margin: 10, borderRadius: 10 }}
         onValueChange={(index) => selectWorkout(index)}
-        >
+      >
         {workouts.map((workout, index) => (
-            <Picker.Item key={index} label={workout.treino} value={index} />
+          <Picker.Item key={index} label={workout.treino} value={index} />
         ))}
-        </Picker>
+      </Picker>
 
-        {/* Renderização de cartões separados para cada exercício do treino selecionado */}
-        {selectedWorkout && (
+      {/* Renderização de cartões separados para cada exercício do treino selecionado */}
+      {selectedWorkout && (
         <FlatList
-            data={selectedWorkout.exercises}
-            keyExtractor={(item, index) => index.toString()} // Use o índice como chave única
-            renderItem={({ item, index }) => (
+          data={selectedWorkout.exercises}
+          keyExtractor={(item, index) => index.toString()} // Use o índice como chave única
+          renderItem={({ item, index }) => (
             <View style={styles.container}>
-            <View style={styles.card}>
+              <View style={styles.card}>
                 <View style={styles.checkboxContainer}>
-                <CheckBox
+                  <Checkbox
                     value={isCheckedList[index]}
                     onValueChange={() => handleCheckBoxChange(index)}
-                />
+                  />
                 </View>
 
                 {/* Informacoes do card */}
                 <View>
-                <Text style={styles.exerciseTextTitle}>{item.exercise}</Text>
-                {/* Input de kg */}
-                <View style={styles.textInputContainer}>
-                  <Text style={styles.exerciseText}>Kg: </Text>
-                  <TextInput
-                    style={styles.textInput}
-                    placeholder={item.kg}
-                    value={pesos[index]}
-                    onChangeText={(value) => handlePesoChange(index, value)}
-                  />
-                </View>
-                {/* Reps e sets */}
-                
-                <Text style={styles.exerciseText}>Reps: {item.reps}</Text>
-                <Text style={styles.exerciseText}>Sets: {item.sets}</Text>
-                </View>
-            </View>
-            </View>
-            )}
-        />
-        )}
+                  <Text style={styles.exerciseTextTitle}>{item.exercise}</Text>
+                  {/* Input de kg */}
+                  <View style={styles.textInputContainer}>
+                    <Text style={styles.exerciseText}>Kg: </Text>
+                    <TextInput
+                      style={styles.textInput}
+                      placeholder={`${item.kg}`}
+                      value={pesos[index]}
+                      onChangeText={(value) => handlePesoChange(index, value)}
+                    />
+                  </View>
+                  {/* Reps e sets */}
 
-        {/* Botão "Finalizar Treino" */}
-        <TouchableOpacity
+                  <Text style={styles.exerciseText}>Reps: {item.reps}</Text>
+                  <Text style={styles.exerciseText}>Sets: {item.sets}</Text>
+                </View>
+              </View>
+            </View>
+          )}
+        />
+      )}
+
+      {/* Botão "Finalizar Treino" */}
+      <TouchableOpacity
         style={styles.finalizarButton}
         onPress={handleDesmarcarTodos}
-        >
+      >
         <Text style={styles.text2}>Finalizar treino</Text>
-        </TouchableOpacity>
+      </TouchableOpacity>
 
 
     </View>
@@ -204,15 +206,15 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   container: {
-    justifyContent: 'center', 
-    alignItems: 'center', 
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   card: {
     backgroundColor: '#FFFFFF',
     borderRadius: 10,
     margin: 10,
     padding: 16,
-    width: 300, 
+    width: 300,
     flexDirection: 'row', // Isso define a direção do layout como horizontal
     shadowColor: '#FFFFFF', // Cor da sombra
     shadowOffset: {
@@ -237,11 +239,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     padding: 4
   },
-  exerciseTextTitle:{
+  exerciseTextTitle: {
     fontSize: 20,
     color: 'black',
     fontWeight: 'bold',
-    
+
   },
   finalizarButton: {
     backgroundColor: '#4B0082',
