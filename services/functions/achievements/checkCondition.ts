@@ -1,8 +1,11 @@
 import { db, auth } from '../../firebaseConfig';
 import { doc, getDoc, updateDoc, collection, getDocs } from 'firebase/firestore';
+import { getUserInfo } from '../login/loginUser';
 
-async function checkCondition(userID: string) {
+async function checkCondition() {
   try {
+    const loggedUser = await getUserInfo();
+    const userID = loggedUser.id._key.path.segments.slice(-1)[0];
     // Consulta para obter o documento do usuário
     const userDocRef = doc(db, 'users', userID);
     const userDocSnapshot = await getDoc(userDocRef);
@@ -18,19 +21,15 @@ async function checkCondition(userID: string) {
     const userData = userDocSnapshot.data();
     for (const challengeDoc of challengesQuerySnapshot.docs){
         const challengeData = challengeDoc.data();
-        console.log(challengeData);
         
         // Obtenha as condições do desafio
         const conditions = challengeData.conditions || {};
         // Verifique as condições
         const challengeKey = conditions.key;
         const challengeValue = conditions.value;
-        console.log(userData.maximum_weights[challengeKey]);
-        console.log(challengeValue);
 
 
         if (userData.maximum_weights[challengeKey] >= challengeValue) {
-            console.log(challengeData.name)
             
             // Atualize o valor do desafio para true
             const userChallengesRef = doc(db, 'users', userID);

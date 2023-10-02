@@ -8,13 +8,15 @@ import {
   TextInput,
   Dimensions,
   Image,
-  ScrollView
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { getAchievementsList } from '../../services/functions/achievements/functionAchievements';
 import { retrieveAchievements } from '../../services/functions/achievements/retrieveAchievements';
 import { ChallengeCard } from '../../components/challengeCard';
 import { checkCondition } from '../../services/functions/achievements/checkCondition';
-import { auth } from '../../services/firebaseConfig';
+import { auth, db } from '../../services/firebaseConfig';
+import { collection, getDoc, onSnapshot } from 'firebase/firestore';
+import { getUserInfo } from '../../services/functions/login/loginUser';
 
 const { width } = Dimensions.get('window');
 
@@ -22,7 +24,7 @@ const maxRectangleWidth = width * 0.45;
 const horizontalSpacing = 10;
 const userID = '4SyAAkeKRs71KxdhGv12';
 
-const user = auth.currentUser;
+
 
 type Achievement = {
   id: string;
@@ -48,20 +50,28 @@ const AchievementsTestScreen = () => {
   const [filteredAchievements, setFilteredAchievements] = useState<Achievement[]>([]);
   const [showAchievements, setShowAchievements] = useState(true);
   const [showChallenges, setShowChallenges] = useState(false);
+  const [userData, setUserData] = useState('');
 
   useEffect(() => {
     async function fetchAchievements() {
       try {
-        await checkCondition('4SyAAkeKRs71KxdhGv12');
-        const achievementsData = await retrieveAchievements(userID);
-        console.log(achievementsData);
+        await checkCondition();
+        const achievementsData = await retrieveAchievements();
         setAchievements(achievementsData);
       } catch (error) {
         console.error('Erro ao buscar a lista de achievements:', error);
       }
     }
+    const reload = onSnapshot(
+      collection(db, "users"),
+      async (snapshot) => {
+        await checkCondition();
+        const achievementsData = await retrieveAchievements();
+        setAchievements(achievementsData);
+      })
 
     fetchAchievements();
+    return () => reload();
   }, []);
 
   useEffect(() => {
@@ -69,26 +79,26 @@ const AchievementsTestScreen = () => {
       achievement.achievementName.toLowerCase().includes(searchText.toLowerCase())
     );
     setFilteredAchievements(filtered);
-    console.log(user);
+
   }, [searchText, achievements]);
 
 
-  function renderItem({ item }: { item: Achievement }) {
-    return (
-      <View style={styles.rectangleContainer}>
-        <Text style={styles.achievementName}>{item.achievementName}</Text>
-        <Image
-          source={{ uri: item.imageURL }} // Defina a URL da imagem aqui
-          style={styles.image} // Defina as dimensões da imagem conforme necessário
-        />
-        <Text style={styles.achievementDescription}>{item.description}</Text>
-      </View>
-    );
-  }
+function renderItem({ item }: { item: Achievement }) {
+  return (
+    <View style={styles.rectangleContainer}>
+      <Text style={styles.achievementName}>{item.achievementName}</Text>
+      <Image
+        source={{ uri: item.imageURL }} // Defina a URL da imagem aqui
+        style={ styles.image } // Defina as dimensões da imagem conforme necessário
+      />
+      <Text style={styles.achievementDescription}>{item.description}</Text>
+    </View>
+  );
+}
 
   return (
     <View style={{ flex: 1, paddingBottom: 60, backgroundColor: '#380062' }}>
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <TouchableOpacity
           style={{
             flexDirection: 'row',
@@ -100,7 +110,7 @@ const AchievementsTestScreen = () => {
           <Ionicons name="arrow-back" size={24} color="white" />
           <Text style={{ color: 'white', marginLeft: 5 }}>Voltar</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
 
       <View style={styles.buttonSelectionContainer}>
         <TouchableOpacity
@@ -123,20 +133,6 @@ const AchievementsTestScreen = () => {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.searchContainer}>
-        <View style={styles.searchInputContainer}>
-          <TextInput
-            placeholder="Pesquisar desafio..."
-            style={styles.searchInput}
-            value={searchText}
-            onChangeText={(text) => setSearchText(text)}
-            onSubmitEditing={() => { }}
-          />
-          <TouchableOpacity style={styles.searchButton} onPress={() => { }}>
-            <Ionicons name="search" size={24} color="black" />
-          </TouchableOpacity>
-        </View>
-      </View>
 
       {/* {showAchievements && (
         <FlatList
@@ -147,17 +143,17 @@ const AchievementsTestScreen = () => {
         />
       )} */}
 
-      {showAchievements && (
-          <FlatList
-            data={filteredAchievements} // Usamos filteredAchievements em vez de rectangles
-            numColumns={2}
-            renderItem={renderItem} // Passamos a função renderItem diretamente
-            keyExtractor={(item) => item.id.toString()} // Certifique-se de usar um identificador único aqui
-            style={{ marginTop: 20 }}
-          />
-      )}
+{showAchievements && (
+  <FlatList
+    data={filteredAchievements} // Usamos filteredAchievements em vez de rectangles
+    numColumns={2}
+    renderItem={renderItem} // Passamos a função renderItem diretamente
+    keyExtractor={(item) => item.id.toString()} // Certifique-se de usar um identificador único aqui
+    style={{ marginTop: 20 }}
+  />
+)}
 
-      {/* {showAchievements && (
+{/* {showAchievements && (
         <FlatList
           data={rectangles}
           numColumns={2}
@@ -169,9 +165,9 @@ const AchievementsTestScreen = () => {
         />
       )} */}
 
-      {showChallenges && (
-        <ChallengeCard />
-      )}
+     {showChallenges && (
+      <ChallengeCard userID = {userData}/>
+      )} 
     </View>
   );
 };
@@ -202,7 +198,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 120,
-    height: 120,
+    height: 120, 
     resizeMode: 'contain'
   },
   achievementDescription: {
@@ -237,7 +233,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 25,
   },
   selectedButton: {
     backgroundColor: '#B397C8',
@@ -259,7 +255,7 @@ const styles = StyleSheet.create({
   rectangleContainer: {
     flex: 1,
     paddingHorizontal: horizontalSpacing / 2,
-    marginHorizontal: horizontalSpacing / 2,
+    marginHorizontal: horizontalSpacing / 2, 
     aspectRatio: 153 / 198,
     marginBottom: 20,
     backgroundColor: '#4B0082',

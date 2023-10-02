@@ -73,13 +73,41 @@ function RootLayoutNav() {
           }}
         />
         <Stack.Screen name="Comments" />
-        <Stack.Screen
+        {/* <Stack.Screen
           options={{ headerShown: false }}
           name="prescricao-especificacao"
-        />
-        <Stack.Screen name="workout" options={{ headerShown: false }} />
+        /> */}
         <Stack.Screen name="Profile" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="workout"
+          options={{
+            headerShown: true,
+            title: "Acompanhe seu treino",
+            headerStyle: {
+              backgroundColor: appTheme.COLORS.primary,
+            },
+            headerTintColor: "white",
+            headerTitleStyle: {
+              fontSize: 18,
+            },
+          }}
+        />
+        <Stack.Screen
+          name="prescricao-especificacao"
+          options={{
+            headerShown: true,
+            title: "Monte seu treino",
+            headerStyle: {
+              backgroundColor: appTheme.COLORS.primary,
+            },
+            headerTintColor: "white",
+            headerTitleStyle: {
+              fontSize: 18,
+            },
+          }}
+        />
       </Stack>
+      
     </ThemeProvider>
   );
 }

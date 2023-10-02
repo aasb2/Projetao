@@ -1,9 +1,12 @@
 import { db } from '../../firebaseConfig';
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
+import { getUserInfo } from '../login/loginUser';
 
-async function incrementCompletedWorkouts(userId: string) {
+async function incrementCompletedWorkouts() {
   try {
-    const userDocRef = doc(db, 'users', userId);
+    const loggedUser = await getUserInfo();
+    const userID = loggedUser.id._key.path.segments.slice(-1)[0];
+    const userDocRef = doc(db, 'users', userID);
     const userDocSnapshot = await getDoc(userDocRef);
 
     if (userDocSnapshot.exists()) {
@@ -16,7 +19,6 @@ async function incrementCompletedWorkouts(userId: string) {
       // Atualiza o campo "completed_workouts" no documento do usuário
       await updateDoc(userDocRef, { completed_workouts: updatedCompletedWorkouts });
 
-      console.log('completed_workouts incrementado com sucesso');
     } else {
       console.error('Documento de usuário não encontrado');
     }

@@ -1,9 +1,12 @@
 import { db } from '../../firebaseConfig';
 import { collection, getDoc, query, where, getDocs, doc, updateDoc} from 'firebase/firestore';
+import { getUserInfo } from '../login/loginUser';
 
-async function updateWeights(userId: string, weights: { [key: string]: number }) {
+async function updateWeights(weights: { [key: string]: number }) {
     try {
-      const userDocRef = doc(db, 'users', userId);
+      const loggedUser = await getUserInfo();
+      const userID = loggedUser.id._key.path.segments.slice(-1)[0];
+      const userDocRef = doc(db, 'users', userID);
       const userDocSnapshot = await getDoc(userDocRef);
   
       if (userDocSnapshot.exists()) {
@@ -25,7 +28,6 @@ async function updateWeights(userId: string, weights: { [key: string]: number })
         // Atualize o campo "maximum_weights" no documento do usuário
         await updateDoc(userDocRef, { maximum_weights: maximumWeights });
   
-        console.log('Pesos atualizados com sucesso');
       } else {
         console.error('Documento de usuário não encontrado');
       }

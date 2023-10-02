@@ -41,6 +41,7 @@ import {
 import { db } from "../../services/firebaseConfig";
 import Colors from "../../constants/Colors";
 import { TouchableHighlight } from "react-native-gesture-handler";
+import {updateUsersScores} from "../../services/functions/ranking/calculateUserScore"
 
 const RankingScreen = () => {
   const [friendsData, setFriendsData] = useState<DocumentData[]>([]);
@@ -49,6 +50,7 @@ const RankingScreen = () => {
   useEffect(() => {
     const fetchFriends = async () => {
       try {
+        await updateUsersScores();
         const dataFriends = await getFriendsList();
         setFriendsData(dataFriends);
       } catch (error) {
@@ -58,6 +60,7 @@ const RankingScreen = () => {
     const unsubscribe = onSnapshot(
       collection(db, "users"),
       async (snapshot) => {
+        await updateUsersScores();
         const updatedFriends = await getFriendsList();
         setFriendsData(updatedFriends);
       }

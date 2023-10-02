@@ -40,7 +40,6 @@ const PrescricaoEspecificacao = () => {
   // const params = useLocalSearchParams<{ exercises: string }>();
   const router = useRoute();
   let params: any = router.params;
-  console.log(params);
 
   const [exerciseOptions, setExercises] = useState<ExerciseStruct[]>([]);
 
@@ -55,7 +54,6 @@ const PrescricaoEspecificacao = () => {
   //atualiza os exercicios quando params muda
   useEffect(() => {
     if (Object.keys(params).length != 0 && params.exercises != "") {
-      //console.log(params);
 
       const exercisesArr: string[] = params.exercises;
       const chosenExercises = exercisesArr.map((ex) => ({
@@ -115,7 +113,7 @@ const PrescricaoEspecificacao = () => {
 
     //cria novo treino
     const addedPresc = await addDoc(presCollection, {
-      prescriptions: exerciseOptions,
+      exercises: exerciseOptions,
       treino: trainingName,
     });
 
@@ -130,14 +128,14 @@ const PrescricaoEspecificacao = () => {
 
   return (
     <View style={styles.prescricaoTreinos}>
-      <View style={styles.headerMobile}>
+      {/* <View style={styles.headerMobile}>
         <Image
           style={[styles.icon]}
           resizeMode="cover"
           source={require("../assets/images/left.png")}
         />
         <Text style={[styles.headerText]}>Treinos - Especificação</Text>
-      </View>
+      </View> */}
 
       <View style={styles.body}>
         <Modal

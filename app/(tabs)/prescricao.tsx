@@ -124,10 +124,12 @@ const Prescricao = () => {
   };
 
   const options = [
-    { value: "Costas" },
-    { value: "Pernas" },
-    { value: "Bíceps" },
+    { value: "Peito"},
+    { value: "Tríceps"},
     { value: "Ombros" },
+    { value: "Costas" },
+    { value: "Bíceps" },
+    { value: "Pernas" },
     { value: "Glúteos" },
   ];
 

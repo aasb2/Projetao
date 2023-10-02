@@ -2,9 +2,12 @@ import { db, auth } from '../../firebaseConfig';
 import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 import { ref, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../firebaseConfig';
+import { getUserInfo } from '../login/loginUser';
 
-async function retrieveAchievements(userID: string) {
+async function retrieveAchievements() {
   try {
+    const loggedUser = await getUserInfo();
+    const userID = loggedUser.id._key.path.segments.slice(-1)[0];
     // const user = auth.currentUser;
 
     // if (!user) {

@@ -1,39 +1,67 @@
 import { db, auth } from '../../firebaseConfig';
-import { collection, getDocs } from 'firebase/firestore';
-import { doc, setDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
+import { ref, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../firebaseConfig';
-import { ref, getDownloadURL, FirebaseStorage } from 'firebase/storage';
+import { getUserInfo } from '../login/loginUser';
 
-async function getAchievementsList() {
+async function retrieveAchievements() {
   try {
-    // Consulta para buscar os achievements na coleção 'achievements'
-    const achievementsCollection = collection(db, 'achievements');
-    const achievementsQuerySnapshot = await getDocs(achievementsCollection);
+    const loggedUser = await getUserInfo();
+    const userID = loggedUser.id._key.path.segments.slice(-1)[0];
+    // const user = auth.currentUser;
+
+    // if (!user) {
+    //     throw new Error('Usuário não autenticado');
+    //   }
+  
+    //   const userId = user.uid;
+  
+      const userDocRef = doc(db, 'users', userID);
+      const userDocSnapshot = await getDoc(userDocRef);
+  
+      if (!userDocSnapshot.exists()) {
+        throw new Error('Documento do usuário não encontrado');
+      }
+  
+      const userData = userDocSnapshot.data();
+      const userChallenges = userData?.userChallenges;
+  
+      if (!userChallenges) {
+        throw new Error('Dados de desafios do usuário não encontrados');
+      }
+  
 
     const achievementsData = [];
 
-    for (const docRef of achievementsQuerySnapshot.docs) {
-      const achievementData = docRef.data();
-      // ID do achievement
-      const achievementId = docRef.id;
-      achievementData.id = achievementId;
-      
-      // Nome do achievement
-      const achievementName = achievementData.name;
-      achievementData.achievementName = achievementName;
+    for (const challengeId in userChallenges) {
+      if (userChallenges[challengeId] === true) {
+        const challengeDocRef = doc(db, 'challenges', challengeId);
+        const challengeDocSnapshot = await getDoc(challengeDocRef);
 
-      // URL da imagem do achievement
-      const imageURLRef = ref(storage, achievementData.image);
-      const imageURL = await getDownloadURL(imageURLRef); 
-      achievementData.imageURL = imageURL;
+        if (challengeDocSnapshot.exists()) {
+          const achievementReference = challengeDocSnapshot.data().achievement;      
+          const achievementDocRef = doc(db, 'achievements', achievementReference);         
+          const achievementDocSnapshot = await getDoc(achievementDocRef);
+          
 
-      // Descrição do achievement
-      const description = achievementData.description;
-      achievementData.description = description;
+          if (achievementDocSnapshot.exists()) {
+            const achievementData = achievementDocSnapshot.data();
+            const achievementId = achievementDocSnapshot.id;
+            achievementData.id = achievementId;
+            achievementData.achievementName = achievementData.name;
 
-      achievementsData.push(achievementData);
+            const imageURLRef = ref(storage, achievementData.image);
+            const imageURL = await getDownloadURL(imageURLRef);
+            achievementData.imageURL = imageURL;
+
+            const description = achievementData.description;
+            achievementData.description = description;
+
+            achievementsData.push(achievementData);
+          }
+        }
+      }
     }
-    console.log("aqui");
 
     return achievementsData;
   } catch (error) {
@@ -41,33 +69,5 @@ async function getAchievementsList() {
     throw error;
   }
 }
-export { getAchievementsList };
 
-// Função para realizar uma requisição POST
-async function enviarDadosParaUsuario(dados) {
-  try {
-    // Verifique se o usuário está autenticado (exemplo, você pode usar Firebase Authentication)
-    const user = auth.currentUser;
-
-    if (!user) {
-      throw new Error('Usuário não autenticado');
-    }
-
-    const userId = user.uid; // ID do usuário autenticado
-
-    // Caminho para o documento do usuário no Firestore (substitua pelo caminho correto)
-    const userDocRef = doc(db, 'users', userId);
-
-    // Adicione os dados ao array "treinos_realizados" no documento do usuário
-    await setDoc(userDocRef, {
-      treinos_realizados: arrayUnion(dados),
-    }, { merge: true });
-
-    console.log('Dados enviados com sucesso para o usuário:', userId);
-  } catch (error) {
-    console.error('Erro ao enviar dados para o usuário:', error);
-    throw error;
-  }
-}
-
-export { enviarDadosParaUsuario };
+export { retrieveAchievements };

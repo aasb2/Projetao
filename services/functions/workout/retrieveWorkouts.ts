@@ -1,9 +1,12 @@
 import { db } from '../../firebaseConfig';
 import { collection, getDoc, query, where, getDocs,doc} from 'firebase/firestore';
+import { getUserInfo } from '../login/loginUser';
 
-async function retrieveWorkouts(userId: string) {
+async function retrieveWorkouts() {
   try {
-    const userDocRef = doc(db, 'users', userId);
+    const loggedUser = await getUserInfo();
+    const userID = loggedUser.id._key.path.segments.slice(-1)[0];
+    const userDocRef = doc(db, 'users', userID);
     const userDocSnapshot = await getDoc(userDocRef);
 
     if (userDocSnapshot.exists()) {
@@ -29,7 +32,6 @@ async function retrieveWorkouts(userId: string) {
         }
       }
 
-      console.log("aqui");
       return workoutsData;
     } else {
       console.error('Documento de usuário não encontrado');
